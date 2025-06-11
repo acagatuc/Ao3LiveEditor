@@ -1,0 +1,25 @@
+html, body {
+    background-color: #E9E8E8;
+    margin: 0;
+    height: 100%;
+}
+
+.banner {
+    background-color: #7b1d1d;
+    color: white;
+    font-family: Georgia, serif;
+    padding: 1%;
+    margin-bottom: 10px;
+}
+
+textarea {
+    resize: none;
+    display: inline-block;
+    min-width: 47%;
+    min-height: 90%;
+    margin-left: 1%;
+    border-width: 2;
+    border-radius: 10;
+    border-color: #ac9696;
+}
+
