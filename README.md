@@ -1,46 +1,127 @@
 # Live HTML & CSS Editor
 
-A simple in-browser live editor that lets users write HTML and CSS, and see the rendered result instantly. Built with pure HTML, CSS, and JavaScript — no libraries or frameworks required.
+A cross-platform live editor that lets users write HTML and CSS and see the rendered result instantly.
+Built with **Vue.js** for structure and **Electron** for true desktop execution — all while remaining lightweight and dependency-minimal.
 
-## 🔍 Features
+This project runs as:
 
-- 📄 **Live Preview** — As you type, your HTML and CSS update in real-time.
-- 🎨 **Full Work Skin Support** — Use our work skin editor to get your CSS just right!
-- 🖥️ **Split Layout** — Editor on the left, preview on the right.
-- 🧠 **No Dependencies** — Lightweight, fast, and easy to understand.
-- 🏃 **Downloadable** — Work on the go! Edit your fanfic anywhere you want to!
+* 🌐 a web app
+* 🖥️ a downloadable desktop app (`.exe`, `.dmg`, `.AppImage`)
+* 📡 an optional cloud-enabled app with user accounts
 
-## 🚀 Getting Started
+---
 
-1. Clone or download this repository:
-   ```
-   git clone https://github.com/your-username/live-html-css-editor.git
-   cd live-html-css-editor
-   ```
+## ✨ Features
 
-2. Open `index.html` in your browser:
-   ```
-   open index.html
-   ```
+* 📄 **Live Preview** — HTML and CSS update in real time as you type
+* 🎨 **Work Skin Support** — Tune and preview CSS skins instantly
+* 🖥️ **Split Layout** — Editor on the left, preview on the right
+* 🧠 **Framework-Powered, Still Simple** — Vue for clarity, no UI bloat
+* 💾 **Offline First** — Works fully offline, saves locally
+* 🏃 **Executable Desktop App** — Runs as a native app via Electron
+* ☁️ **Optional Accounts** — Cloud saves and sync (web version only)
+
+---
+
+## 🚀 Getting Started (Web Version)
+
+### Install dependencies
+
+```bash
+npm install
+```
+
+### Run the dev server
+
+```bash
+npm run dev
+```
+
+Open the app in your browser at:
+
+```
+http://localhost:5173
+```
+
+---
+
+## 🖥️ Desktop App (Electron)
+
+### Run in Electron (development)
+
+```bash
+npm run electron:dev
+```
+
+### Build desktop executables
+
+```bash
+npm run electron:build
+```
+
+This produces native apps for:
+
+* Windows (`.exe`)
+* macOS (`.dmg`)
+* Linux (`.AppImage`)
+
+---
 
 ## 🛠️ How It Works
 
-- The left-side `<textarea>` allows you to enter both HTML and CSS (inside `<style>` tags).
-- The right-side `<iframe>` is updated using JavaScript's `srcdoc` property, reflecting the latest content on every keystroke.
+* The editor is built as a Vue app using controlled, reactive state
+* HTML and CSS are combined and injected into an `<iframe>`
+* The iframe is updated using `srcdoc` for instant rendering
+* Electron wraps the Vue app in a Chromium shell for desktop use
+* All editing logic is frontend-only and works offline
 
-## 📁 File Structure
+---
 
-```
+## 📁 Project Structure
+
+```text
 live-html-css-editor/
 │
-├── index.html       # Main HTML file containing the editor and preview logic
-└── README.md        # Project documentation
+├── app/                    # Vue frontend
+│   ├── components/
+│   │   ├── Editor.vue
+│   │   ├── Preview.vue
+│   │   └── SplitLayout.vue
+│   └── main.js
+│
+├── electron/               # Electron main process
+│   └── main.js
+│
+├── public/
+├── index.html
+└── README.md
 ```
 
-## ✨ Demo
+---
 
-You can view a live version of the editor [here](#) *(Add GitHub Pages or deployment link if available)*.
+## 🌐 Web App vs Desktop App
 
-## 📄 License
+| Feature            | Web          | Desktop      |
+| ------------------ | ------------ | ------------ |
+| Live preview       | ✅            | ✅            |
+| Offline use        | ⚠️ (limited) | ✅            |
+| File system access | ❌            | ✅            |
+| User accounts      | ✅            | ❌ (optional) |
+| Executable app     | ❌            | ✅            |
 
-This project is licensed under the MIT License. See the LICENSE file for more information.
+---
+
+## 🔮 Future Enhancements
+
+* User authentication and cloud storage
+* Project export as standalone HTML files
+* Theme / skin marketplace
+* Plugin system for editor extensions
+
+---
+
+## 🧠 Design Philosophy
+
+> The editor should work even if the internet disappears.
+
+Frameworks are used for **clarity and portability**, not complexity.
