@@ -19,7 +19,7 @@ const leftWidth = ref(50)
 let dragging = false
 
 const gridStyle = computed(() => ({
-  gridTemplateColumns: `${leftWidth.value}% 6px ${100 - leftWidth.value}%`
+  gridTemplateColumns: `${leftWidth.value}% 6px ${100 - leftWidth.value}%`,
 }))
 
 function startDrag() {
