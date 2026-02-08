@@ -1,61 +1,65 @@
 <template>
-  <div class="split-panel" :style="gridStyle">
-    <div class="panel left">
+  <div class="split-root">
+    <div class="panel left" :style="{ width: leftWidth + '%' }">
       <slot name="left" />
     </div>
 
-    <div class="divider" @mousedown="startDrag" />
+    <div
+      class="divider"
+      @mousedown="startDrag"
+    />
 
-    <div class="panel right">
+    <div class="panel right" :style="{ width: 100 - leftWidth + '%' }">
       <slot name="right" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onUnmounted } from 'vue'
+import { ref } from 'vue'
 
 const leftWidth = ref(50)
+
 let dragging = false
 
-const gridStyle = computed(() => ({
-  gridTemplateColumns: `${leftWidth.value}% 6px ${100 - leftWidth.value}%`,
-}))
-
-function startDrag() {
+const startDrag = () => {
   dragging = true
   window.addEventListener('mousemove', onDrag)
   window.addEventListener('mouseup', stopDrag)
 }
 
-function onDrag(e) {
+const onDrag = (e: MouseEvent) => {
   if (!dragging) return
   const percent = (e.clientX / window.innerWidth) * 100
   leftWidth.value = Math.min(80, Math.max(20, percent))
 }
 
-function stopDrag() {
+const stopDrag = () => {
   dragging = false
   window.removeEventListener('mousemove', onDrag)
   window.removeEventListener('mouseup', stopDrag)
 }
-
-onUnmounted(stopDrag)
 </script>
 
 <style scoped>
-.split-panel {
-  display: grid;
+.split-root {
+  display: flex;
   height: 100%;
   width: 100%;
+  overflow: hidden;
 }
 
 .panel {
-  overflow: auto;
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .divider {
+  width: 6px;
   cursor: col-resize;
-  background: var(--divider-color, #ccc);
+  background-color: rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+  z-index: 10;
 }
 </style>

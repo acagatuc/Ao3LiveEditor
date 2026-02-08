@@ -1,7 +1,5 @@
 <template>
   <div class="editor-view">
-    <Toolbar />
-
     <SplitPanel>
       <template #left>
         <EditorInput v-model:html="html" v-model:css="css" />
@@ -17,7 +15,6 @@
 <script setup lang="ts">
 import { watch } from 'vue'
 
-import Toolbar from '@/components/AppToolbar.vue'
 import SplitPanel from '@/components/SplitPanel.vue'
 
 import EditorInput from '@/editor/EditorInput.vue'
@@ -35,11 +32,19 @@ watch([html, css], saveToStorage, { deep: true })
 </script>
 
 <style scoped>
+.app-main {
+  padding: 0 !important;
+}
+
 .editor-view {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   width: 100vw;
+  margin-bottom: 100px;
   overflow: hidden;
+  background-color: #e9e8e8;
+  font-family: 'Lucida Grande', 'Verdana';
+  color: #2a2a2a;
 }
 </style>
