@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import EditorView from './views/EditorView.vue'
+import EditorView from '@/views/EditorView.vue'
 import Toolbar from '@/components/AppToolbar.vue'
 </script>
 
