@@ -5,16 +5,15 @@
     <div class="preview-body">
       <iframe ref="iframeRef" class="preview-frame" sandbox="allow-same-origin" :srcdoc="srcdoc" />
     </div>
+
+    <!-- Button row -->
+    <div class="preview-footer"></div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, watch, onMounted } from 'vue'
-import {
-  editorScrollRatio,
-  previewScrollRatio,
-  isSyncingScroll,
-} from './scrollStateSync.ts'
+import { editorScrollRatio, previewScrollRatio, isSyncingScroll } from './scrollStateSync.ts'
 
 const props = defineProps<{
   html?: string
@@ -56,7 +55,6 @@ const srcdoc = computed(
 )
 
 watch(editorScrollRatio, (ratio) => {
-  console.log("hit preview")
   const iframe = iframeRef.value
   const doc = iframe?.contentDocument?.documentElement
   if (!iframe || !doc) return
@@ -91,11 +89,7 @@ const onIframeScroll = () => {
 
 onMounted(() => {
   iframeRef.value?.addEventListener('load', () => {
-    iframeRef.value?.contentWindow?.addEventListener(
-      'scroll',
-      onIframeScroll,
-      { passive: true },
-    )
+    iframeRef.value?.contentWindow?.addEventListener('scroll', onIframeScroll, { passive: true })
   })
 })
 </script>
@@ -126,12 +120,20 @@ onMounted(() => {
 .preview-frame {
   width: 100%; /* fill parent width */
   height: 100%; /* fill parent height */
-  border: 1px solid #AEAEAE;
+  border: 1px solid #aeaeae;
   border-radius: 4px;
   box-sizing: border-box; /* include border in width */
 }
 
 .preview-frame:hover {
   border-color: #2a2a2a;
+}
+
+.preview-footer {
+  flex-shrink: 0;
+  height: 36px; /* FIXED HEIGHT */
+  display: flex;
+  justify-content: flex-end;
+  padding: 4px 8px;
 }
 </style>

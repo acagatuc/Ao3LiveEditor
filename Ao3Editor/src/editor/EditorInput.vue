@@ -46,7 +46,7 @@
         Format CSS
       </v-btn>
 
-      <v-btn
+      <!-- <v-btn
         v-else
         size="small"
         variant="text"
@@ -54,7 +54,7 @@
         @click="autoFormatHtml"
       >
         Format HTML
-      </v-btn>
+      </v-btn> -->
     </div>
   </div>
 </template>
@@ -63,7 +63,7 @@
 import { ref, watch, onMounted, nextTick, type ComponentPublicInstance } from 'vue'
 import { editorScrollRatio, isSyncingScroll } from './scrollStateSync.ts'
 import { formatCss } from '@/editor/formatCss'
-import { formatHtml } from '@/editor/formatHTML'
+// import { formatHtml, formatHtmlAo3 } from '@/editor/formatHTML'
 
 const props = defineProps<{
   html?: string
@@ -90,9 +90,9 @@ async function autoFormatCss() {
   localCss.value = await formatCss(localCss.value)
 }
 
-async function autoFormatHtml() {
-  localHtml.value = await formatHtml(localHtml.value)
-}
+// async function autoFormatHtml() {
+//   localHtml.value = await formatHtmlAo3(localHtml.value)
+// }
 
 const onScroll = () => {
   if (isSyncingScroll.value || !textareaEl) return
@@ -135,9 +135,10 @@ onMounted(async () => {
 }
 
 .editor-footer {
+  flex-shrink: 0;
+  height: 36px; /* FIXED HEIGHT */
   display: flex;
   justify-content: space-between;
   padding: 4px 8px;
-  flex-shrink: 0;
 }
 </style>
