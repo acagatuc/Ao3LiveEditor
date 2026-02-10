@@ -4,7 +4,6 @@
       <v-tab value="html">HTML</v-tab>
       <v-tab value="css">CSS</v-tab>
     </v-tabs>
-
     <v-divider />
 
     <div class="editor-body">
@@ -34,12 +33,37 @@
         @scroll.passive="onScroll"
       />
     </div>
+    <!-- Button row -->
+    <div class="editor-footer">
+      <v-btn size="small" variant="text" prepend-icon="mdi-download"> Export </v-btn>
+      <v-btn
+        v-if="tab === 'css'"
+        size="small"
+        variant="text"
+        prepend-icon="mdi-format-indent-increase"
+        @click="autoFormatCss"
+      >
+        Format CSS
+      </v-btn>
+
+      <v-btn
+        v-else
+        size="small"
+        variant="text"
+        prepend-icon="mdi-format-indent-increase"
+        @click="autoFormatHtml"
+      >
+        Format HTML
+      </v-btn>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch, onMounted, nextTick, type ComponentPublicInstance } from 'vue'
 import { editorScrollRatio, isSyncingScroll } from './scrollStateSync.ts'
+import { formatCss } from '@/editor/formatCss'
+import { formatHtml } from '@/editor/formatHTML'
 
 const props = defineProps<{
   html?: string
@@ -61,6 +85,14 @@ let textareaEl: HTMLTextAreaElement | null = null
 
 watch(localHtml, (v) => emit('update:html', v))
 watch(localCss, (v) => emit('update:css', v))
+
+async function autoFormatCss() {
+  localCss.value = await formatCss(localCss.value)
+}
+
+async function autoFormatHtml() {
+  localHtml.value = await formatHtml(localHtml.value)
+}
 
 const onScroll = () => {
   if (isSyncingScroll.value || !textareaEl) return
@@ -94,8 +126,18 @@ onMounted(async () => {
 
 .editor-textarea {
   height: 100%;
-  overflow-y: auto; /* ✅ scrolling happens here */
   font-family: 'Lucida Grande', 'Verdana';
   background-color: white;
+}
+
+.editor-textarea {
+  height: 100%;
+}
+
+.editor-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 8px;
+  flex-shrink: 0;
 }
 </style>
