@@ -1,34 +1,25 @@
 <template>
-  <header class="toolbar">
-    <h1 class="title">Ao3Editor</h1>
+  <v-app-bar color="primary" class="toolbar">
+    <v-toolbar-title>Live HTML Editor</v-toolbar-title>
 
-    <div class="actions">
-      <button @click="$emit('export')">Export</button>
-      <button @click="$emit('clear')">Clear</button>
-    </div>
-  </header>
+    <v-btn
+      href="https://www.w3schools.com/html/"
+      target="_blank" 
+      rel="noopener noreferrer"
+      prepend-icon="mdi-open-in-new"
+      title="Open W3Schools HTML reference"
+    >
+      HTML Tutorial Site  
+    </v-btn>
+  </v-app-bar>
 </template>
 
-<script setup lang="ts">
-// Emits only — no logic here
-</script>
+<script setup lang="ts"></script>
 
 <style scoped>
 .toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem 1rem;
-  background: #1f1f1f;
-  color: #fff;
-}
-
-.title {
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.actions button {
-  margin-left: 0.5rem;
+  background-color: #7b1d1d;
+  color: white;
+  font-family: 'Lucida Grande', 'Verdana';
 }
 </style>
