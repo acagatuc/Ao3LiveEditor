@@ -1,57 +1,99 @@
 <template>
   <div class="preview-root">
-    <div class="preview-header">Preview:</div>
+    <div class="preview-header-row">
+      <div class="preview-header-title">Preview:</div>
+      <v-btn size="small" variant="tonal" @click="toggleHideStyle">
+        {{ hideCreatorStyleMode ? "Show Creator's Style" : "Hide Creator's Style" }}
+      </v-btn>
+    </div>
     <v-divider />
     <div class="preview-body">
       <iframe ref="iframeRef" class="preview-frame" sandbox="allow-same-origin" :srcdoc="srcdoc" />
     </div>
 
     <!-- Button row -->
-    <div class="preview-footer"></div>
+    <div class="preview-footer">
+      <v-tooltip location="top">
+        <template #activator="{ props }">
+          <div class="preview-footer-label" v-bind="props">
+            <v-icon size="16">mdi-link-off</v-icon>
+            <span>Links disabled</span>
+          </div>
+        </template>
+        <span>Links disabled in preview. You can still open them in a new tab.</span>
+      </v-tooltip>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, watch, onMounted } from 'vue'
 import { editorScrollRatio, previewScrollRatio, isSyncingScroll } from './scrollStateSync.ts'
+import { generateSrcdoc } from './generateSrcdoc.ts'
 
 const props = defineProps<{
   html?: string
   css?: string
 }>()
 
+// iframe ref to preview ao3 html
 const iframeRef = ref<HTMLIFrameElement | null>(null)
 
-const srcdoc = computed(
-  () => `
-<!DOCTYPE html>
-<html>
-<head>
-  <style>
-    ${props.css || ''}
+// boolean to determine whether the user wants to hide style
+const hideCreatorStyleMode = ref(false)
 
-    /* Safe defaults for preview */
-    body {
-      max-width: 100%;
-      overflow-wrap: break-word;
-      word-wrap: break-word;
-      font-family: "Lucida Grande", "Verdana";
-      background-color: white;
+// Strips all CSS but keeps HTML intact
+function hideCreatorStyle(html: string): string {
+  // Remove inline styles only; you already wrap the HTML in #workskin
+  return html.replace(/\s*style="[^"]*"/gi, '')
+}
+
+// Toggle handler
+function toggleHideStyle() {
+  hideCreatorStyleMode.value = !hideCreatorStyleMode.value
+}
+
+// debounce on keystroke so that html generation/sanitization only occurs when author stops typing for a bit
+const debouncedHtml = ref(props.html || '')
+let debounceTimer: number | null = null
+
+watch(
+  () => props.html,
+  (newHtml) => {
+    if (debounceTimer) {
+      clearTimeout(debounceTimer)
     }
 
-    pre, code {
-      white-space: pre-wrap;
-      word-break: break-word;
+    debounceTimer = window.setTimeout(() => {
+      debouncedHtml.value = newHtml || ''
+    }, 400)
+  },
+)
+
+function disableIframeLinks() {
+  const iframe = iframeRef.value
+  const doc = iframe?.contentDocument
+  if (!doc) return
+
+  doc.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement | null
+    const link = target?.closest('a')
+
+    if (link) {
+      e.preventDefault()
+      e.stopPropagation()
     }
-  </style>
-</head>
-<body>
- <div id="workskin">
-    ${props.html || ''}
-  </div>
-</body>
-</html>
-`,
+  })
+}
+
+const srcdoc = computed(() =>
+  generateSrcdoc({
+    html: hideCreatorStyleMode.value
+      ? hideCreatorStyle(debouncedHtml.value || '')
+      : debouncedHtml.value || '',
+    css: hideCreatorStyleMode.value ? '' : props.css || '',
+    hideCreatorStyle: hideCreatorStyleMode.value,
+  }),
 )
 
 watch(editorScrollRatio, (ratio) => {
@@ -89,7 +131,13 @@ const onIframeScroll = () => {
 
 onMounted(() => {
   iframeRef.value?.addEventListener('load', () => {
-    iframeRef.value?.contentWindow?.addEventListener('scroll', onIframeScroll, { passive: true })
+    const win = iframeRef.value?.contentWindow
+    if (!win) return
+
+    win.addEventListener('scroll', onIframeScroll, { passive: true })
+
+    // Disable all links inside the iframe to prevent navigation
+    disableIframeLinks()
   })
 })
 </script>
@@ -102,7 +150,16 @@ onMounted(() => {
   width: 100%;
 }
 
-.preview-header {
+.preview-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 48px;
+  padding: 0 16px;
+  flex-shrink: 0;
+}
+
+.preview-header-title {
   height: 48px;
   display: flex;
   align-items: center;
@@ -135,5 +192,13 @@ onMounted(() => {
   display: flex;
   justify-content: flex-end;
   padding: 4px 8px;
+}
+
+.preview-footer-label {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.6);
 }
 </style>

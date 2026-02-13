@@ -32,10 +32,17 @@
         no-resize
         @scroll.passive="onScroll"
       />
+      <div class="copy-button">
+        <v-btn icon rounded size="small" @click="copyToClipboard"
+          ><v-icon>mdi-content-copy</v-icon></v-btn
+        >
+      </div>
     </div>
     <!-- Button row -->
     <div class="editor-footer">
-      <v-btn size="small" variant="text" prepend-icon="mdi-download"> Export </v-btn>
+      <v-btn size="small" variant="text" prepend-icon="mdi-download" @click="saveToFile">
+        Export
+      </v-btn>
       <v-btn
         v-if="tab === 'css'"
         size="small"
@@ -61,6 +68,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, nextTick, type ComponentPublicInstance } from 'vue'
+import { toast, type ToastOptions } from 'vue3-toastify'
 import { editorScrollRatio, isSyncingScroll } from './scrollStateSync.ts'
 import { formatCss } from '@/editor/formatCss'
 // import { formatHtml, formatHtmlAo3 } from '@/editor/formatHTML'
@@ -90,9 +98,73 @@ async function autoFormatCss() {
   localCss.value = await formatCss(localCss.value)
 }
 
-// async function autoFormatHtml() {
-//   localHtml.value = await formatHtmlAo3(localHtml.value)
-// }
+async function copyToClipboard() {
+  try {
+    if (tab.value === 'html') {
+      await navigator.clipboard.writeText(localHtml.value)
+      toast.success('Copied HTML to clipboard!', {
+        autoClose: 3000,
+        position: toast.POSITION.TOP_CENTER,
+      } as ToastOptions)
+    } else if (tab.value === 'css') {
+      await navigator.clipboard.writeText(localCss.value)
+      toast.success('Copied CSS to clipboard!', {
+        autoClose: 3000,
+        position: toast.POSITION.TOP_CENTER,
+      } as ToastOptions)
+    }
+  } catch ($e) {
+    toast.error('Failed to copy.', {
+      autoClose: 3000,
+      position: toast.POSITION.TOP_CENTER,
+    } as ToastOptions)
+    console.log($e)
+  }
+}
+
+// Source - https://stackoverflow.com/a/19332584
+// Posted by NatureShade, modified by community. See post 'Timeline' for change history
+// Retrieved 2026-02-12, License - CC BY-SA 4.0
+
+function saveToFile() {
+  if (tab.value === 'html') {
+    const textFileAsBlob = new Blob([localHtml.value], { type: 'text/plain' })
+    const downloadLink = document.createElement('a')
+    downloadLink.download = "html.txt"
+    downloadLink.innerHTML = 'Download File'
+    if (window.webkitURL != null) {
+      // Chrome allows the link to be clicked
+      // without actually adding it to the DOM.
+      downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob)
+    } else {
+      // Firefox requires the link to be added to the DOM
+      // before it can be clicked.
+      downloadLink.href = window.URL.createObjectURL(textFileAsBlob)
+      // downloadLink.onclick = destroyClickedElement;
+      downloadLink.style.display = 'none'
+      document.body.appendChild(downloadLink)
+    }
+    downloadLink.click()
+  } else if (tab.value === 'css') {
+    const textFileAsBlob = new Blob([localCss.value], { type: 'text/plain' })
+    const downloadLink = document.createElement('a')
+    downloadLink.download = "css.txt"
+    downloadLink.innerHTML = 'Download File'
+    if (window.webkitURL != null) {
+      // Chrome allows the link to be clicked
+      // without actually adding it to the DOM.
+      downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob)
+    } else {
+      // Firefox requires the link to be added to the DOM
+      // before it can be clicked.
+      downloadLink.href = window.URL.createObjectURL(textFileAsBlob)
+      // downloadLink.onclick = destroyClickedElement;
+      downloadLink.style.display = 'none'
+      document.body.appendChild(downloadLink)
+    }
+    downloadLink.click()
+  }
+}
 
 const onScroll = () => {
   if (isSyncingScroll.value || !textareaEl) return
@@ -119,19 +191,22 @@ onMounted(async () => {
 }
 
 .editor-body {
+  position: relative;
   flex: 1;
   padding: 8px;
   min-height: 0; /* ← critical for textarea + flex */
+}
+
+.copy-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
 }
 
 .editor-textarea {
   height: 100%;
   font-family: 'Lucida Grande', 'Verdana';
   background-color: white;
-}
-
-.editor-textarea {
-  height: 100%;
 }
 
 .editor-footer {

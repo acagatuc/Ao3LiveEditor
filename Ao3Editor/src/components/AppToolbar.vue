@@ -2,12 +2,14 @@
   <v-app-bar color="primary" class="toolbar">
     <v-toolbar-title>Live HTML Editor</v-toolbar-title>
 
-    <v-btn icon @click="$emit('export')">
-      <v-icon>mdi-download</v-icon>
-    </v-btn>
-
-    <v-btn icon @click="$emit('clear')">
-      <v-icon>mdi-delete</v-icon>
+    <v-btn
+      href="https://www.w3schools.com/html/"
+      target="_blank" 
+      rel="noopener noreferrer"
+      prepend-icon="mdi-open-in-new"
+      title="Open W3Schools HTML reference"
+    >
+      HTML Tutorial Site  
     </v-btn>
   </v-app-bar>
 </template>
@@ -18,6 +20,6 @@
 .toolbar {
   background-color: #7b1d1d;
   color: white;
-  font-family: "Lucida Grande", "Verdana";
+  font-family: 'Lucida Grande', 'Verdana';
 }
 </style>

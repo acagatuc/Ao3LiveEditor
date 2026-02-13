@@ -21,8 +21,4 @@ body,
   margin: 0;
   overflow: hidden;
 }
-
-* {
-  outline: 1px solid red;
-}
 </style>
