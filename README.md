@@ -15,21 +15,21 @@ Built with **Vue.js** for structure and **Electron** for true desktop execution 
 
 This project runs as:
 
-* 🌐 a web app
-* 🖥️ a downloadable desktop app (`.exe`, `.dmg`, `.AppImage`)
-* 📡 an optional cloud-enabled app with user accounts
+- 🌐 a web app
+- 🖥️ a downloadable desktop app (`.exe`, `.dmg`, `.AppImage`)
+- 📡 an optional cloud-enabled app with user accounts
 
 ---
 
 ## ✨ Features
 
-* 📄 **Live Preview** — HTML and CSS update in real time as you type
-* 🎨 **Work Skin Support** — Tune and preview CSS skins instantly
-* 🖥️ **Split Layout** — Editor on the left, preview on the right
-* 🧠 **Framework-Powered, Still Simple** — Vue for clarity, no UI bloat
-* 💾 **Offline First** — Works fully offline, saves locally
-* 🏃 **Executable Desktop App** — Runs as a native app via Electron
-* ☁️ **Optional Accounts** — Cloud saves and sync (web version only)
+- 📄 **Live Preview** — HTML and CSS update in real time as you type
+- 🎨 **Work Skin Support** — Tune and preview CSS skins instantly
+- 🖥️ **Split Layout** — Editor on the left, preview on the right
+- 🧠 **Framework-Powered, Still Simple** — Vue for clarity, no UI bloat
+- 💾 **Offline First** — Works fully offline, saves locally
+- 🏃 **Executable Desktop App** — Runs as a native app via Electron
+- ☁️ **Optional Accounts** — Cloud saves and sync (web version only)
 
 ---
 
@@ -71,19 +71,19 @@ npm run electron:build
 
 This produces native apps for:
 
-* Windows (`.exe`)
-* macOS (`.dmg`)
-* Linux (`.AppImage`)
+- Windows (`.exe`)
+- macOS (`.dmg`)
+- Linux (`.AppImage`)
 
 ---
 
 ## 🛠️ How It Works
 
-* The editor is built as a Vue app using controlled, reactive state
-* HTML and CSS are combined and injected into an `<iframe>`
-* The iframe is updated using `srcdoc` for instant rendering
-* Electron wraps the Vue app in a Chromium shell for desktop use
-* All editing logic is frontend-only and works offline
+- The editor is built as a Vue app using controlled, reactive state
+- HTML and CSS are combined and injected into an `<iframe>`
+- The iframe is updated using `srcdoc` for instant rendering
+- Electron wraps the Vue app in a Chromium shell for desktop use
+- All editing logic is frontend-only and works offline
 
 ---
 
@@ -111,22 +111,22 @@ live-html-css-editor/
 
 ## 🌐 Web App vs Desktop App
 
-| Feature            | Web          | Desktop      |
-| ------------------ | ------------ | ------------ |
-| Live preview       | ✅            | ✅            |
+| Feature            | Web          | Desktop       |
+| ------------------ | ------------ | ------------- |
+| Live preview       | ✅           | ✅            |
 | Offline use        | ⚠️ (limited) | ✅            |
-| File system access | ❌            | ✅            |
-| User accounts      | ✅            | ❌ (optional) |
-| Executable app     | ❌            | ✅            |
+| File system access | ❌           | ✅            |
+| User accounts      | ✅           | ❌ (optional) |
+| Executable app     | ❌           | ✅            |
 
 ---
 
 ## 🔮 Future Enhancements
 
-* User authentication and cloud storage
-* Project export as standalone HTML files
-* Theme / skin marketplace
-* Plugin system for editor extensions
+- User authentication and cloud storage
+- Project export as standalone HTML files
+- Theme / skin marketplace
+- Plugin system for editor extensions
 
 ---
 
