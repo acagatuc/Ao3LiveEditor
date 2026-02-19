@@ -1,0 +1,1 @@
+// Tokenizes raw CSS input into structured rulesets and declarations without mutating the source, extracting selectors, properties, and values for analysis.

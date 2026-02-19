@@ -70,7 +70,7 @@
 import { ref, watch, onMounted, nextTick, type ComponentPublicInstance } from 'vue'
 import { toast, type ToastOptions } from 'vue3-toastify'
 import { editorScrollRatio, isSyncingScroll } from './scrollStateSync.ts'
-import { formatCss } from '@/editor/formatCss'
+import { formatCss } from '@/utilities/formatCss.js'
 // import { formatHtml, formatHtmlAo3 } from '@/editor/formatHTML'
 
 const props = defineProps<{

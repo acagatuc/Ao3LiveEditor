@@ -1,0 +1,1 @@
+// Document to identify allowed and disallowed CSS properties.
