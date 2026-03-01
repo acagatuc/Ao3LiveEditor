@@ -51,7 +51,7 @@ export function validateValue(value: string, property: string): ValueValidationR
   let floatMatch: RegExpExecArray | null
   while ((floatMatch = FLOAT_REGEX.exec(v)) !== null) {
     const decimals = floatMatch[1]
-    if (decimals.length > MAX_DECIMAL_PLACES) {
+    if (decimals!.length > MAX_DECIMAL_PLACES) {
       return {
         valid: false,
         reason: `"AO3 allows 2 decimal places at most!"`,
@@ -65,7 +65,7 @@ export function validateValue(value: string, property: string): ValueValidationR
   DIMENSION_REGEX.lastIndex = 0
   let dimMatch: RegExpExecArray | null
   while ((dimMatch = DIMENSION_REGEX.exec(v)) !== null) {
-    const unit = dimMatch[2].toLowerCase()
+    const unit = dimMatch[2]!.toLowerCase()
 
     // Skip known non-unit suffixes that appear in values (hex colors won't
     // match this regex since they start with #, but guard anyway)
@@ -84,7 +84,7 @@ export function validateValue(value: string, property: string): ValueValidationR
   let urlMatch: RegExpExecArray | null
   while ((urlMatch = URL_REGEX.exec(v)) !== null) {
     const href = urlMatch[1]
-    const ext = href.split('.').pop()?.toLowerCase().split('?')[0] ?? ''
+    const ext = href!.split('.').pop()?.toLowerCase().split('?')[0] ?? ''
     if (ext && !ALLOWED_IMAGE_FORMATS.includes(ext)) {
       return {
         valid: false,

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { analyzeCss } from '../utilities/analyzeCss'
+import { analyzeCss, type CssRule } from '../utilities/analyzeCss'
 import { buildPreviewCss } from '../utilities/buildPreviewCss'
 
 describe('AO3 allowed properties', () => {
@@ -44,42 +44,11 @@ describe('analyzeCss – disallowed at-rules', () => {
     expect(atRuleWarning?.message).toContain('@font-face')
 
     // Ensure normal rules still parsed
-    const boxRule = analysis.rules.find((r) => r.selector.trim() === '.box')
-
+    const boxRule = analysis.rules.find((r) => r.selector.trim() === '.box') as CssRule
     expect(boxRule).toBeDefined()
-    expect(boxRule?.declarations[0].property).toBe('margin')
+    expect(boxRule?.declarations?.[0]?.property).toBe('margin')
   })
 })
-
-// it('removes values with too many decimal places in strict mode', () => {
-//   const input = `
-//     .box {
-//       margin: 10.123px;
-//       padding: 5px;
-//     }
-//   `
-
-//   const analysis = analyzeCss(input)
-//   const output = buildPreviewCss(analysis, true)
-
-//   expect(output).not.toContain('10.123px')
-//   expect(output).toContain('padding: 5px;')
-// })
-
-// it('removes unknown properties in strict mode', () => {
-//   const input = `
-//     .box {
-//       banana: yellow;
-//       margin: 10px;
-//     }
-//   `
-
-//   const analysis = analyzeCss(input)
-//   const output = buildPreviewCss(analysis, true)
-
-//   expect(output).not.toContain('banana:')
-//   expect(output).toContain('margin: 10px;')
-// })
 
 describe('duplicate property handling', () => {
   it('keeps only the last duplicate', () => {

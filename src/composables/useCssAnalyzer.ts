@@ -19,7 +19,7 @@ export interface PositionedWarning extends CssWarning {
 function findSelectorLine(rawCss: string, selector: string): number | undefined {
   const lines = rawCss.split('\n')
   for (let i = 0; i < lines.length; i++) {
-    if (lines[i].includes(selector)) return i + 1
+    if (lines[i]?.includes(selector)) return i + 1
   }
   return undefined
 }
@@ -58,6 +58,7 @@ export function useCssAnalyzer() {
       'disallowed-atrule': 0,
       'comment-stripped': 0,
       'invalid-var-usage': 0,
+      'value-invalid': 0,
     }
     for (const w of warnings.value) counts[w.type]++
     return counts
