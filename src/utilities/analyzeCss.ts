@@ -1,6 +1,7 @@
 // Orchestrates parsing and validation to produce a structured representation of the CSS along with aggregated warnings for unsupported properties, duplicates, and disallowed constructs.
 
-import { validateProperty } from '../utilities/validateProperties'
+import { validateProperty } from './validateProperties'
+import { validateValue } from './validateValue'
 
 /**
  * Represents a single CSS declaration inside a ruleset.
@@ -30,6 +31,7 @@ export interface CssWarning {
     | 'disallowed-atrule'
     | 'comment-stripped'
     | 'invalid-var-usage'
+    | 'value-invalid'
   message: string
   selector?: string
   property?: string
@@ -83,11 +85,19 @@ export function analyzeCss(
   for (const match of cssWithoutComments.matchAll(ruleRegex)) {
     // Array-like object that exec returns: RegExpExecArray
     // Explicit guard
-    const [, selector, body] = match
+    const [, untrimmedSelector, body] = match
 
     // If the selector or body doesn't exist
-    if (!selector || !body) continue
+    if (!untrimmedSelector || !body) continue
 
+    const selector = untrimmedSelector.trim()
+    if (selector.startsWith('@')) {
+      warnings.push({
+        type: 'disallowed-atrule',
+        message: `${selector} is not allowed by AO3`,
+        selector,
+      })
+    }
     // A set to track already seen properties, so that duplicate properties can be overwritten with the last declaration.
     // As per AO3 rules on multiple declarations in one ruleset.
     const seenProperties = new Set<string>()
@@ -147,6 +157,17 @@ export function analyzeCss(
           selector,
           property: normalizedProperty,
         })
+      } else {
+        // Only validate the value if the property itself is allowed
+        const valueValidation = validateValue(value, normalizedProperty)
+        if (!valueValidation.valid) {
+          warnings.push({
+            type: 'value-invalid',
+            message: valueValidation.reason || 'Invalid value',
+            selector,
+            property: normalizedProperty,
+          })
+        }
       }
 
       declarations.push({
