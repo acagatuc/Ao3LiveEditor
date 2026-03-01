@@ -1,4 +1,4 @@
-import { sanitizeHtml } from './sanitizeHtml.ts'
+import { sanitizeHtml } from '../utilities/sanitizeHtml.ts'
 
 export function generateSrcdoc(params: {
   html: string
@@ -11,7 +11,6 @@ export function generateSrcdoc(params: {
   const htmlContent = hideCreatorStyle ? html.replace(/\s*style="[^"]*"/gi, '') : html
 
   const sanitizedHtml = sanitizeHtml(htmlContent)
-  console.log('hit')
 
   // Return the iframe content
   return `<!DOCTYPE html>
