@@ -1,7 +1,9 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import AppToolbar from './components/AppToolbar'
 import EditorView from './views/EditorView'
+import RichTextEditor from './pages/RichTextEditor'
 
 const theme = createTheme({
   palette: {
@@ -19,17 +21,22 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100vh',
-          overflow: 'hidden',
-        }}
-      >
-        <AppToolbar />
-        <EditorView />
-      </div>
+      <BrowserRouter>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100vh',
+            overflow: 'hidden',
+          }}
+        >
+          <AppToolbar />
+          <Routes>
+            <Route path="/" element={<EditorView />} />
+            <Route path="/rich-text" element={<RichTextEditor />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
     </ThemeProvider>
   )
 }

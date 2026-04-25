@@ -39,8 +39,8 @@
 }
 
 .editor-textarea:focus {
-  border: 2px solid #7b1d1d;
-  padding: 7px 15px;
+  border-color: #7b1d1d;
+  box-shadow: 0 0 0 1px #7b1d1d;
 }
 
 .copy-button {
