@@ -8,7 +8,6 @@ import './EditorView.css'
 export default function EditorView() {
   const { html, css, setHtml, setCss, saveToStorage } = useEditorState()
 
-  // Autosave on change
   useEffect(() => {
     saveToStorage(html, css)
   }, [html, css, saveToStorage])

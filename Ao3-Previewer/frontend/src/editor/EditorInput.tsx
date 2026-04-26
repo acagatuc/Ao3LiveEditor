@@ -14,7 +14,6 @@ import FormatIndentIncreaseIcon from '@mui/icons-material/FormatIndentIncrease'
 import { useCssAnalyzer } from '../hooks/useCssAnalyzer'
 import type { PositionedWarning } from '../hooks/useCssAnalyzer'
 import { formatCss } from '../utilities/formatCss'
-import { scrollSync, emitEditorScroll } from './scrollStateSync'
 import CssWarningBanner from '../components/CssWarningBanner'
 import CssLintOverlay from '../components/CssLintOverlay'
 import './EditorInput.css'
@@ -55,15 +54,6 @@ export default function EditorInput({ html, css, onHtmlChange, onCssChange }: Ed
   function handleCssChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     onCssChange(e.target.value)
     if (lintStatus !== 'idle') resetLint()
-  }
-
-  function handleScroll(e: React.UIEvent<HTMLTextAreaElement>) {
-    if (tab !== 'html') return
-    if (scrollSync.isSyncing) return
-    const ta = e.currentTarget
-    const maxScroll = ta.scrollHeight - ta.clientHeight
-    if (maxScroll <= 0) return
-    emitEditorScroll(ta.scrollTop / maxScroll)
   }
 
   async function autoFormatCss() {
@@ -124,7 +114,6 @@ export default function EditorInput({ html, css, onHtmlChange, onCssChange }: Ed
             placeholder="Write HTML here"
             value={html}
             onChange={handleHtmlChange}
-            onScroll={handleScroll}
             spellCheck={false}
           />
         )}
