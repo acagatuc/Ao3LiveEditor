@@ -1,16 +1,8 @@
-.editor-pane {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-  background-color: #fff;
-}
-
 .editor-pane__body {
-  position: relative;
-  flex: 1;
+  height: 100%;
   padding: 8px;
-  min-height: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .editor-pane__inner {

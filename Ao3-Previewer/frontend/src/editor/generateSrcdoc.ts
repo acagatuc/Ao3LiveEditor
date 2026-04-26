@@ -13,6 +13,10 @@ export function generateSrcdoc(params: {
   return `<!DOCTYPE html>
 <html>
 <head>
+<script type="text/javascript">
+    // Fix for Firefox autofocus CSS bug
+    // See: http://stackoverflow.com/questions/18943276/html-5-autofocus-messes-up-css-loading/18945951#18945951
+</script>
   <style>
     ${hideCreatorStyle ? '' : css}
 
@@ -42,13 +46,31 @@ export function generateSrcdoc(params: {
   </div>
 
   <script>
-    document.addEventListener('click', function(e) {
-      const target = e.target;
-      if (target.tagName === 'A' || target.closest('a')) {
-        e.preventDefault();
+    // Report scroll position to parent so it can be restored after reloads.
+    window.addEventListener('scroll', function() {
+      window.parent.postMessage({ type: 'ao3:scroll', y: window.scrollY }, '*');
+    }, { passive: true });
+
+    // Receive scroll commands from parent. rAF defers the layout work until
+    // after the page is painted, preventing the forced-layout warning.
+    window.addEventListener('message', function(e) {
+      if (e.data && e.data.type === 'ao3:setScroll') {
+        var y = e.data.y;
+        requestAnimationFrame(function() { window.scrollTo(0, y); });
       }
-    }, true);
-  <\/script>
+    });
+
+    // Disable link navigation. Deferred to load so the script does not run
+    // mid-parse, which is what triggers the forced-layout console warning.
+    window.addEventListener('load', function() {
+      document.addEventListener('click', function(e) {
+        var target = e.target;
+        if (target.tagName === 'A' || target.closest('a')) {
+          e.preventDefault();
+        }
+      }, true);
+    });
+  </script>
 </body>
 </html>`
 }
