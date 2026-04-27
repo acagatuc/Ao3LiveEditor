@@ -7,12 +7,21 @@ import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
+import * as acm from "aws-cdk-lib/aws-certificatemanager";
+import * as route53 from "aws-cdk-lib/aws-route53";
+import * as route53targets from "aws-cdk-lib/aws-route53-targets";
 import * as path from "path";
 import { Construct } from "constructs";
 
 export class Ao3PreviewerStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
+    // ─── Environment Variables ───────────────────────────────────
+
+    const certificateArn = process.env.CERTIFICATE_ARN!;
+    const hostedZoneId = process.env.HOSTED_ZONE_ID!;
+    const domainName = process.env.DOMAIN_NAME!;
 
     // ─── Frontend ───────────────────────────────────────────────
 
@@ -21,6 +30,21 @@ export class Ao3PreviewerStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
     });
+
+    const certificate = acm.Certificate.fromCertificateArn(
+      this,
+      "SiteCertificate",
+      certificateArn,
+    );
+
+    const hostedZone = route53.HostedZone.fromHostedZoneAttributes(
+      this,
+      "HostedZone",
+      {
+        hostedZoneId,
+        zoneName: domainName,
+      },
+    );
 
     const cloudFrontDistribution = new cloudfront.Distribution(
       this,
@@ -34,6 +58,8 @@ export class Ao3PreviewerStack extends cdk.Stack {
           cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
         },
         defaultRootObject: "index.html",
+        domainNames: [domainName, `www.${domainName}`],
+        certificate,
         errorResponses: [
           {
             httpStatus: 403,
@@ -46,8 +72,23 @@ export class Ao3PreviewerStack extends cdk.Stack {
             responsePagePath: "/index.html",
           },
         ],
-      }
+      },
     );
+
+    new route53.ARecord(this, "SiteAliasRecord", {
+      zone: hostedZone,
+      target: route53.RecordTarget.fromAlias(
+        new route53targets.CloudFrontTarget(cloudFrontDistribution),
+      ),
+    });
+
+    new route53.ARecord(this, "WwwAliasRecord", {
+      zone: hostedZone,
+      recordName: "www",
+      target: route53.RecordTarget.fromAlias(
+        new route53targets.CloudFrontTarget(cloudFrontDistribution),
+      ),
+    });
 
     new s3deploy.BucketDeployment(this, "ReactAppDeployment", {
       sources: [s3deploy.Source.asset("../frontend/dist")],
@@ -69,6 +110,7 @@ export class Ao3PreviewerStack extends cdk.Stack {
     });
 
     // ─── Lambda Functions ────────────────────────────────────────
+
     const bundlingConfig = {
       externalModules: ["@aws-sdk/*"],
     };
@@ -84,7 +126,7 @@ export class Ao3PreviewerStack extends cdk.Stack {
           PREVIEWS_TABLE_NAME: previewsTable.tableName,
         },
         bundling: bundlingConfig,
-      }
+      },
     );
 
     const getPreviewFn = new lambdaNodejs.NodejsFunction(
@@ -98,7 +140,7 @@ export class Ao3PreviewerStack extends cdk.Stack {
           PREVIEWS_TABLE_NAME: previewsTable.tableName,
         },
         bundling: bundlingConfig,
-      }
+      },
     );
 
     // Grant Lambda functions access to DynamoDB
@@ -110,7 +152,7 @@ export class Ao3PreviewerStack extends cdk.Stack {
     const api = new apigateway.RestApi(this, "PreviewsApi", {
       restApiName: "ao3-previewer-api",
       defaultCorsPreflightOptions: {
-        allowOrigins: apigateway.Cors.ALL_ORIGINS,
+        allowOrigins: [`https://${domainName}`, `https://www.${domainName}`],
         allowMethods: ["GET", "POST", "OPTIONS"],
         allowHeaders: ["Content-Type"],
       },
@@ -119,14 +161,11 @@ export class Ao3PreviewerStack extends cdk.Stack {
     const previews = api.root.addResource("previews");
     previews.addMethod(
       "POST",
-      new apigateway.LambdaIntegration(createPreviewFn)
+      new apigateway.LambdaIntegration(createPreviewFn),
     );
 
     const preview = previews.addResource("{id}");
-    preview.addMethod(
-      "GET",
-      new apigateway.LambdaIntegration(getPreviewFn)
-    );
+    preview.addMethod("GET", new apigateway.LambdaIntegration(getPreviewFn));
 
     // ─── Outputs ─────────────────────────────────────────────────
 
@@ -138,6 +177,11 @@ export class Ao3PreviewerStack extends cdk.Stack {
     new cdk.CfnOutput(this, "ApiUrl", {
       value: api.url,
       description: "API Gateway URL",
+    });
+
+    new cdk.CfnOutput(this, "DomainUrl", {
+      value: `https://${domainName}`,
+      description: "Custom domain URL",
     });
   }
 }
