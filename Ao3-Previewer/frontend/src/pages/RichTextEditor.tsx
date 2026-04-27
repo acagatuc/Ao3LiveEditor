@@ -111,9 +111,6 @@ export default function RichTextEditor() {
       saveContent(raw);
       setHtml(raw.replace(STRIP_LTR, ""));
     },
-    onError: ({ error }) => {
-      console.error("Editor error:", error);
-    },
   });
 
   const sanitizedHtml = useMemo(
