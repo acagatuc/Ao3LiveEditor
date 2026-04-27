@@ -21,6 +21,7 @@ jobs:
           cache-dependency-path: |
             Ao3-Previewer/frontend/package-lock.json
             Ao3-Previewer/infrastructure/package-lock.json
+            Ao3-Previewer/infrastructure/functions/package-lock.json
 
       - name: Install frontend dependencies
         working-directory: Ao3-Previewer/frontend
@@ -29,10 +30,21 @@ jobs:
       - name: Build React app
         working-directory: Ao3-Previewer/frontend
         run: npm run build
+        env:
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
       - name: Install infrastructure dependencies
         working-directory: Ao3-Previewer/infrastructure
         run: npm ci
+
+      - name: Install Lambda function dependencies
+        working-directory: Ao3-Previewer/infrastructure/functions
+        run: npm ci
+
+      - name: Typecheck Lambda functions
+        working-directory: Ao3-Previewer/infrastructure/functions
+        run: npm run typecheck
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4

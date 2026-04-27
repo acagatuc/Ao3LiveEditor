@@ -3,7 +3,9 @@ import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import Tooltip from '@mui/material/Tooltip'
 import LinkOffIcon from '@mui/icons-material/LinkOff'
+import ShareIcon from '@mui/icons-material/Share'
 import { generateSrcdoc } from './generateSrcdoc'
+import ShareModal from '../components/ShareModal'
 import './PreviewFrame.css'
 
 interface PreviewFrameProps {
@@ -15,8 +17,9 @@ export default function PreviewFrame({ html, css }: PreviewFrameProps) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const [hideCreatorStyleMode, setHideCreatorStyleMode] = useState(false)
   const [debouncedHtml, setDebouncedHtml] = useState(html)
-  const iframeScrollY = useRef<number>(0)  // kept current by postMessage from iframe
-  const savedScrollY = useRef<number>(0)   // set on button click, cleared after restore
+  const [shareOpen, setShareOpen] = useState(false)
+  const iframeScrollY = useRef<number>(0)
+  const savedScrollY = useRef<number>(0)
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedHtml(html), 400)
@@ -93,6 +96,14 @@ export default function PreviewFrame({ html, css }: PreviewFrameProps) {
       </div>
 
       <div className="preview-footer">
+        <Button
+          size="small"
+          variant="text"
+          startIcon={<ShareIcon />}
+          onClick={() => setShareOpen(true)}
+        >
+          Share
+        </Button>
         <Tooltip
           title="Links disabled in preview. You can still open them in a new tab."
           placement="top"
@@ -103,6 +114,13 @@ export default function PreviewFrame({ html, css }: PreviewFrameProps) {
           </div>
         </Tooltip>
       </div>
+
+      <ShareModal
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+        html={html}
+        css={css}
+      />
     </div>
   )
 }
