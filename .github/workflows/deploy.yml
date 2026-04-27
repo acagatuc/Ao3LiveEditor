@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - main
+      - backend-dev
 
 jobs:
   deploy:
@@ -29,6 +29,8 @@ jobs:
       - name: Build React app
         working-directory: Ao3-Previewer/frontend
         run: npm run build
+        env:
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
 
       - name: Install infrastructure dependencies
         working-directory: Ao3-Previewer/infrastructure
