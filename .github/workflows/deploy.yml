@@ -31,10 +31,15 @@ jobs:
         run: npm run build
         env:
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
       - name: Install infrastructure dependencies
         working-directory: Ao3-Previewer/infrastructure
         run: npm ci
+
+      - name: Typecheck Lambda functions
+        working-directory: Ao3-Previewer/functions
+        run: npm run typecheck
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
