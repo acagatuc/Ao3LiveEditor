@@ -38,7 +38,7 @@ jobs:
         run: npm ci
 
       - name: Typecheck Lambda functions
-        working-directory: Ao3-Previewer/functions
+        working-directory: Ao3-Previewer/infrastructure/functions
         run: npm run typecheck
 
       - name: Configure AWS credentials
