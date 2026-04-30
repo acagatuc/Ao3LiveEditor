@@ -3,9 +3,9 @@ import { useParams, Link } from 'react-router-dom'
 import CircularProgress from '@mui/material/CircularProgress'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
-import { generateSrcdoc } from '../editor/generateSrcdoc'
+import { generateSrcdoc } from '../utilities/generateSrcdoc'
 import { getPreview, type GetPreviewResponse } from '../api/previews'
-import './SharedPreview.css'
+import './SharedPreviewPage.css'
 
 function getDaysRemaining(expiresAt: string): number {
   const now = Date.now()
@@ -13,7 +13,7 @@ function getDaysRemaining(expiresAt: string): number {
   return Math.ceil((expiry - now) / (1000 * 60 * 60 * 24))
 }
 
-export default function SharedPreview() {
+export default function SharedPreviewPage() {
   const { id } = useParams<{ id: string }>()
   const [fetchState, setFetchState] = useState<'loading' | 'error' | 'loaded'>('loading')
   const [data, setData] = useState<GetPreviewResponse | null>(null)

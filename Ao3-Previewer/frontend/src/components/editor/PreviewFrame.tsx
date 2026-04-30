@@ -4,8 +4,8 @@ import Divider from '@mui/material/Divider'
 import Tooltip from '@mui/material/Tooltip'
 import LinkOffIcon from '@mui/icons-material/LinkOff'
 import ShareIcon from '@mui/icons-material/Share'
-import { generateSrcdoc } from './generateSrcdoc'
-import ShareModal from '../components/ShareModal'
+import { generateSrcdoc } from '../../utilities/generateSrcdoc'
+import ShareModal from './ShareModal'
 import './PreviewFrame.css'
 
 interface PreviewFrameProps {
