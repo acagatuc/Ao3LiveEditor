@@ -10,6 +10,7 @@ import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as route53targets from "aws-cdk-lib/aws-route53-targets";
+import * as iam from "aws-cdk-lib/aws-iam";
 import * as path from "path";
 import { Construct } from "constructs";
 
@@ -166,6 +167,37 @@ export class Ao3PreviewerStack extends cdk.Stack {
 
     const preview = previews.addResource("{id}");
     preview.addMethod("GET", new apigateway.LambdaIntegration(getPreviewFn));
+
+    const contactFormFn = new lambdaNodejs.NodejsFunction(
+      this,
+      "ContactFormFunction",
+      {
+        entry: path.join(__dirname, "../functions/contactForm/index.ts"),
+        handler: "handler",
+        runtime: lambda.Runtime.NODEJS_20_X,
+        environment: {
+          CONTACT_EMAIL: process.env.CONTACT_EMAIL!,
+          SES_FROM_EMAIL: process.env.SES_FROM_EMAIL!,
+        },
+        bundling: bundlingConfig,
+      }
+    );
+
+    contactFormFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ["ses:SendEmail"],
+        resources: ["*"],
+        conditions: {
+          StringEquals: {
+            "ses:FromAddress": process.env.SES_FROM_EMAIL!,
+          },
+        },
+      })
+    );
+
+    const contact = api.root.addResource("contact");
+    contact.addMethod("POST", new apigateway.LambdaIntegration(contactFormFn));
 
     // ─── Outputs ─────────────────────────────────────────────────
 

@@ -2,9 +2,12 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import AppToolbar from "./components/AppToolbar";
-import EditorView from "./pages/EditorView";
-import RichTextEditor from "./pages/RichTextEditor";
-import SharedPreview from "./pages/SharedPreview";
+import EditorViewPage from "./pages/EditorViewPage";
+import RichTextEditorPage from "./pages/RichTextEditorPage";
+import SharedPreviewPage from "./pages/SharedPreviewPage";
+import RoadmapPage from "./pages/RoadmapPage";
+import BookmarkSearchPage from "./pages/BookmarkSearchPage";
+import WorkskinsPage from "./pages/WorkskinsPage";
 
 const theme = createTheme({
   palette: {
@@ -30,13 +33,15 @@ function AppContent() {
           display: "flex",
           flexDirection: "column",
           height: "100vh",
-          overflow: "hidden",
         }}
       >
         <Routes>
-          <Route path="/" element={<EditorView />} />
-          <Route path="/rich-text" element={<RichTextEditor />} />
-          <Route path="/preview/:id" element={<SharedPreview />} />
+          <Route path="/" element={<EditorViewPage />} />
+          <Route path="/rich-text" element={<RichTextEditorPage />} />
+          <Route path="/preview/:id" element={<SharedPreviewPage />} />
+          <Route path="/roadmap" element={<RoadmapPage />} />
+          <Route path="/bookmarks" element={<BookmarkSearchPage />} />
+          <Route path="/workskins" element={<WorkskinsPage />} />
         </Routes>
       </main>
     </>

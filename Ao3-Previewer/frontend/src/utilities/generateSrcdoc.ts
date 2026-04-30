@@ -1,4 +1,4 @@
-import { sanitizeHtml } from '../utilities/sanitizeHtml'
+import { sanitizeHtml } from './sanitizeHtml'
 
 export function generateSrcdoc(params: {
   html: string

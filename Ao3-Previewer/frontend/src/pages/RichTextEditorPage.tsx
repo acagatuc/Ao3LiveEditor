@@ -11,7 +11,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditorToolbar from "../components/rich-text/EditorToolbar";
 import EditorPane from "../components/rich-text/EditorPane";
 import HtmlOutput from "../components/rich-text/HtmlOutput";
-import "./RichTextEditor.css";
+import "./RichTextEditorPage.css";
 
 const STORAGE_KEY = "ao3-rich-text-state";
 const STRIP_LTR = /\s+dir="ltr"/g;
@@ -92,7 +92,7 @@ function saveContent(html: string): void {
   } catch {}
 }
 
-export default function RichTextEditor() {
+export default function RichTextEditorPage() {
   const [html, setHtml] = useState(() => loadContent().replace(STRIP_LTR, ""));
   const [copied, setCopied] = useState(false);
   const [leftWidth, setLeftWidth] = useState(50);

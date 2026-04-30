@@ -62,3 +62,5 @@ jobs:
           DOMAIN_NAME: ${{ secrets.DOMAIN_NAME }}
           CDK_DEFAULT_ACCOUNT: ${{ secrets.CDK_DEFAULT_ACCOUNT }}
           CDK_DEFAULT_REGION: ${{ secrets.CDK_DEFAULT_REGION }}
+          CONTACT_EMAIL: ${{ secrets.CONTACT_EMAIL }}
+          SES_FROM_EMAIL: ${{ secrets.SES_FROM_EMAIL }}

@@ -3,7 +3,8 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import Box from "@mui/material/Box";
+import ExternalLinkButton from "./ExternalLinkButton";
 
 function NavButton({ label, to }: { label: string; to: string }) {
   const navigate = useNavigate();
@@ -19,8 +20,9 @@ function NavButton({ label, to }: { label: string; to: string }) {
         borderBottom: active ? "2px solid white" : "2px solid transparent",
         opacity: active ? 1 : 0.75,
         fontFamily: "'Lucida Grande', Verdana, sans-serif",
-        fontSize: 13,
-        textTransform: "none",
+        fontSize: "11px",
+        textTransform: "uppercase",
+        letterSpacing: "0.06em",
         px: 1.5,
         "&:hover": { opacity: 1, bgcolor: "rgba(255,255,255,0.1)" },
       }}
@@ -34,33 +36,51 @@ export default function AppToolbar() {
   return (
     <AppBar position="static" sx={{ bgcolor: "#7b1d1d", flexShrink: 0 }}>
       <Toolbar>
-        <Typography
-          variant="h6"
-          sx={{ fontFamily: "'Lucida Grande', Verdana, sans-serif", mr: 3 }}
-        >
-          AO3 Live Editor
-        </Typography>
+        <div style={{ marginRight: "2.5rem" }}>
+          <Typography
+            sx={{
+              fontFamily: 'Georgia, "Times New Roman", serif',
+              fontSize: "20px",
+              fontWeight: 500,
+              letterSpacing: "0.02em",
+              color: "#fff",
+              lineHeight: 1,
+            }}
+          >
+            FicFormatter
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: "9px",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              color: "rgba(255,255,255,0.45)",
+              marginTop: "3px",
+              fontFamily: "'Lucida Grande', Verdana, sans-serif",
+            }}
+          >
+            fanfic writing tools
+          </Typography>
+        </div>
 
-        <NavButton label="HTML/CSS Editor" to="/" />
-        <NavButton label="Rich Text Editor" to="/rich-text" />
+        <Box
+          sx={{
+            width: "0.5px",
+            height: "24px",
+            bgcolor: "rgba(255,255,255,0.2)",
+            mr: 1.5,
+          }}
+        />
+
+        <NavButton label="HTML/CSS" to="/" />
+        <NavButton label="Rich Text" to="/rich-text" />
+        <NavButton label="Workskins" to="/workskins" />
+        <NavButton label="Bookmarks" to="/bookmarks" />
+        <NavButton label="Roadmap" to="/roadmap" />
 
         <div style={{ flexGrow: 1 }} />
 
-        <Button
-          color="inherit"
-          href="https://www.w3schools.com/html/"
-          target="_blank"
-          rel="noopener noreferrer"
-          startIcon={<OpenInNewIcon />}
-          title="Open W3Schools HTML reference"
-          sx={{
-            fontFamily: "'Lucida Grande', Verdana, sans-serif",
-            fontSize: 13,
-            textTransform: "none",
-          }}
-        >
-          HTML Tutorial Site
-        </Button>
+        <ExternalLinkButton href="https://www.w3schools.com/html/" label="Reference" />
       </Toolbar>
     </AppBar>
   );

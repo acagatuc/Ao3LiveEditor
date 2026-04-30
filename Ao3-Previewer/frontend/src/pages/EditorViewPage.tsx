@@ -1,12 +1,20 @@
 import { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import SplitPanel from '../components/SplitPanel'
-import EditorInput from '../editor/EditorInput'
-import PreviewFrame from '../editor/PreviewFrame'
-import { useEditorState } from '../editor/useEditorState'
-import './EditorView.css'
+import EditorInput from '../components/editor/EditorInput'
+import PreviewFrame from '../components/editor/PreviewFrame'
+import { useEditorState } from '../hooks/useEditorState'
+import './EditorViewPage.css'
 
-export default function EditorView() {
+export default function EditorViewPage() {
   const { html, css, setHtml, setCss, saveToStorage } = useEditorState()
+  const location = useLocation()
+
+  useEffect(() => {
+    if (location.state?.css) {
+      setCss(location.state.css)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     saveToStorage(html, css)

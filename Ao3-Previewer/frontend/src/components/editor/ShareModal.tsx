@@ -10,7 +10,7 @@ import Box from '@mui/material/Box'
 import CloseIcon from '@mui/icons-material/Close'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import CheckIcon from '@mui/icons-material/Check'
-import { createPreview } from '../api/previews'
+import { createPreview } from '../../api/previews'
 
 interface ShareModalProps {
   open: boolean
