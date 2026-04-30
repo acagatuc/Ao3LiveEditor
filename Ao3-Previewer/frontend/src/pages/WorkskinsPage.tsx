@@ -12,10 +12,6 @@ export default function WorkskinsPage() {
         <Typography variant="h4" component="h1" gutterBottom>
           Community Workskins
         </Typography>
-        <Typography color="text.secondary">
-          Ready-to-use CSS workskins for AO3. Click "Try it" to load any skin into the HTML/CSS
-          editor.
-        </Typography>
       </div>
 
       {workskins.length > 0 && (
