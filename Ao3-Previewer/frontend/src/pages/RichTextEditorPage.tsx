@@ -11,72 +11,12 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditorToolbar from "../components/rich-text/EditorToolbar";
 import EditorPane from "../components/rich-text/EditorPane";
 import HtmlOutput from "../components/rich-text/HtmlOutput";
+import { AO3_ALLOWED_TAGS, AO3_ALLOWED_ATTR } from "../allowlist/ao3HtmlAllowlist";
 import "./RichTextEditorPage.css";
 
 const STORAGE_KEY = "ao3-rich-text-state";
 const STRIP_LTR = /\s+dir="ltr"/g;
-
-const AO3_TAGS = [
-  "a",
-  "abbr",
-  "acronym",
-  "address",
-  "b",
-  "big",
-  "blockquote",
-  "br",
-  "caption",
-  "center",
-  "cite",
-  "code",
-  "col",
-  "colgroup",
-  "dd",
-  "del",
-  "dfn",
-  "div",
-  "dl",
-  "dt",
-  "em",
-  "h1",
-  "h2",
-  "h3",
-  "h4",
-  "h5",
-  "h6",
-  "hr",
-  "i",
-  "img",
-  "ins",
-  "kbd",
-  "li",
-  "ol",
-  "p",
-  "pre",
-  "q",
-  "rp",
-  "rt",
-  "ruby",
-  "s",
-  "samp",
-  "small",
-  "span",
-  "strike",
-  "strong",
-  "sub",
-  "sup",
-  "table",
-  "tbody",
-  "td",
-  "tfoot",
-  "th",
-  "thead",
-  "tr",
-  "tt",
-  "u",
-  "ul",
-  "var",
-];
+const TEXT_ALIGN_STYLE = /\sstyle="text-align:\s*(left|center|right|justify);?"/gi;
 
 function loadContent(): string {
   try {
@@ -113,26 +53,13 @@ export default function RichTextEditorPage() {
     },
   });
 
-  const sanitizedHtml = useMemo(
-    () =>
-      DOMPurify.sanitize(html, {
-        ALLOWED_TAGS: AO3_TAGS,
-        ALLOWED_ATTR: [
-          "href",
-          "src",
-          "alt",
-          "title",
-          "class",
-          "dir",
-          "target",
-          "rel",
-          "align",
-          "width",
-          "height",
-        ],
-      }),
-    [html],
-  );
+  const sanitizedHtml = useMemo(() => {
+    const withAlign = html.replace(TEXT_ALIGN_STYLE, (_, value) => ` align="${value}"`);
+    return DOMPurify.sanitize(withAlign, {
+      ALLOWED_TAGS: AO3_ALLOWED_TAGS,
+      ALLOWED_ATTR: AO3_ALLOWED_ATTR,
+    });
+  }, [html]);
 
   async function copyHtml() {
     try {

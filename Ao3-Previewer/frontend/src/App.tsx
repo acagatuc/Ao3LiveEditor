@@ -26,13 +26,15 @@ function AppContent() {
   const showToolbar = !location.pathname.startsWith("/preview/");
 
   return (
-    <>
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden" }}>
       {showToolbar && <AppToolbar />}
       <main
         style={{
+          flex: 1,
+          minHeight: 0,
           display: "flex",
           flexDirection: "column",
-          height: "100vh",
+          overflow: "hidden",
         }}
       >
         <Routes>
@@ -44,7 +46,7 @@ function AppContent() {
           <Route path="/workskins" element={<WorkskinsPage />} />
         </Routes>
       </main>
-    </>
+    </div>
   );
 }
 

@@ -31,9 +31,10 @@ export function validateValue(value: string, _property: string): ValueValidation
     }
   }
 
+  const withoutHex = v.replace(/#[0-9a-fA-F]{3,8}/gi, '')
   DIMENSION_REGEX.lastIndex = 0
   let dimMatch: RegExpExecArray | null
-  while ((dimMatch = DIMENSION_REGEX.exec(v)) !== null) {
+  while ((dimMatch = DIMENSION_REGEX.exec(withoutHex)) !== null) {
     const unit = dimMatch[2]!.toLowerCase()
     if (isKeywordSuffix(unit)) continue
     if (!ALLOWED_UNITS.includes(unit)) {
