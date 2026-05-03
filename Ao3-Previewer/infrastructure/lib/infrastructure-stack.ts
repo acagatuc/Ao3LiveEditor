@@ -112,10 +112,6 @@ export class Ao3PreviewerStack extends cdk.Stack {
 
     // ─── Lambda Functions ────────────────────────────────────────
 
-    const bundlingConfig = {
-      externalModules: ["@aws-sdk/*"],
-    };
-
     const createPreviewFn = new lambdaNodejs.NodejsFunction(
       this,
       "CreatePreviewFunction",
@@ -126,9 +122,11 @@ export class Ao3PreviewerStack extends cdk.Stack {
         environment: {
           PREVIEWS_TABLE_NAME: previewsTable.tableName,
         },
-        bundling: bundlingConfig,
+        bundling: { externalModules: ["@aws-sdk/*"] },
       },
     );
+
+    const bundlingConfig = { externalModules: ["@aws-sdk/*"] };
 
     const getPreviewFn = new lambdaNodejs.NodejsFunction(
       this,
