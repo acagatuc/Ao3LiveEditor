@@ -1,5 +1,5 @@
 // AO3-allowed HTML tags and attributes for user-submitted content.
-// Reference: https://archiveofourown.org/help/posting-with-html.html
+// Reference: https://archiveofourown.org/faq/formatting-content-on-ao3-with-html?language_id=en#canihtml
 
 export const AO3_ALLOWED_TAGS = [
   "a",
