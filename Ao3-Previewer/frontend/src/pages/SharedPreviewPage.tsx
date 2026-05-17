@@ -101,6 +101,16 @@ export default function SharedPreviewPage() {
         </div>
         <div className="shared-preview__actions">
           <span className="shared-preview__expiry">{expiryText}</span>
+          <span
+            style={{
+              fontSize: '11px',
+              color: 'rgba(0,0,0,0.4)',
+              fontStyle: 'italic',
+              fontFamily: "'Lucida Grande', Verdana, sans-serif",
+            }}
+          >
+            Preview normalized to match AO3 rendering
+          </span>
           <Button size="small" variant="outlined" onClick={handleToggleCreatorStyle}>
             {hideCreatorStyle ? "Show Creator's Style" : "Hide Creator's Style"}
           </Button>
