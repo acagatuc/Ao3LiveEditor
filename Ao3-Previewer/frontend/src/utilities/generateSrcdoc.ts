@@ -1,4 +1,6 @@
 import { sanitizeHtml } from './sanitizeHtml'
+import { normalizeForAo3 } from './normalizeForAo3'
+import { AO3_BASE_STYLES } from '../styles/ao3BaseStyles'
 
 export function generateSrcdoc(params: {
   html: string
@@ -9,6 +11,7 @@ export function generateSrcdoc(params: {
 
   const htmlContent = hideCreatorStyle ? html.replace(/\s*style="[^"]*"/gi, '') : html
   const sanitizedHtml = sanitizeHtml(htmlContent)
+  const normalizedHtml = normalizeForAo3(sanitizedHtml)
 
   return `<!DOCTYPE html>
 <html>
@@ -18,31 +21,22 @@ export function generateSrcdoc(params: {
     // See: http://stackoverflow.com/questions/18943276/html-5-autofocus-messes-up-css-loading/18945951#18945951
 </script>
   <style>
-    ${hideCreatorStyle ? '' : css}
-
-    body {
-      max-width: 100%;
-      overflow-wrap: break-word;
-      word-wrap: break-word;
-      font-family: "Lucida Grande", "Verdana";
-      background-color: white;
-    }
-
-    pre, code {
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
+    ${AO3_BASE_STYLES}
 
     a {
       pointer-events: auto;
       cursor: not-allowed;
       text-decoration: underline dotted;
     }
+
+    ${hideCreatorStyle ? '' : css}
   </style>
 </head>
 <body>
   <div id="workskin">
-    ${sanitizedHtml}
+    <div class="userstuff">
+      ${normalizedHtml}
+    </div>
   </div>
 
   <script>
