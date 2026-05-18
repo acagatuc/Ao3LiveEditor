@@ -3,6 +3,7 @@ import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Divider from '@mui/material/Divider'
 import Button from '@mui/material/Button'
+import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
 import CircularProgress from '@mui/material/CircularProgress'
 import Snackbar from '@mui/material/Snackbar'
@@ -11,11 +12,10 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import DownloadIcon from '@mui/icons-material/Download'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import FormatIndentIncreaseIcon from '@mui/icons-material/FormatIndentIncrease'
-import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh'
-import { normalizeForAo3, stripWhitespaceNodes } from '../../utilities/normalizeForAo3'
 import { useCssAnalyzer } from '../../hooks/useCssAnalyzer'
 import type { PositionedWarning } from '../../hooks/useCssAnalyzer'
 import { formatCss } from '../../utilities/formatCss'
+import { formatForAo3 } from '../../utilities/formatForAo3'
 import CssWarningBanner from '../CssWarningBanner'
 import CssLintOverlay from '../CssLintOverlay'
 import './EditorInput.css'
@@ -38,7 +38,6 @@ export default function EditorInput({ html, css, onHtmlChange, onCssChange }: Ed
   const [tab, setTab] = useState<TabValue>('html')
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
   const [snack, setSnack] = useState<Snack | null>(null)
-  const [formatted, setFormatted] = useState(false)
 
   const { warnings: lintWarnings, status: lintStatus, isAnalyzing, analyze, reset: resetLint } =
     useCssAnalyzer()
@@ -59,10 +58,8 @@ export default function EditorInput({ html, css, onHtmlChange, onCssChange }: Ed
     if (lintStatus !== 'idle') resetLint()
   }
 
-  function handleFormatForAo3() {
-    onHtmlChange(stripWhitespaceNodes(normalizeForAo3(html)))
-    setFormatted(true)
-    setTimeout(() => setFormatted(false), 2000)
+  function formatHtml() {
+    onHtmlChange(formatForAo3(html))
   }
 
   async function autoFormatCss() {
@@ -174,15 +171,16 @@ export default function EditorInput({ html, css, onHtmlChange, onCssChange }: Ed
         </Button>
 
         {tab === 'html' && (
-          <Button
-            size="small"
-            variant="text"
-            startIcon={<AutoFixHighIcon />}
-            onClick={handleFormatForAo3}
-            title="Wraps bare text in paragraph tags to match AO3's rendering"
-          >
-            {formatted ? 'Formatted!' : 'Format for AO3'}
-          </Button>
+          <Tooltip title="Wraps lone text in paragraph tags and clears html-like whitespace">
+            <Button
+              size="small"
+              variant="text"
+              startIcon={<FormatIndentIncreaseIcon />}
+              onClick={formatHtml}
+            >
+              Format for AO3
+            </Button>
+          </Tooltip>
         )}
 
         {tab === 'css' && (

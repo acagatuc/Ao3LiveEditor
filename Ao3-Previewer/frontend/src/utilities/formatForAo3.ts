@@ -7,8 +7,11 @@ const INLINE_ELEMENTS = new Set([
   'sub', 'sup', 'textarea', 'time', 'tt', 'u', 'var',
 ])
 
-/** Mirrors AO3's paragraph-wrapping render behavior. Used by the preview. */
-export function normalizeForAo3(html: string): string {
+/**
+ * Trims whitespace from text nodes and wraps bare text / inline-only runs in <p> tags.
+ * Applied by the "Format for AO3" button — modifies editor content explicitly.
+ */
+export function formatForAo3(html: string): string {
   try {
     if (!html || html.trim() === '') return html
 
@@ -44,10 +47,17 @@ export function normalizeForAo3(html: string): string {
 
       children.forEach(child => {
         if (child.nodeType === Node.TEXT_NODE) {
-          if (child.textContent?.trim() !== '') {
+          const text = child.textContent ?? ''
+          if (text.trim() !== '') {
+            child.textContent = text.trim()
             inlineGroup.push(child)
           } else {
             flushGroup()
+            if (text.includes('\n')) {
+              child.textContent = '\n'
+            } else if (child.parentNode === node) {
+              node.removeChild(child)
+            }
           }
         } else if (child.nodeType === Node.ELEMENT_NODE) {
           const el = child as Element
@@ -70,4 +80,3 @@ export function normalizeForAo3(html: string): string {
     return html
   }
 }
-
