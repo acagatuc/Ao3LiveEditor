@@ -14,11 +14,11 @@
 .split-divider {
   width: 6px;
   cursor: col-resize;
-  background-color: rgba(0, 0, 0, 0.12);
+  background-color: var(--ff-color-divider);
   flex-shrink: 0;
   z-index: 10;
 }
 
 .split-divider:hover {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: var(--ff-color-divider-hover);
 }

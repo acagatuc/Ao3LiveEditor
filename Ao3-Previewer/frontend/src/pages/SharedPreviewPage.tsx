@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import CircularProgress from '@mui/material/CircularProgress'
 import Button from '@mui/material/Button'
+import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import { generateSrcdoc } from '../utilities/generateSrcdoc'
 import { getPreview, type GetPreviewResponse } from '../api/previews'
@@ -101,16 +102,12 @@ export default function SharedPreviewPage() {
         </div>
         <div className="shared-preview__actions">
           <span className="shared-preview__expiry">{expiryText}</span>
-          <span
-            style={{
-              fontSize: '11px',
-              color: 'rgba(0,0,0,0.4)',
-              fontStyle: 'italic',
-              fontFamily: "'Lucida Grande', Verdana, sans-serif",
-            }}
+          <Box
+            component="span"
+            sx={{ fontSize: '11px', color: 'text.disabled', fontStyle: 'italic' }}
           >
             Preview normalized to match AO3 rendering
-          </span>
+          </Box>
           <Button size="small" variant="outlined" onClick={handleToggleCreatorStyle}>
             {hideCreatorStyle ? "Show Creator's Style" : "Hide Creator's Style"}
           </Button>

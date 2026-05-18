@@ -1,7 +1,7 @@
 .css-warning-banner {
   --banner-bg: #fffbeb;
   --banner-border: #f59e0b;
-  --banner-text: #2a2a2a;
+  --banner-text: var(--ff-color-text-primary);
   --banner-sub: #6b7280;
   --banner-font: 'JetBrains Mono', 'Fira Mono', 'Consolas', monospace;
 

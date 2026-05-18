@@ -3,7 +3,7 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
-  background-color: #e9e8e8;
+  background-color: var(--ff-color-bg-default);
   font-family: 'Lucida Grande', 'Verdana', sans-serif;
-  color: #2a2a2a;
+  color: var(--ff-color-text-primary);
 }

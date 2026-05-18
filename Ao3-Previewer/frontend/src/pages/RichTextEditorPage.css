@@ -5,9 +5,9 @@
   height: 100%;
   width: 100%;
   overflow: hidden;
-  background-color: #e9e8e8;
+  background-color: var(--ff-color-bg-default);
   font-family: 'Lucida Grande', 'Verdana', sans-serif;
-  color: #2a2a2a;
+  color: var(--ff-color-text-primary);
 }
 
 /* Toolbar cell stretches to fill the row 1 slot on the left */
@@ -23,12 +23,12 @@
   grid-column: 2;
   grid-row: 1 / -1;
   cursor: col-resize;
-  background-color: rgba(0, 0, 0, 0.12);
+  background-color: var(--ff-color-divider);
   z-index: 10;
 }
 
 .rte-divider:hover {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: var(--ff-color-divider-hover);
 }
 
 /* HTML header matches the toolbar row height automatically via CSS grid */
@@ -38,8 +38,8 @@
   display: flex;
   align-items: center;
   padding: 0 16px;
-  background-color: #fafafa;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  background-color: var(--ff-color-bg-subtle);
+  border-bottom: 1px solid var(--ff-color-divider);
   min-width: 0;
 }
 
@@ -52,7 +52,7 @@
   grid-column: 1;
   grid-row: 2;
   min-height: 0;
-  background-color: #fff;
+  background-color: var(--ff-color-bg-paper);
   overflow: hidden;
 }
 
@@ -60,7 +60,7 @@
   grid-column: 3;
   grid-row: 2;
   min-height: 0;
-  background-color: #fff;
+  background-color: var(--ff-color-bg-paper);
   overflow: hidden;
 }
 
@@ -71,8 +71,8 @@
   align-items: center;
   height: 36px;
   padding: 4px 8px;
-  border-top: 1px solid rgba(0, 0, 0, 0.12);
-  background-color: #fff;
+  border-top: 1px solid var(--ff-color-divider);
+  background-color: var(--ff-color-bg-paper);
 }
 
 .rte-html-footer-cell {
@@ -83,6 +83,6 @@
   align-items: center;
   height: 36px;
   padding: 4px 8px;
-  border-top: 1px solid rgba(0, 0, 0, 0.12);
-  background-color: #fff;
+  border-top: 1px solid var(--ff-color-divider);
+  background-color: var(--ff-color-bg-paper);
 }

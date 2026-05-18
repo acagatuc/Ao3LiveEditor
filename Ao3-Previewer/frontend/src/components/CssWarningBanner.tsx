@@ -71,7 +71,7 @@ export default function CssWarningBanner({
           size="small"
           aria-label={collapsed ? 'Expand warnings' : 'Collapse warnings'}
           onClick={(e) => { e.stopPropagation(); setCollapsed((c) => !c) }}
-          sx={{ color: '#9ca3af', padding: '2px' }}
+          sx={{ color: 'text.secondary', padding: '2px' }}
         >
           {collapsed ? <ExpandMoreIcon fontSize="small" /> : <ExpandLessIcon fontSize="small" />}
         </IconButton>
@@ -79,7 +79,7 @@ export default function CssWarningBanner({
           size="small"
           aria-label="Dismiss warnings"
           onClick={(e) => { e.stopPropagation(); onDismiss() }}
-          sx={{ color: '#9ca3af', padding: '2px' }}
+          sx={{ color: 'text.secondary', padding: '2px' }}
         >
           <CloseIcon fontSize="small" />
         </IconButton>
