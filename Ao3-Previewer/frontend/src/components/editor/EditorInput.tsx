@@ -3,6 +3,7 @@ import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Divider from '@mui/material/Divider'
 import Button from '@mui/material/Button'
+import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
 import CircularProgress from '@mui/material/CircularProgress'
 import Snackbar from '@mui/material/Snackbar'
@@ -14,6 +15,7 @@ import FormatIndentIncreaseIcon from '@mui/icons-material/FormatIndentIncrease'
 import { useCssAnalyzer } from '../../hooks/useCssAnalyzer'
 import type { PositionedWarning } from '../../hooks/useCssAnalyzer'
 import { formatCss } from '../../utilities/formatCss'
+import { formatForAo3 } from '../../utilities/formatForAo3'
 import CssWarningBanner from '../CssWarningBanner'
 import CssLintOverlay from '../CssLintOverlay'
 import './EditorInput.css'
@@ -54,6 +56,10 @@ export default function EditorInput({ html, css, onHtmlChange, onCssChange }: Ed
   function handleCssChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     onCssChange(e.target.value)
     if (lintStatus !== 'idle') resetLint()
+  }
+
+  function formatHtml() {
+    onHtmlChange(formatForAo3(html))
   }
 
   async function autoFormatCss() {
@@ -163,6 +169,19 @@ export default function EditorInput({ html, css, onHtmlChange, onCssChange }: Ed
         >
           Export
         </Button>
+
+        {tab === 'html' && (
+          <Tooltip title="Wraps lone text in paragraph tags and clears html-like whitespace">
+            <Button
+              size="small"
+              variant="text"
+              startIcon={<FormatIndentIncreaseIcon />}
+              onClick={formatHtml}
+            >
+              Format for AO3
+            </Button>
+          </Tooltip>
+        )}
 
         {tab === 'css' && (
           <>
