@@ -25,7 +25,7 @@ export function formatForAo3(html: string): string {
 
       function flushGroup() {
         if (inlineGroup.length === 0) return
-        if (node.tagName?.toLowerCase() === 'p') {
+        if (node.tagName?.toLowerCase() === 'p' || node.tagName?.toLowerCase() === 'summary') {
           inlineGroup = []
           return
         }
