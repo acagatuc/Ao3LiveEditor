@@ -8,7 +8,6 @@ import SharedPreviewPage from "./pages/SharedPreviewPage";
 import RoadmapPage from "./pages/RoadmapPage";
 import BookmarkSearchPage from "./pages/BookmarkSearchPage";
 import WorkskinsPage from "./pages/WorkskinsPage";
-import ChangelogPage from "./pages/ChangelogPage";
 
 const theme = createTheme({
   palette: {
@@ -45,7 +44,6 @@ function AppContent() {
           <Route path="/roadmap" element={<RoadmapPage />} />
           <Route path="/bookmarks" element={<BookmarkSearchPage />} />
           <Route path="/workskins" element={<WorkskinsPage />} />
-          <Route path="/changelog" element={<ChangelogPage />} />
         </Routes>
       </main>
     </div>

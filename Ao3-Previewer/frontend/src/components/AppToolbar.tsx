@@ -77,7 +77,6 @@ export default function AppToolbar() {
         <NavButton label="Workskins" to="/workskins" />
         <NavButton label="Bookmarks" to="/bookmarks" />
         <NavButton label="Roadmap" to="/roadmap" />
-        <NavButton label="Changelog" to="/changelog" />
 
         <div style={{ flexGrow: 1 }} />
 
