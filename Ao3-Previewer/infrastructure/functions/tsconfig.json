@@ -10,6 +10,11 @@
   "include": [
     "createPreview/**/*.ts",
     "getPreview/**/*.ts",
-    "contactForm/**/*.ts"
+    "contactForm/**/*.ts",
+    "createDraft/**/*.ts",
+    "updateDraft/**/*.ts",
+    "getDraft/**/*.ts",
+    "deleteDraft/**/*.ts",
+    "shared/**/*.ts"
   ]
 }

@@ -13,6 +13,7 @@ import * as route53targets from "aws-cdk-lib/aws-route53-targets";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as path from "path";
 import { Construct } from "constructs";
+import { addDraftsResources } from "./drafts-resources";
 
 export class Ao3PreviewerStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -152,8 +153,16 @@ export class Ao3PreviewerStack extends cdk.Stack {
       restApiName: "ao3-previewer-api",
       defaultCorsPreflightOptions: {
         allowOrigins: [`https://${domainName}`, `https://www.${domainName}`],
-        allowMethods: ["GET", "POST", "OPTIONS"],
+        allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowHeaders: ["Content-Type"],
+      },
+      deployOptions: {
+        // Guards GET /drafts/{id} against brute-force id scanning (128-bit random ids are
+        // "unguessable link" privacy, not real access control — this raises the practical
+        // cost). Blanket across the whole API/all callers combined; generous enough that
+        // normal usage never sees it.
+        throttlingRateLimit: 50,
+        throttlingBurstLimit: 100,
       },
     });
 
@@ -196,6 +205,10 @@ export class Ao3PreviewerStack extends cdk.Stack {
 
     const contact = api.root.addResource("contact");
     contact.addMethod("POST", new apigateway.LambdaIntegration(contactFormFn));
+
+    // ─── Drafts ──────────────────────────────────────────────────
+
+    addDraftsResources(this, api);
 
     // ─── Outputs ─────────────────────────────────────────────────
 

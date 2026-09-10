@@ -12,6 +12,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import DownloadIcon from '@mui/icons-material/Download'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import FormatIndentIncreaseIcon from '@mui/icons-material/FormatIndentIncrease'
+import SaveIcon from '@mui/icons-material/Save'
 import { useCssAnalyzer } from '../../hooks/useCssAnalyzer'
 import type { PositionedWarning } from '../../hooks/useCssAnalyzer'
 import { formatCss } from '../../utilities/formatCss'
@@ -25,6 +26,7 @@ interface EditorInputProps {
   css: string
   onHtmlChange: (html: string) => void
   onCssChange: (css: string) => void
+  onOpenSaveDraft: () => void
 }
 
 type TabValue = 'html' | 'css'
@@ -34,7 +36,7 @@ interface Snack {
   severity: 'success' | 'error'
 }
 
-export default function EditorInput({ html, css, onHtmlChange, onCssChange }: EditorInputProps) {
+export default function EditorInput({ html, css, onHtmlChange, onCssChange, onOpenSaveDraft }: EditorInputProps) {
   const [tab, setTab] = useState<TabValue>('html')
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
   const [snack, setSnack] = useState<Snack | null>(null)
@@ -161,6 +163,15 @@ export default function EditorInput({ html, css, onHtmlChange, onCssChange }: Ed
       )}
 
       <div className="editor-footer">
+        <Button
+          size="small"
+          variant="text"
+          startIcon={<SaveIcon />}
+          onClick={onOpenSaveDraft}
+        >
+          Save Draft
+        </Button>
+
         <Button
           size="small"
           variant="text"

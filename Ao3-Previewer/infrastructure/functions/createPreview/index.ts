@@ -2,7 +2,7 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { APIGatewayProxyHandler } from "aws-lambda";
 import { randomBytes } from "crypto";
-import sanitizeHtml from "sanitize-html";
+import { sanitizeHtmlContent, sanitizeCss } from "../shared/sanitize";
 
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
@@ -14,39 +14,6 @@ const MAX_HTML_SIZE = 350000; // 350KB
 const MAX_CSS_SIZE = 25000;   // 25KB
 const MAX_TITLE_SIZE = 500;   // 500B
 const MAX_AUTHOR_SIZE = 500;  // 500B
-
-// Mirrors frontend/src/allowlist/ao3HtmlAllowlist.ts exactly — that file is the source of truth
-const AO3_TAGS = [
-  "a", "abbr", "acronym", "address", "b", "big", "blockquote", "br", "caption", "center",
-  "cite", "code", "col", "colgroup", "dd", "del", "details", "dfn", "dir", "div", "dl", "dt",
-  "em", "figcaption", "figure", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "i", "img", "ins",
-  "kbd", "li", "ol", "p", "pre", "q", "rp", "rt", "ruby", "s", "samp", "small", "span",
-  "strike", "strong", "sub", "summary", "sup", "table", "tbody", "td", "tfoot", "th", "thead",
-  "tr", "tt", "u", "ul", "var",
-];
-
-const AO3_ATTRS = [
-  "align", "alt", "axis", "class", "height", "href", "name", "src", "target", "title", "width",
-];
-
-function sanitizeHtmlContent(html: string): string {
-  return sanitizeHtml(html, {
-    allowedTags: AO3_TAGS,
-    allowedAttributes: { "*": AO3_ATTRS },
-  });
-}
-
-// Mirrors frontend/src/allowlist/cssAllowedProperties.ts DISALLOWED_AT_RULES
-const DISALLOWED_AT_RULES = ["@font-face", "@import"];
-
-function sanitizeCss(css: string): string {
-  let result = css.replace(/<[^>]*>/g, "");
-  for (const rule of DISALLOWED_AT_RULES) {
-    result = result.replace(new RegExp(rule + "\\b[^;]*(;|$)", "gi"), "");   // statement rules
-    result = result.replace(new RegExp(rule + "\\b[^{]*\\{[^}]*\\}", "gi"), ""); // block rules
-  }
-  return result;
-}
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   try {

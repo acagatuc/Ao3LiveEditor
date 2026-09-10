@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import AppToolbar from "./components/AppToolbar";
+import { DraftsIndexProvider } from "./contexts/DraftsIndexProvider";
 import EditorViewPage from "./pages/EditorViewPage";
 import RichTextEditorPage from "./pages/RichTextEditorPage";
 import SharedPreviewPage from "./pages/SharedPreviewPage";
@@ -73,7 +74,9 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <BrowserRouter>
-        <AppContent />
+        <DraftsIndexProvider>
+          <AppContent />
+        </DraftsIndexProvider>
       </BrowserRouter>
     </ThemeProvider>
   );
