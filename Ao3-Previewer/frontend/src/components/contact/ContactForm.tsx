@@ -42,7 +42,7 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="roadmap-form">
+    <form onSubmit={handleSubmit} className="contact-form">
       <TextField
         label="Your name"
         value={name}

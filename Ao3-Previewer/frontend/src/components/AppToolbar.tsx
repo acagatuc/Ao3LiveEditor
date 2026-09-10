@@ -5,8 +5,9 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import ExternalLinkButton from "./ExternalLinkButton";
+import { useChangelogUnseen } from "../hooks/useChangelogUnseen";
 
-function NavButton({ label, to }: { label: string; to: string }) {
+function NavButton({ label, to, showBadge }: { label: string; to: string; showBadge?: boolean }) {
   const navigate = useNavigate();
   const location = useLocation();
   const active = location.pathname === to;
@@ -27,12 +28,29 @@ function NavButton({ label, to }: { label: string; to: string }) {
         "&:hover": { opacity: 1, bgcolor: "rgba(255,255,255,0.1)" },
       }}
     >
-      {label}
+      <Box sx={{ position: "relative", display: "inline-flex" }}>
+        {label}
+        {showBadge && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: -5,
+              right: -9,
+              width: 6,
+              height: 6,
+              borderRadius: "50%",
+              bgcolor: "#ffd54f",
+            }}
+          />
+        )}
+      </Box>
     </Button>
   );
 }
 
 export default function AppToolbar() {
+  const changelogUnseen = useChangelogUnseen();
+
   return (
     <AppBar position="static" sx={{ bgcolor: "#7b1d1d", flexShrink: 0 }}>
       <Toolbar>
@@ -76,7 +94,8 @@ export default function AppToolbar() {
         <NavButton label="Rich Text" to="/rich-text" />
         <NavButton label="Workskins" to="/workskins" />
         <NavButton label="Bookmarks" to="/bookmarks" />
-        <NavButton label="Roadmap" to="/roadmap" />
+        <NavButton label="Changelog" to="/changelog" showBadge={changelogUnseen} />
+        <NavButton label="Contact" to="/contact" />
 
         <div style={{ flexGrow: 1 }} />
 
