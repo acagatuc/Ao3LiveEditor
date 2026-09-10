@@ -1,0 +1,18 @@
+.contact-page {
+  height: 100%;
+  overflow-y: auto;
+  padding: 2rem;
+  box-sizing: border-box;
+  font-family: 'Lucida Grande', Verdana, sans-serif;
+}
+
+.contact-content {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
