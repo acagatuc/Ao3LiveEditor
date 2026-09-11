@@ -15,6 +15,28 @@ export interface ChangelogRelease {
 // Newest first. Derived from the real commit history on main.
 export const CHANGELOG: ChangelogRelease[] = [
   {
+    version: "0.10.0",
+    date: "2026-09-12",
+    title: "Drafts",
+    changes: [
+      {
+        type: "added",
+        description:
+          "Save Draft button in both the HTML/CSS and Rich Text editors, so you can save your work-in-progress and come back to it later",
+      },
+      {
+        type: "added",
+        description:
+          "My Drafts menu in the header - reopen a recent draft in one click, or open the full list to rename, delete, or browse everything you've saved",
+      },
+      {
+        type: "improved",
+        description:
+          "My Drafts reminds you that drafts are saved to this browser only, not an account - as with AO3 itself, keep a copy of anything important saved elsewhere too",
+      },
+    ],
+  },
+  {
     version: "0.9.0",
     date: "2026-09-10",
     title: "Changelog page, Contact page & Roadmap retirement",

@@ -1,31 +1,33 @@
-import { useState, useEffect } from 'react'
-import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
-import TextField from '@mui/material/TextField'
-import Button from '@mui/material/Button'
-import IconButton from '@mui/material/IconButton'
-import Typography from '@mui/material/Typography'
-import CircularProgress from '@mui/material/CircularProgress'
-import CloseIcon from '@mui/icons-material/Close'
-import { createDraft, updateDraft } from '../../api/drafts'
-import type { DraftPayloadType } from '../../api/drafts'
+import { useState, useEffect } from "react";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
+import CloseIcon from "@mui/icons-material/Close";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { createDraft, updateDraft } from "../../api/drafts";
+import type { DraftPayloadType } from "../../api/drafts";
+import { Box } from "@mui/material";
 
 export interface SavedDraftResult {
-  id: string
-  title: string
-  updatedAt: string
+  id: string;
+  title: string;
+  updatedAt: string;
 }
 
 interface SaveDraftDialogProps {
-  open: boolean
-  onClose: () => void
-  payloadType: DraftPayloadType
-  html: string
-  css?: string
-  currentDraft: { id: string; title: string } | null
-  onSaved: (result: SavedDraftResult) => void
+  open: boolean;
+  onClose: () => void;
+  payloadType: DraftPayloadType;
+  html: string;
+  css?: string;
+  currentDraft: { id: string; title: string } | null;
+  onSaved: (result: SavedDraftResult) => void;
 }
 
 export default function SaveDraftDialog({
@@ -37,49 +39,94 @@ export default function SaveDraftDialog({
   currentDraft,
   onSaved,
 }: SaveDraftDialogProps) {
-  const [title, setTitle] = useState('')
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState('')
+  const [title, setTitle] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   // Resets the form each time the dialog opens — SaveDraftDialog is always mounted by its
   // parent (only the `open` prop toggles), so state would otherwise persist stale across uses.
   useEffect(() => {
     if (open) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setTitle(currentDraft?.title ?? '')
-      setError('')
+      setTitle(currentDraft?.title ?? "");
+      setError("");
     }
-  }, [open, currentDraft])
+  }, [open, currentDraft]);
 
   async function handleSave(saveAsNew: boolean) {
-    setSaving(true)
-    setError('')
+    setSaving(true);
+    setError("");
     try {
       if (currentDraft && !saveAsNew) {
-        const { updatedAt } = await updateDraft(currentDraft.id, { payloadType, html, css, title })
-        onSaved({ id: currentDraft.id, title, updatedAt })
+        const { updatedAt } = await updateDraft(currentDraft.id, {
+          payloadType,
+          html,
+          css,
+          title,
+        });
+        onSaved({ id: currentDraft.id, title, updatedAt });
       } else {
-        const { id, updatedAt } = await createDraft({ payloadType, html, css, title })
-        onSaved({ id, title, updatedAt })
+        const { id, updatedAt } = await createDraft({
+          payloadType,
+          html,
+          css,
+          title,
+        });
+        onSaved({ id, title, updatedAt });
       }
-      onClose()
+      onClose();
     } catch {
-      setError('Failed to save draft. Please try again.')
+      setError("Failed to save draft. Please try again.");
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
   }
 
   return (
-    <Dialog open={open} onClose={saving ? undefined : onClose} maxWidth="xs" fullWidth>
-      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pr: 1 }}>
+    <Dialog
+      open={open}
+      onClose={saving ? undefined : onClose}
+      maxWidth="xs"
+      fullWidth
+    >
+      <DialogTitle
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          pr: 1,
+        }}
+      >
         Save Draft
-        <IconButton size="small" onClick={onClose} disabled={saving} aria-label="close">
+        <IconButton
+          size="small"
+          onClick={onClose}
+          disabled={saving}
+          aria-label="close"
+        >
           <CloseIcon fontSize="small" />
         </IconButton>
       </DialogTitle>
 
       <DialogContent>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 1,
+            alignItems: "flex-start",
+            mb: 2,
+            color: "text.secondary",
+          }}
+        >
+          <InfoOutlinedIcon fontSize="small" sx={{ mt: "2px" }} />
+          <Typography variant="body2" color="text.secondary">
+            Drafts are saved to this browser only, not to an account - they
+            won't be there if you switch browsers or devices, or clear your site
+            data. If you experience an issue, please use the contact form to get
+            in touch. As with AO3 itself, please don't rely on this as your only
+            copy - keep your work saved somewhere else too.
+          </Typography>
+        </Box>
         <TextField
           label="Title"
           placeholder="Untitled"
@@ -92,8 +139,9 @@ export default function SaveDraftDialog({
         />
         {currentDraft && (
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
-            This content is linked to an existing draft. "Update" overwrites it — "Save as New"
-            keeps the original untouched and creates a separate copy.
+            This content is linked to an existing draft. "Update" overwrites it
+            - "Save as New" keeps the original untouched and creates a separate
+            copy.
           </Typography>
         )}
         {error && (
@@ -109,13 +157,23 @@ export default function SaveDraftDialog({
         </Button>
         {currentDraft && (
           <Button onClick={() => handleSave(true)} disabled={saving}>
-            {saving ? <CircularProgress size={16} /> : 'Save as New'}
+            {saving ? <CircularProgress size={16} /> : "Save as New"}
           </Button>
         )}
-        <Button variant="contained" onClick={() => handleSave(false)} disabled={saving}>
-          {saving ? <CircularProgress size={16} /> : currentDraft ? 'Update' : 'Save'}
+        <Button
+          variant="contained"
+          onClick={() => handleSave(false)}
+          disabled={saving}
+        >
+          {saving ? (
+            <CircularProgress size={16} />
+          ) : currentDraft ? (
+            "Update"
+          ) : (
+            "Save"
+          )}
         </Button>
       </DialogActions>
     </Dialog>
-  )
+  );
 }
