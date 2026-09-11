@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect, useRef } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import AppToolbar from "./components/AppToolbar";
@@ -25,6 +26,21 @@ const theme = createTheme({
 function AppContent() {
   const location = useLocation();
   const showToolbar = !location.pathname.startsWith("/preview/");
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    // The GA snippet in index.html already sends a page_view for the initial
+    // load; only track subsequent client-side route changes here.
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (typeof window.gtag !== "function") return;
+    window.gtag("event", "page_view", {
+      page_path: location.pathname + location.search,
+      page_location: window.location.href,
+    });
+  }, [location]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden" }}>
