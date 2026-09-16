@@ -16,7 +16,7 @@ export interface ChangelogRelease {
 export const CHANGELOG: ChangelogRelease[] = [
   {
     version: "0.10.0",
-    date: "2026-09-12",
+    date: "2026-09-16",
     title: "Drafts",
     changes: [
       {
