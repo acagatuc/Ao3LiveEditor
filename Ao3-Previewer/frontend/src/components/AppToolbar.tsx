@@ -6,6 +6,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import ExternalLinkButton from "./ExternalLinkButton";
 import { useChangelogUnseen } from "../hooks/useChangelogUnseen";
+import DraftsHeaderMenu from "./DraftsHeaderMenu";
 
 function NavButton({ label, to, showBadge }: { label: string; to: string; showBadge?: boolean }) {
   const navigate = useNavigate();
@@ -100,6 +101,7 @@ export default function AppToolbar() {
         <div style={{ flexGrow: 1 }} />
 
         <ExternalLinkButton href="https://www.w3schools.com/html/" label="Reference" />
+        <DraftsHeaderMenu />
       </Toolbar>
     </AppBar>
   );

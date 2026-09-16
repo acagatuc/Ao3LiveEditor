@@ -5,6 +5,7 @@ import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import * as path from "path";
 import { Construct } from "constructs";
+import { addDraftsResources } from "./drafts-resources";
 
 export class Ao3PreviewerDevStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -65,8 +66,12 @@ export class Ao3PreviewerDevStack extends cdk.Stack {
       restApiName: "ao3-previewer-api-dev",
       defaultCorsPreflightOptions: {
         allowOrigins: ["http://localhost:5173"],
-        allowMethods: ["GET", "POST", "OPTIONS"],
+        allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowHeaders: ["Content-Type"],
+      },
+      deployOptions: {
+        throttlingRateLimit: 50,
+        throttlingBurstLimit: 100,
       },
     });
 
@@ -78,6 +83,10 @@ export class Ao3PreviewerDevStack extends cdk.Stack {
 
     const preview = previews.addResource("{id}");
     preview.addMethod("GET", new apigateway.LambdaIntegration(getPreviewFn));
+
+    // ─── Drafts ─────────────────────────────────────────────────
+
+    addDraftsResources(this, api, "http://localhost:5173");
 
     // ─── Outputs ─────────────────────────────────────────────────
 
