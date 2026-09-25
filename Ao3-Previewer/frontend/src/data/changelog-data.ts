@@ -15,6 +15,23 @@ export interface ChangelogRelease {
 // Newest first. Derived from the real commit history on main.
 export const CHANGELOG: ChangelogRelease[] = [
   {
+    version: "0.11.0",
+    date: "2026-09-25",
+    title: "Tidier header & Ko-fi",
+    changes: [
+      {
+        type: "improved",
+        description:
+          "Cleaner header - HTML/CSS, Rich Text, and Changelog stay up front, while Workskins, Bookmark Search, the HTML reference, and Contact now live under a new More menu",
+      },
+      {
+        type: "added",
+        description:
+          "Ko-fi link (the coffee cup in the header, or More → Support on Ko-fi) for anyone who'd like to support FicFormatter",
+      },
+    ],
+  },
+  {
     version: "0.10.0",
     date: "2026-09-16",
     title: "Drafts",
