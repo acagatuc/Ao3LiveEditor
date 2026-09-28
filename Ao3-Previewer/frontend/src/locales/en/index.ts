@@ -1,4 +1,5 @@
 import common from "./common.json";
+import cssWarnings from "./cssWarnings.json";
 import editor from "./editor.json";
 import pages from "./pages.json";
 import richText from "./richText.json";
@@ -8,6 +9,7 @@ export const enResources = {
   editor,
   richText,
   pages,
+  cssWarnings,
 } as const;
 
 export type Namespace = keyof typeof enResources;
