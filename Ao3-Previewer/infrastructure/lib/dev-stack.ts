@@ -6,6 +6,7 @@ import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import * as path from "path";
 import { Construct } from "constructs";
 import { addDraftsResources } from "./drafts-resources";
+import { addBugReportsResources } from "./bug-reports-resources";
 
 export class Ao3PreviewerDevStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -87,6 +88,19 @@ export class Ao3PreviewerDevStack extends cdk.Stack {
     // ─── Drafts ─────────────────────────────────────────────────
 
     addDraftsResources(this, api, "http://localhost:5173");
+
+    // ─── Bug Reports ─────────────────────────────────────────────
+
+    // Dev sends with its own "Dev"-suffixed SES templates, using the same addresses as prod
+    // (from infrastructure/.env). Without them, reports are only stored.
+    const toEmail = process.env.CONTACT_EMAIL;
+    const fromEmail = process.env.SES_FROM_EMAIL;
+    addBugReportsResources(
+      this,
+      api,
+      "http://localhost:5173",
+      toEmail && fromEmail ? { toEmail, fromEmail, env: "dev" } : undefined,
+    );
 
     // ─── Outputs ─────────────────────────────────────────────────
 

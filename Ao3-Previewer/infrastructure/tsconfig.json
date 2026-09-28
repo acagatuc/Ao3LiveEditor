@@ -22,6 +22,12 @@
     "strictPropertyInitialization": false,
     "skipLibCheck": true,
     "types": ["node"],
+    // The AWS SDK is installed in functions/ (alongside the Lambdas). Files outside functions/,
+    // like scripts/followup.ts, need this to find its types; `npm run followup` sets NODE_PATH
+    // so Node finds it at runtime too.
+    "paths": {
+      "@aws-sdk/*": ["./functions/node_modules/@aws-sdk/*"]
+    },
     "typeRoots": [
       "./node_modules/@types"
     ]

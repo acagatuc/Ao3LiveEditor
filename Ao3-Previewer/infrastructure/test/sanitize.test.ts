@@ -45,6 +45,42 @@ describe("sanitizeHtmlContent", () => {
     expect(result).toContain('src="https://example.com/pic.png"');
     expect(result).toContain('alt="a picture"');
   });
+
+  it("unwraps disallowed tags but keeps their text, like AO3", () => {
+    expect(sanitizeHtmlContent('<font color="red">Hi</font><section>there</section>')).toBe("Hithere");
+  });
+
+  it("removes AO3's remove-contents tags along with their text", () => {
+    expect(sanitizeHtmlContent("<svg><text>gone</text></svg><p>kept</p>")).toBe("<p>kept</p>");
+  });
+
+  it("keeps AO3's per-element attributes", () => {
+    const html =
+      '<table><tr><td colspan="2" rowspan="2">a</td></tr></table><ol start="5" type="a"><li>x</li></ol>';
+    expect(sanitizeHtmlContent(html)).toBe(html);
+  });
+
+  it("drops attributes AO3 doesn't allow on that element", () => {
+    const result = sanitizeHtmlContent('<a href="https://example.com" target="_blank">x</a><p width="5">y</p>');
+    expect(result).toBe('<a href="https://example.com">x</a><p>y</p>');
+  });
+
+  it("drops class names that don't start with a letter or are one character", () => {
+    expect(sanitizeHtmlContent('<p class="a 1x ok good_one">t</p>')).toBe('<p class="ok good_one">t</p>');
+  });
+
+  it("only allows http(s) image sources", () => {
+    expect(sanitizeHtmlContent('<img src="data:image/png;base64,AAAA">')).not.toContain("data:");
+  });
+
+  it("keeps relative and protocol-relative image sources as written", () => {
+    expect(sanitizeHtmlContent('<img src="/rel.png">')).toBe('<img src="/rel.png" />');
+    expect(sanitizeHtmlContent('<img src="//cdn.example.com/x.png">')).toBe('<img src="//cdn.example.com/x.png" />');
+  });
+
+  it("does not allow the dir tag (it's in AO3's FAQ but not its sanitizer)", () => {
+    expect(sanitizeHtmlContent("<dir><li>d</li></dir>")).toBe("<li>d</li>");
+  });
 });
 
 describe("sanitizeCss", () => {

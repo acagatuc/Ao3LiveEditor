@@ -6,6 +6,7 @@ import { DynamoDBDocumentClient, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { APIGatewayProxyHandler } from "aws-lambda";
 import { sanitizeHtmlContent, sanitizeCss } from "../shared/sanitize";
+import { corsHeaders } from "../shared/cors";
 
 const dynamoClient = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(dynamoClient);
@@ -25,7 +26,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (!id) {
       return {
         statusCode: 400,
-        headers: corsHeaders(),
+        headers: corsHeaders(event),
         body: JSON.stringify({ error: "Draft ID is required" }),
       };
     }
@@ -36,7 +37,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (payloadType !== "html-css" && payloadType !== "richtext") {
       return {
         statusCode: 400,
-        headers: corsHeaders(),
+        headers: corsHeaders(event),
         body: JSON.stringify({
           error: "payloadType must be 'html-css' or 'richtext'",
         }),
@@ -45,21 +46,21 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (typeof html !== "string" || html.length === 0) {
       return {
         statusCode: 400,
-        headers: corsHeaders(),
+        headers: corsHeaders(event),
         body: JSON.stringify({ error: "html is required" }),
       };
     }
     if (css !== undefined && typeof css !== "string") {
       return {
         statusCode: 400,
-        headers: corsHeaders(),
+        headers: corsHeaders(event),
         body: JSON.stringify({ error: "css must be a string" }),
       };
     }
     if (title !== undefined && typeof title !== "string") {
       return {
         statusCode: 400,
-        headers: corsHeaders(),
+        headers: corsHeaders(event),
         body: JSON.stringify({ error: "title must be a string" }),
       };
     }
@@ -67,7 +68,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (Buffer.byteLength(html, "utf8") > MAX_HTML_SIZE) {
       return {
         statusCode: 413,
-        headers: corsHeaders(),
+        headers: corsHeaders(event),
         body: JSON.stringify({
           error: "HTML content exceeds maximum size of 5MB",
         }),
@@ -76,7 +77,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (Buffer.byteLength(css ?? "", "utf8") > MAX_CSS_SIZE) {
       return {
         statusCode: 413,
-        headers: corsHeaders(),
+        headers: corsHeaders(event),
         body: JSON.stringify({
           error: "CSS content exceeds maximum size of 25KB",
         }),
@@ -85,7 +86,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (Buffer.byteLength(title ?? "", "utf8") > MAX_TITLE_SIZE) {
       return {
         statusCode: 413,
-        headers: corsHeaders(),
+        headers: corsHeaders(event),
         body: JSON.stringify({ error: "Title exceeds maximum size of 500B" }),
       };
     }
@@ -122,7 +123,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       if (error instanceof ConditionalCheckFailedException) {
         return {
           statusCode: 404,
-          headers: corsHeaders(),
+          headers: corsHeaders(event),
           body: JSON.stringify({ error: "Draft not found or has expired" }),
         };
       }
@@ -150,7 +151,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 
     return {
       statusCode: 200,
-      headers: corsHeaders(),
+      headers: corsHeaders(event),
       body: JSON.stringify({
         id,
         updatedAt: new Date(now * 1000).toISOString(),
@@ -160,17 +161,8 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     console.error("updateDraft error:", error);
     return {
       statusCode: 500,
-      headers: corsHeaders(),
+      headers: corsHeaders(event),
       body: JSON.stringify({ error: "Internal server error" }),
     };
   }
 };
-
-function corsHeaders() {
-  return {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin":
-      process.env.ALLOWED_ORIGIN ?? "https://ficformatter.com",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
-}

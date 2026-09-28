@@ -2,6 +2,7 @@ import { DynamoDBClient, ConditionalCheckFailedException } from "@aws-sdk/client
 import { DynamoDBDocumentClient, DeleteCommand } from "@aws-sdk/lib-dynamodb";
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { APIGatewayProxyHandler } from "aws-lambda";
+import { corsHeaders } from "../shared/cors";
 
 const dynamoClient = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(dynamoClient);
@@ -14,7 +15,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
   try {
     const id = event.pathParameters?.id;
     if (!id) {
-      return { statusCode: 400, headers: corsHeaders(), body: JSON.stringify({ error: "Draft ID is required" }) };
+      return { statusCode: 400, headers: corsHeaders(event), body: JSON.stringify({ error: "Draft ID is required" }) };
     }
 
     try {
@@ -27,7 +28,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       );
     } catch (error) {
       if (error instanceof ConditionalCheckFailedException) {
-        return { statusCode: 404, headers: corsHeaders(), body: JSON.stringify({ error: "Draft not found or has expired" }) };
+        return { statusCode: 404, headers: corsHeaders(event), body: JSON.stringify({ error: "Draft not found or has expired" }) };
       }
       throw error;
     }
@@ -38,21 +39,13 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 
     console.log(JSON.stringify({ event: "deleteDraft", id }));
 
-    return { statusCode: 204, headers: corsHeaders(), body: "" };
+    return { statusCode: 204, headers: corsHeaders(event), body: "" };
   } catch (error) {
     console.error("deleteDraft error:", error);
     return {
       statusCode: 500,
-      headers: corsHeaders(),
+      headers: corsHeaders(event),
       body: JSON.stringify({ error: "Internal server error" }),
     };
   }
 };
-
-function corsHeaders() {
-  return {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": process.env.ALLOWED_ORIGIN ?? "https://ficformatter.com",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
-}

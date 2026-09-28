@@ -27,6 +27,7 @@ interface EditorInputProps {
   onHtmlChange: (html: string) => void
   onCssChange: (css: string) => void
   onOpenSaveDraft: () => void
+  lintRequest?: number
 }
 
 type TabValue = 'html' | 'css'
@@ -36,7 +37,14 @@ interface Snack {
   severity: 'success' | 'error'
 }
 
-export default function EditorInput({ html, css, onHtmlChange, onCssChange, onOpenSaveDraft }: EditorInputProps) {
+export default function EditorInput({
+  html,
+  css,
+  onHtmlChange,
+  onCssChange,
+  onOpenSaveDraft,
+  lintRequest = 0,
+}: EditorInputProps) {
   const [tab, setTab] = useState<TabValue>('html')
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
   const [snack, setSnack] = useState<Snack | null>(null)
@@ -66,6 +74,14 @@ export default function EditorInput({ html, css, onHtmlChange, onCssChange, onOp
 
   async function autoFormatCss() {
     onCssChange(await formatCss(css))
+  }
+
+  // Bumped from outside (the bug report dialog) to switch to the CSS tab and run the linter.
+  const [handledLintRequest, setHandledLintRequest] = useState(lintRequest)
+  if (lintRequest !== handledLintRequest) {
+    setHandledLintRequest(lintRequest)
+    setTab('css')
+    analyze(css)
   }
 
   function validateCss() {

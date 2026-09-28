@@ -4,16 +4,27 @@ import Divider from '@mui/material/Divider'
 import Tooltip from '@mui/material/Tooltip'
 import LinkOffIcon from '@mui/icons-material/LinkOff'
 import ShareIcon from '@mui/icons-material/Share'
+import BugReportOutlinedIcon from '@mui/icons-material/BugReportOutlined'
 import { generateSrcdoc } from '../../utilities/generateSrcdoc'
 import ShareModal from './ShareModal'
+import BugReportDialog from './BugReportDialog'
 import './PreviewFrame.css'
 
 interface PreviewFrameProps {
   html: string
   css: string
+  reportOpen: boolean
+  onReportOpenChange: (open: boolean) => void
+  onValidateCss: () => void
 }
 
-export default function PreviewFrame({ html, css }: PreviewFrameProps) {
+export default function PreviewFrame({
+  html,
+  css,
+  reportOpen,
+  onReportOpenChange,
+  onValidateCss,
+}: PreviewFrameProps) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const [hideCreatorStyleMode, setHideCreatorStyleMode] = useState(false)
   const [debouncedHtml, setDebouncedHtml] = useState(html)
@@ -75,13 +86,25 @@ export default function PreviewFrame({ html, css }: PreviewFrameProps) {
     <div className="preview-root">
       <div className="preview-header-row">
         <div className="preview-header-title">Preview:</div>
-        <Button
-          size="small"
-          variant="outlined"
-          onClick={handleToggleCreatorStyle}
-        >
-          {hideCreatorStyleMode ? "Show Creator's Style" : "Hide Creator's Style"}
-        </Button>
+        <div className="preview-header-actions">
+          <Tooltip title="Does your work look different on AO3? Send a report" placement="bottom">
+            <Button
+              size="small"
+              variant="text"
+              startIcon={<BugReportOutlinedIcon />}
+              onClick={() => onReportOpenChange(true)}
+            >
+              Report a problem
+            </Button>
+          </Tooltip>
+          <Button
+            size="small"
+            variant="outlined"
+            onClick={handleToggleCreatorStyle}
+          >
+            {hideCreatorStyleMode ? "Show Creator's Style" : "Hide Creator's Style"}
+          </Button>
+        </div>
       </div>
       <Divider />
 
@@ -120,6 +143,14 @@ export default function PreviewFrame({ html, css }: PreviewFrameProps) {
         onClose={() => setShareOpen(false)}
         html={html}
         css={css}
+      />
+
+      <BugReportDialog
+        open={reportOpen}
+        onClose={() => onReportOpenChange(false)}
+        html={html}
+        css={css}
+        onValidateCss={onValidateCss}
       />
     </div>
   )

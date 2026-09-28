@@ -1,6 +1,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
 import { APIGatewayProxyHandler } from "aws-lambda";
+import { corsHeaders } from "../shared/cors";
 
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
@@ -14,7 +15,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (!id) {
       return {
         statusCode: 400,
-        headers: corsHeaders(),
+        headers: corsHeaders(event),
         body: JSON.stringify({ error: "Preview ID is required" }),
       };
     }
@@ -29,7 +30,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (!result.Item) {
       return {
         statusCode: 404,
-        headers: corsHeaders(),
+        headers: corsHeaders(event),
         body: JSON.stringify({ error: "Preview not found or has expired" }),
       };
     }
@@ -38,7 +39,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 
     return {
       statusCode: 200,
-      headers: corsHeaders(),
+      headers: corsHeaders(event),
       body: JSON.stringify({
         html,
         css,
@@ -52,16 +53,8 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     console.error("getPreview error:", error);
     return {
       statusCode: 500,
-      headers: corsHeaders(),
+      headers: corsHeaders(event),
       body: JSON.stringify({ error: "Internal server error" }),
     };
   }
 };
-
-function corsHeaders() {
-  return {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": process.env.ALLOWED_ORIGIN ?? "https://ficformatter.com",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
-}

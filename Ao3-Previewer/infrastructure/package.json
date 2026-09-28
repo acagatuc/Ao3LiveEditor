@@ -8,7 +8,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "followup": "NODE_PATH=functions/node_modules ts-node scripts/followup.ts"
   },
   "devDependencies": {
     "@types/jest": "^30",

@@ -14,6 +14,7 @@ import * as iam from "aws-cdk-lib/aws-iam";
 import * as path from "path";
 import { Construct } from "constructs";
 import { addDraftsResources } from "./drafts-resources";
+import { addBugReportsResources } from "./bug-reports-resources";
 
 export class Ao3PreviewerStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -209,6 +210,13 @@ export class Ao3PreviewerStack extends cdk.Stack {
     // ─── Drafts ──────────────────────────────────────────────────
 
     addDraftsResources(this, api);
+
+    // ─── Bug Reports ─────────────────────────────────────────────
+
+    addBugReportsResources(this, api, undefined, {
+      toEmail: process.env.CONTACT_EMAIL!,
+      fromEmail: process.env.SES_FROM_EMAIL!,
+    });
 
     // ─── Outputs ─────────────────────────────────────────────────
 
