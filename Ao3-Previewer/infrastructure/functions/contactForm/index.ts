@@ -1,5 +1,6 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import { APIGatewayProxyHandler } from "aws-lambda";
+import { corsHeaders } from "../shared/cors";
 
 const ses = new SESClient({ region: "us-east-1" });
 
@@ -14,7 +15,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (!name || !message) {
       return {
         statusCode: 400,
-        headers: corsHeaders(),
+        headers: corsHeaders(event),
         body: JSON.stringify({ error: "Name and message are required" }),
       };
     }
@@ -38,23 +39,15 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 
     return {
       statusCode: 200,
-      headers: corsHeaders(),
+      headers: corsHeaders(event),
       body: JSON.stringify({ success: true }),
     };
   } catch (error) {
     console.error("contactForm error:", error);
     return {
       statusCode: 500,
-      headers: corsHeaders(),
+      headers: corsHeaders(event),
       body: JSON.stringify({ error: "Internal server error" }),
     };
   }
 };
-
-function corsHeaders() {
-  return {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "https://ficformatter.com",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
-}

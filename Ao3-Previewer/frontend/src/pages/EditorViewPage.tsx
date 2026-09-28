@@ -4,6 +4,7 @@ import SplitPanel from '../components/SplitPanel'
 import EditorInput from '../components/editor/EditorInput'
 import PreviewFrame from '../components/editor/PreviewFrame'
 import SaveDraftDialog from '../components/editor/SaveDraftDialog'
+import BugReportNotice from '../components/editor/BugReportNotice'
 import type { SavedDraftResult } from '../components/editor/SaveDraftDialog'
 import { useEditorState } from '../hooks/useEditorState'
 import { useDraftsIndexContext } from '../contexts/draftsIndexContext'
@@ -16,6 +17,10 @@ export default function EditorViewPage() {
   const draftsIndex = useDraftsIndexContext()
   const [currentDraftId, setCurrentDraftId] = useState<string | null>(null)
   const [saveDialogOpen, setSaveDialogOpen] = useState(false)
+  // Lifted here so the first-visit notice can open the preview's bug report dialog.
+  const [reportOpen, setReportOpen] = useState(false)
+  // Bumped to ask EditorInput to switch to the CSS tab and run the linter.
+  const [lintRequest, setLintRequest] = useState(0)
   const lastLoadedKeyRef = useRef<string | null>(null)
 
   const currentDraftTitle = draftsIndex.entries.find((e) => e.id === currentDraftId)?.title ?? ''
@@ -59,9 +64,18 @@ export default function EditorViewPage() {
             onHtmlChange={setHtml}
             onCssChange={setCss}
             onOpenSaveDraft={() => setSaveDialogOpen(true)}
+            lintRequest={lintRequest}
           />
         }
-        right={<PreviewFrame html={html} css={css} />}
+        right={
+          <PreviewFrame
+            html={html}
+            css={css}
+            reportOpen={reportOpen}
+            onReportOpenChange={setReportOpen}
+            onValidateCss={() => setLintRequest((n) => n + 1)}
+          />
+        }
       />
       <SaveDraftDialog
         open={saveDialogOpen}
@@ -72,6 +86,7 @@ export default function EditorViewPage() {
         currentDraft={currentDraftId ? { id: currentDraftId, title: currentDraftTitle } : null}
         onSaved={handleDraftSaved}
       />
+      <BugReportNotice onReport={() => setReportOpen(true)} />
     </div>
   )
 }

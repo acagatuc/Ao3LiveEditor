@@ -2,6 +2,7 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
 import { S3Client, GetObjectCommand, NoSuchKey } from "@aws-sdk/client-s3";
 import { APIGatewayProxyHandler } from "aws-lambda";
+import { corsHeaders } from "../shared/cors";
 
 const dynamoClient = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(dynamoClient);
@@ -14,7 +15,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
   try {
     const id = event.pathParameters?.id;
     if (!id) {
-      return { statusCode: 400, headers: corsHeaders(), body: JSON.stringify({ error: "Draft ID is required" }) };
+      return { statusCode: 400, headers: corsHeaders(event), body: JSON.stringify({ error: "Draft ID is required" }) };
     }
 
     const result = await docClient.send(
@@ -25,7 +26,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     );
 
     if (!result.Item) {
-      return { statusCode: 404, headers: corsHeaders(), body: JSON.stringify({ error: "Draft not found or has expired" }) };
+      return { statusCode: 404, headers: corsHeaders(event), body: JSON.stringify({ error: "Draft not found or has expired" }) };
     }
 
     const { payloadType, title, createdAt, updatedAt, ttl } = result.Item;
@@ -38,14 +39,14 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       content = JSON.parse((await object.Body!.transformToString()) as string);
     } catch (error) {
       if (error instanceof NoSuchKey) {
-        return { statusCode: 404, headers: corsHeaders(), body: JSON.stringify({ error: "Draft not found or has expired" }) };
+        return { statusCode: 404, headers: corsHeaders(event), body: JSON.stringify({ error: "Draft not found or has expired" }) };
       }
       throw error;
     }
 
     return {
       statusCode: 200,
-      headers: corsHeaders(),
+      headers: corsHeaders(event),
       body: JSON.stringify({
         id,
         payloadType,
@@ -61,16 +62,8 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     console.error("getDraft error:", error);
     return {
       statusCode: 500,
-      headers: corsHeaders(),
+      headers: corsHeaders(event),
       body: JSON.stringify({ error: "Internal server error" }),
     };
   }
 };
-
-function corsHeaders() {
-  return {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": process.env.ALLOWED_ORIGIN ?? "https://ficformatter.com",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
-}

@@ -15,6 +15,28 @@ export interface ChangelogRelease {
 // Newest first. Derived from the real commit history on main.
 export const CHANGELOG: ChangelogRelease[] = [
   {
+    version: "0.12.0",
+    date: "2026-09-28",
+    title: "Report a problem",
+    changes: [
+      {
+        type: "added",
+        description:
+          "Report a problem button above the HTML/CSS preview - if your work looks different on AO3 than it does here, send a report in one step and your HTML and CSS come along with it",
+      },
+      {
+        type: "fixed",
+        description:
+          "The preview now matches AO3's HTML rules more closely: text inside unsupported tags is kept instead of disappearing, and table and list attributes like colspan, rowspan, and start now work",
+      },
+      {
+        type: "fixed",
+        description:
+          "Class names AO3 would drop (ones that start with a number or are a single character) no longer apply in the preview",
+      },
+    ],
+  },
+  {
     version: "0.11.0",
     date: "2026-09-25",
     title: "Tidier header & Ko-fi",
