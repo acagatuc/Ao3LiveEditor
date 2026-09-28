@@ -47,6 +47,10 @@ jobs:
         working-directory: Ao3-Previewer/infrastructure/functions
         run: npm run typecheck
 
+      - name: Run Unit Tests on Infra
+        working-directory: Ao3-Previewer/infrastructure/
+        run: npm test
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
