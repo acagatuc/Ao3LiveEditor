@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -41,6 +42,7 @@ export default function DraftsModal({
   draftsIndex,
   onOpen,
 }: DraftsModalProps) {
+  const { t } = useTranslation();
   const { entries, upsert, remove } = draftsIndex;
   const [openingId, setOpeningId] = useState<string | null>(null);
   const [renamingId, setRenamingId] = useState<string | null>(null);
@@ -57,7 +59,7 @@ export default function DraftsModal({
       const draft = await getDraft(id);
       onOpen(draft);
     } catch {
-      setError("Failed to open that draft. It may have expired.");
+      setError(t("drafts.openFailed"));
     } finally {
       setOpeningId(null);
     }
@@ -88,7 +90,7 @@ export default function DraftsModal({
       });
       setRenamingId(null);
     } catch {
-      setError("Failed to rename that draft.");
+      setError(t("drafts.renameFailed"));
     } finally {
       setSavingRenameId(null);
     }
@@ -102,7 +104,7 @@ export default function DraftsModal({
       remove(id);
       setConfirmDeleteId(null);
     } catch {
-      setError("Failed to delete that draft.");
+      setError(t("drafts.deleteFailed"));
     } finally {
       setDeletingId(null);
     }
@@ -125,8 +127,8 @@ export default function DraftsModal({
           pr: 1,
         }}
       >
-        My Drafts
-        <IconButton size="small" onClick={handleClose} aria-label="close">
+        {t("drafts.myDrafts")}
+        <IconButton size="small" onClick={handleClose} aria-label={t("actions.close")}>
           <CloseIcon fontSize="small" />
         </IconButton>
       </DialogTitle>
@@ -143,11 +145,7 @@ export default function DraftsModal({
         >
           <InfoOutlinedIcon fontSize="small" sx={{ mt: "2px" }} />
           <Typography variant="body2" color="text.secondary">
-            Drafts are saved to this browser only, not to an account - they
-            won't be there if you switch browsers or devices, or clear your site
-            data. If you experience an issue, please use the contact form to get
-            in touch. As with AO3 itself, please don't rely on this as your only
-            copy - keep your work saved somewhere else too.
+            {t("drafts.storageNotice")}
           </Typography>
         </Box>
 
@@ -159,7 +157,7 @@ export default function DraftsModal({
 
         {entries.length === 0 ? (
           <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
-            No saved drafts yet. Use "Save Draft" to save your work here.
+            {t("drafts.modalEmpty")}
           </Typography>
         ) : (
           <List disablePadding>
@@ -191,7 +189,7 @@ export default function DraftsModal({
                             size="small"
                             onClick={() => confirmRename(entry.id)}
                             disabled={savingRenameId === entry.id}
-                            aria-label="confirm rename"
+                            aria-label={t("drafts.confirmRename")}
                           >
                             {savingRenameId === entry.id ? (
                               <CircularProgress size={16} />
@@ -203,7 +201,7 @@ export default function DraftsModal({
                       ) : (
                         <>
                           <Typography variant="body1" noWrap>
-                            {entry.title || "Untitled"}
+                            {entry.title || t("drafts.untitled")}
                           </Typography>
                           <Box
                             sx={{
@@ -220,7 +218,9 @@ export default function DraftsModal({
                               variant="outlined"
                             />
                             <Typography variant="body2" color="text.secondary">
-                              Edited {formatRelativeTime(entry.updatedAt)}
+                              {t("drafts.edited", {
+                                time: formatRelativeTime(entry.updatedAt),
+                              })}
                             </Typography>
                           </Box>
                         </>
@@ -236,7 +236,7 @@ export default function DraftsModal({
                           }}
                         >
                           <Typography variant="body2">
-                            Delete this draft?
+                            {t("drafts.confirmDelete")}
                           </Typography>
                           <Button
                             size="small"
@@ -247,14 +247,14 @@ export default function DraftsModal({
                             {deletingId === entry.id ? (
                               <CircularProgress size={14} />
                             ) : (
-                              "Delete"
+                              t("actions.delete")
                             )}
                           </Button>
                           <Button
                             size="small"
                             onClick={() => setConfirmDeleteId(null)}
                           >
-                            Cancel
+                            {t("actions.cancel")}
                           </Button>
                         </Box>
                       )}
@@ -271,20 +271,20 @@ export default function DraftsModal({
                             {openingId === entry.id ? (
                               <CircularProgress size={14} />
                             ) : (
-                              "Open"
+                              t("actions.open")
                             )}
                           </Button>
                           <IconButton
                             size="small"
                             onClick={() => startRename(entry.id, entry.title)}
-                            aria-label="rename"
+                            aria-label={t("drafts.rename")}
                           >
                             <EditIcon fontSize="small" />
                           </IconButton>
                           <IconButton
                             size="small"
                             onClick={() => setConfirmDeleteId(entry.id)}
-                            aria-label="delete"
+                            aria-label={t("actions.delete")}
                           >
                             <DeleteIcon fontSize="small" />
                           </IconButton>

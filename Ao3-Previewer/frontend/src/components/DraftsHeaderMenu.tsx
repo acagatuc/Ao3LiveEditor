@@ -59,12 +59,12 @@ export default function DraftsHeaderMenu() {
           letterSpacing: '0.06em',
         }}
       >
-        {t('draftsMenu.myDrafts')}
+        {t('drafts.myDrafts')}
       </Button>
 
       <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={() => setAnchorEl(null)}>
         {recent.length === 0 ? (
-          <MenuItem disabled>{t('draftsMenu.empty')}</MenuItem>
+          <MenuItem disabled>{t('drafts.menuEmpty')}</MenuItem>
         ) : (
           recent.map((entry) => {
             const Icon = payloadTypeIcon(entry.payloadType)
@@ -78,8 +78,8 @@ export default function DraftsHeaderMenu() {
                   <Icon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText
-                  primary={entry.title || t('draftsMenu.untitled')}
-                  secondary={t('draftsMenu.entrySubtitle', {
+                  primary={entry.title || t('drafts.untitled')}
+                  secondary={t('drafts.menuEntrySubtitle', {
                     type: payloadTypeLabel(entry.payloadType),
                     time: formatRelativeTime(entry.updatedAt),
                   })}
@@ -95,7 +95,7 @@ export default function DraftsHeaderMenu() {
             setAnchorEl(null)
           }}
         >
-          {t('draftsMenu.viewAll')}
+          {t('drafts.viewAll')}
         </MenuItem>
       </Menu>
 

@@ -1,4 +1,5 @@
 import { useRef, useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Divider from '@mui/material/Divider'
@@ -45,6 +46,7 @@ export default function EditorInput({
   onOpenSaveDraft,
   lintRequest = 0,
 }: EditorInputProps) {
+  const { t } = useTranslation(['editor', 'common'])
   const [tab, setTab] = useState<TabValue>('html')
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
   const [snack, setSnack] = useState<Snack | null>(null)
@@ -97,9 +99,9 @@ export default function EditorInput({
   async function copyToClipboard() {
     try {
       await navigator.clipboard.writeText(tab === 'html' ? html : css)
-      setSnack({ message: `Copied ${tab.toUpperCase()} to clipboard!`, severity: 'success' })
+      setSnack({ message: t('input.copied', { tab: t(`tabs.${tab}`) }), severity: 'success' })
     } catch {
-      setSnack({ message: 'Failed to copy.', severity: 'error' })
+      setSnack({ message: t('input.copyFailed'), severity: 'error' })
     }
   }
 
@@ -125,8 +127,8 @@ export default function EditorInput({
         textColor="primary"
         indicatorColor="primary"
       >
-        <Tab value="html" label="HTML" />
-        <Tab value="css" label="CSS" />
+        <Tab value="html" label={t('tabs.html')} />
+        <Tab value="css" label={t('tabs.css')} />
       </Tabs>
       <Divider />
 
@@ -135,7 +137,7 @@ export default function EditorInput({
           <textarea
             ref={textareaRef}
             className="editor-textarea"
-            placeholder="Write HTML here"
+            placeholder={t('input.htmlPlaceholder')}
             value={html}
             onChange={handleHtmlChange}
             spellCheck={false}
@@ -147,7 +149,7 @@ export default function EditorInput({
             <textarea
               ref={textareaRef}
               className="editor-textarea"
-              placeholder="Write CSS here"
+              placeholder={t('input.cssPlaceholder')}
               value={css}
               onChange={handleCssChange}
               spellCheck={false}
@@ -163,7 +165,7 @@ export default function EditorInput({
         )}
 
         <div className="copy-button">
-          <IconButton size="small" onClick={copyToClipboard} title="Copy to clipboard">
+          <IconButton size="small" onClick={copyToClipboard} title={t('input.copyToClipboard')}>
             <ContentCopyIcon fontSize="small" />
           </IconButton>
         </div>
@@ -185,7 +187,7 @@ export default function EditorInput({
           startIcon={<SaveIcon />}
           onClick={onOpenSaveDraft}
         >
-          Save Draft
+          {t('common:drafts.saveDraft')}
         </Button>
 
         <Button
@@ -194,18 +196,18 @@ export default function EditorInput({
           startIcon={<DownloadIcon />}
           onClick={saveToFile}
         >
-          Export
+          {t('input.export')}
         </Button>
 
         {tab === 'html' && (
-          <Tooltip title="Wraps lone text in paragraph tags and clears html-like whitespace">
+          <Tooltip title={t('input.formatForAo3Tooltip')}>
             <Button
               size="small"
               variant="text"
               startIcon={<FormatIndentIncreaseIcon />}
               onClick={formatHtml}
             >
-              Format for AO3
+              {t('input.formatForAo3')}
             </Button>
           </Tooltip>
         )}
@@ -222,7 +224,7 @@ export default function EditorInput({
               onClick={validateCss}
               disabled={isAnalyzing}
             >
-              Validate CSS
+              {t('input.validateCss')}
             </Button>
 
             <Button
@@ -231,7 +233,7 @@ export default function EditorInput({
               startIcon={<FormatIndentIncreaseIcon />}
               onClick={autoFormatCss}
             >
-              Format CSS
+              {t('input.formatCss')}
             </Button>
           </>
         )}

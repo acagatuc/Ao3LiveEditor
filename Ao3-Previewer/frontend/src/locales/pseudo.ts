@@ -8,8 +8,8 @@ const ACCENTED: Record<string, string> = {
   W: "Ŵ", X: "Ẋ", Y: "Ý", Z: "Ž",
 };
 
-// Leaves {{placeholders}} and <0>component tags</0> untouched so interpolation still works.
-const PROTECTED = /(\{\{[^}]+\}\}|<\/?\d+\/?>)/;
+// Leaves {{placeholders}} and <tag>component tags</tag> untouched so interpolation still works.
+const PROTECTED = /(\{\{[^}]+\}\}|<\/?[a-zA-Z0-9]+\s*\/?>)/;
 
 function pseudoString(value: string): string {
   const accented = value

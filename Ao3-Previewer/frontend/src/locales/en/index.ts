@@ -1,7 +1,9 @@
 import common from "./common.json";
+import editor from "./editor.json";
 
 export const enResources = {
   common,
+  editor,
 } as const;
 
 export type Namespace = keyof typeof enResources;

@@ -6,11 +6,9 @@
     "close": "Close",
     "continue": "Continue",
     "save": "Save",
-    "copy": "Copy",
-    "copied": "Copied!",
     "delete": "Delete",
     "open": "Open",
-    "retry": "Retry"
+    "copied": "Copied!"
   },
   "nav": {
     "htmlCss": "HTML/CSS",
@@ -30,12 +28,27 @@
     "title": "Leaving FicFormatter",
     "body": "You're about to open an external site. ficformatter.com is not responsible for external content."
   },
-  "draftsMenu": {
+  "drafts": {
     "myDrafts": "My Drafts",
-    "empty": "No saved drafts yet",
+    "menuEmpty": "No saved drafts yet",
     "untitled": "Untitled",
-    "entrySubtitle": "{{type}} · Edited {{time}}",
-    "viewAll": "View All Drafts…"
+    "menuEntrySubtitle": "{{type}} · Edited {{time}}",
+    "viewAll": "View All Drafts…",
+    "saveDraft": "Save Draft",
+    "storageNotice": "Drafts are saved to this browser only, not to an account - they won't be there if you switch browsers or devices, or clear your site data. If you experience an issue, please use the contact form to get in touch. As with AO3 itself, please don't rely on this as your only copy - keep your work saved somewhere else too.",
+    "modalEmpty": "No saved drafts yet. Use \"Save Draft\" to save your work here.",
+    "edited": "Edited {{time}}",
+    "confirmDelete": "Delete this draft?",
+    "rename": "Rename",
+    "confirmRename": "Confirm rename",
+    "openFailed": "Failed to open that draft. It may have expired.",
+    "renameFailed": "Failed to rename that draft.",
+    "deleteFailed": "Failed to delete that draft.",
+    "titleLabel": "Title",
+    "linkedNotice": "This content is linked to an existing draft. \"Update\" overwrites it - \"Save as New\" keeps the original untouched and creates a separate copy.",
+    "saveFailed": "Failed to save draft. Please try again.",
+    "saveAsNew": "Save as New",
+    "update": "Update"
   },
   "payloadType": {
     "richtext": "Rich Text",
