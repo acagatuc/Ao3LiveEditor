@@ -1,4 +1,5 @@
 import { useRef, useState, useMemo, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -39,6 +40,7 @@ function saveContent(html: string): void {
 }
 
 export default function RichTextEditorPage() {
+  const { t } = useTranslation(["richText", "common"]);
   const [html, setHtml] = useState(() => loadContent().replace(STRIP_LTR, ""));
   const [copied, setCopied] = useState(false);
   const [leftWidth, setLeftWidth] = useState(50);
@@ -143,7 +145,7 @@ export default function RichTextEditorPage() {
       <div className="rte-divider" onMouseDown={startDrag} />
 
       <div className="rte-html-header-cell">
-        <span className="rte-html-header-title">HTML Output</span>
+        <span className="rte-html-header-title">{t("htmlOutput")}</span>
       </div>
 
       <div className="rte-editor-body-cell">
@@ -161,7 +163,7 @@ export default function RichTextEditorPage() {
           startIcon={<SaveIcon />}
           onClick={() => setSaveDialogOpen(true)}
         >
-          Save Draft
+          {t("common:drafts.saveDraft")}
         </Button>
 
         <Button
@@ -170,7 +172,7 @@ export default function RichTextEditorPage() {
           startIcon={<DeleteOutlineIcon />}
           onClick={clearEditor}
         >
-          Clear
+          {t("clear")}
         </Button>
       </div>
 
@@ -182,7 +184,7 @@ export default function RichTextEditorPage() {
           onClick={copyHtml}
           color={copied ? "success" : "inherit"}
         >
-          {copied ? "Copied!" : "Copy HTML"}
+          {copied ? t("common:actions.copied") : t("copyHtml")}
         </Button>
       </div>
 

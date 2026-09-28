@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import './HtmlOutput.css'
 
 const BLOCK_CLOSE = /(<\/(?:p|h[1-6]|blockquote|ul|ol|li|div|pre|table|tbody|thead|tfoot|tr|th|td)>)/gi
@@ -16,6 +17,7 @@ interface HtmlOutputProps {
 }
 
 export default function HtmlOutput({ html }: HtmlOutputProps) {
+  const { t } = useTranslation('richText')
   const formattedHtml = useMemo(() => formatHtmlOutput(html), [html])
   const isEmpty = html.replace(/<[^>]*>/g, '').trim() === ''
 
@@ -24,7 +26,7 @@ export default function HtmlOutput({ html }: HtmlOutputProps) {
       <div className="html-output__code-box">
         <pre className="html-output__code">
           {isEmpty ? (
-            <span className="html-output__empty">Your HTML will appear here as you type.</span>
+            <span className="html-output__empty">{t('htmlOutputEmpty')}</span>
           ) : (
             formattedHtml
           )}
