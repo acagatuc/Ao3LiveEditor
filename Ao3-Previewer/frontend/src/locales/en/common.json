@@ -1,0 +1,50 @@
+{
+  "appName": "FicFormatter",
+  "tagline": "fanfic writing tools",
+  "actions": {
+    "cancel": "Cancel",
+    "close": "Close",
+    "continue": "Continue",
+    "save": "Save",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "delete": "Delete",
+    "open": "Open",
+    "retry": "Retry"
+  },
+  "nav": {
+    "htmlCss": "HTML/CSS",
+    "richText": "Rich Text",
+    "changelog": "Changelog",
+    "more": "More",
+    "tools": "Tools",
+    "workskins": "Workskins",
+    "bookmarkSearch": "Bookmark Search",
+    "resources": "Resources",
+    "htmlReference": "HTML Reference",
+    "supportKofi": "Support on Ko-fi",
+    "contact": "Contact",
+    "supportKofiLong": "Support FicFormatter on Ko-fi"
+  },
+  "externalLink": {
+    "title": "Leaving FicFormatter",
+    "body": "You're about to open an external site. ficformatter.com is not responsible for external content."
+  },
+  "draftsMenu": {
+    "myDrafts": "My Drafts",
+    "empty": "No saved drafts yet",
+    "untitled": "Untitled",
+    "entrySubtitle": "{{type}} · Edited {{time}}",
+    "viewAll": "View All Drafts…"
+  },
+  "payloadType": {
+    "richtext": "Rich Text",
+    "html-css": "HTML/CSS"
+  },
+  "relativeTime": {
+    "justNow": "just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago"
+  }
+}
