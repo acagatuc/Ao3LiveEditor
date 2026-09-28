@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -9,6 +10,7 @@ interface WorkskinCardProps {
 }
 
 export default function WorkskinCard({ skin }: WorkskinCardProps) {
+  const { t } = useTranslation(["pages", "common"]);
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
 
@@ -28,7 +30,7 @@ export default function WorkskinCard({ skin }: WorkskinCardProps) {
       <div className="workskin-info">
         <Typography variant="h6">{skin.name}</Typography>
         <Typography variant="body2" color="text.secondary">
-          by {skin.author}
+          {t("workskins.byAuthor", { author: skin.author })}
         </Typography>
         <Typography variant="body2" sx={{ mt: 0.5 }}>
           {skin.description}
@@ -36,10 +38,10 @@ export default function WorkskinCard({ skin }: WorkskinCardProps) {
       </div>
       <div className="workskin-actions">
         <Button size="small" variant="outlined" onClick={handleCopy}>
-          {copied ? "Copied!" : "Copy CSS"}
+          {copied ? t("common:actions.copied") : t("workskins.copyCss")}
         </Button>
         <Button size="small" variant="contained" onClick={handleTryIt}>
-          Try it
+          {t("workskins.tryIt")}
         </Button>
       </div>
     </div>

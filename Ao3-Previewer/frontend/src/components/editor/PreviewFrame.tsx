@@ -26,7 +26,7 @@ export default function PreviewFrame({
   onReportOpenChange,
   onValidateCss,
 }: PreviewFrameProps) {
-  const { t } = useTranslation('editor')
+  const { t } = useTranslation(['editor', 'common'])
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const [hideCreatorStyleMode, setHideCreatorStyleMode] = useState(false)
   const [debouncedHtml, setDebouncedHtml] = useState(html)
@@ -104,7 +104,7 @@ export default function PreviewFrame({
             variant="outlined"
             onClick={handleToggleCreatorStyle}
           >
-            {hideCreatorStyleMode ? t('preview.showCreatorStyle') : t('preview.hideCreatorStyle')}
+            {hideCreatorStyleMode ? t('common:preview.showCreatorStyle') : t('common:preview.hideCreatorStyle')}
           </Button>
         </div>
       </div>

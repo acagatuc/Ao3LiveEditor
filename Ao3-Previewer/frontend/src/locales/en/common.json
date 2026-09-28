@@ -59,5 +59,9 @@
     "minutesAgo": "{{count}}m ago",
     "hoursAgo": "{{count}}h ago",
     "daysAgo": "{{count}}d ago"
+  },
+  "preview": {
+    "showCreatorStyle": "Show Creator's Style",
+    "hideCreatorStyle": "Hide Creator's Style"
   }
 }

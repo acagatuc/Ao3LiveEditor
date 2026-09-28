@@ -1,0 +1,74 @@
+{
+  "workskins": {
+    "title": "Community Workskins",
+    "byAuthor": "by {{author}}",
+    "copyCss": "Copy CSS",
+    "tryIt": "Try it",
+    "featuredBadge": "From a fellow dev",
+    "featuredTitle": "Need CSS effects for your fic?",
+    "featuredBody": "Effects for AO3 is a free collection of CSS effects and templates for AO3 works - browse the examples, grab the code, and paste it straight into your work skin. Built by a fellow dev who's been generous enough to send readers our way, too.",
+    "featuredLink": "Visit fanfictemplates.com",
+    "comingSoonBadge": "Coming Soon",
+    "comingSoonTitle": "Community-submitted workskins are on the way",
+    "comingSoonBody": "Want to contribute a workskin? Reach out via the contact form and we'll add it here.",
+    "goToContact": "Go to Contact"
+  },
+  "contact": {
+    "title": "Get in touch",
+    "subtitle": "Bug reports, feature requests, or just to say hello.",
+    "success": "Thanks for reaching out! We'll be in touch if needed.",
+    "nameLabel": "Your name",
+    "emailLabel": "Your email (optional)",
+    "typeLabel": "Type",
+    "types": {
+      "bugReport": "Bug report",
+      "featureRequest": "Feature request",
+      "workskinSubmission": "Workskin Submission",
+      "generalFeedback": "General feedback"
+    },
+    "messageLabel": "Message",
+    "failed": "Something went wrong. Please try again.",
+    "sending": "Sending...",
+    "send": "Send message"
+  },
+  "bookmarks": {
+    "title": "AO3 Bookmark Search",
+    "subtitle": "Find public bookmarks of an author's works on AO3.",
+    "usernameLabel": "AO3 username",
+    "usernameRequired": "Please enter an AO3 username",
+    "usernameHelper": "The author whose bookmarked works you want to find",
+    "recsOnly": "Recommendations only",
+    "notesOnly": "Bookmarks with notes only",
+    "sortLabel": "Sort",
+    "sortSelectLabel": "Sorted by:",
+    "dateBookmarked": "Date Bookmarked",
+    "dateUpdated": "Date Updated",
+    "search": "Search on AO3"
+  },
+  "sharedPreview": {
+    "notFound": "This preview has expired or could not be found.",
+    "createYourOwn": "Create your own preview →",
+    "expiresToday": "Expires today",
+    "expiresIn_one": "Expires in {{count}} day",
+    "expiresIn_other": "Expires in {{count}} days",
+    "defaultTitle": "Shared Preview",
+    "byAuthor": "by {{author}}",
+    "normalizedNote": "Preview normalized to match AO3 rendering"
+  },
+  "changelog": {
+    "title": "Changelog",
+    "subtitle": "A history of what's changed in FicFormatter.",
+    "changeType": {
+      "added": "Added",
+      "fixed": "Fixed",
+      "improved": "Improved",
+      "removed": "Removed"
+    },
+    "upcoming": "Upcoming",
+    "upcomingSubtitle": "What we're working on and thinking about next.",
+    "upcomingStatus": {
+      "in-progress": "In progress",
+      "planned": "Planned"
+    }
+  }
+}

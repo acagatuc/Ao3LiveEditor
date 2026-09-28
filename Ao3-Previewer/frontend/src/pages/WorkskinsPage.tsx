@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
@@ -7,11 +8,13 @@ import ExternalLinkButton from "../components/ExternalLinkButton";
 import "./WorkskinsPage.css";
 
 export default function WorkskinsPage() {
+  const { t } = useTranslation("pages");
+
   return (
     <div className="workskins-page">
       <div className="workskins-header">
         <Typography variant="h4" component="h1" gutterBottom>
-          Community Workskins
+          {t("workskins.title")}
         </Typography>
       </div>
 
@@ -24,18 +27,16 @@ export default function WorkskinsPage() {
       )}
 
       <div className="workskins-featured">
-        <span className="workskins-featured__badge">From a fellow dev</span>
+        <span className="workskins-featured__badge">{t("workskins.featuredBadge")}</span>
         <Typography variant="h5" component="h2" className="workskins-featured__title">
-          Need CSS effects for your fic?
+          {t("workskins.featuredTitle")}
         </Typography>
         <Typography color="text.secondary" className="workskins-featured__body">
-          Effects for AO3 is a free collection of CSS effects and templates for AO3 works - browse
-          the examples, grab the code, and paste it straight into your work skin. Built by a fellow
-          dev who's been generous enough to send readers our way, too.
+          {t("workskins.featuredBody")}
         </Typography>
         <ExternalLinkButton
           href="https://fanfictemplates.com/"
-          label="Visit fanfictemplates.com"
+          label={t("workskins.featuredLink")}
           variant="contained"
           color="primary"
           size="large"
@@ -43,15 +44,15 @@ export default function WorkskinsPage() {
       </div>
 
       <div className="workskins-coming-soon">
-        <span className="workskins-coming-soon__badge">Coming Soon</span>
+        <span className="workskins-coming-soon__badge">{t("workskins.comingSoonBadge")}</span>
         <Typography variant="h6" component="p" sx={{ mt: 1.5, mb: 0.5 }}>
-          Community-submitted workskins are on the way
+          {t("workskins.comingSoonTitle")}
         </Typography>
         <Typography color="text.secondary" variant="body2" sx={{ mb: 2 }}>
-          Want to contribute a workskin? Reach out via the contact form and we'll add it here.
+          {t("workskins.comingSoonBody")}
         </Typography>
         <Button component={Link} to="/contact" variant="outlined" size="small">
-          Go to Contact
+          {t("workskins.goToContact")}
         </Button>
       </div>
     </div>
