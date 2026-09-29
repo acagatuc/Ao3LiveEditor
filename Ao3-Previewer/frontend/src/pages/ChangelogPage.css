@@ -146,8 +146,11 @@
   line-height: 1.5;
 }
 
+/* Fixed width so every description starts at the same x position, whichever label the chip
+   shows. Sized for the longest label ("Improved"); widen it if a translation gets cut off. */
 .changelog-release__chip {
   flex-shrink: 0;
+  width: 76px;
   font-size: 10px !important;
   height: 18px !important;
 }
