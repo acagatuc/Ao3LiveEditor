@@ -15,6 +15,23 @@ export interface ChangelogRelease {
 // Newest first. Derived from the real commit history on main.
 export const CHANGELOG: ChangelogRelease[] = [
   {
+    version: "0.13.0",
+    date: "2026-10-03",
+    title: "Groundwork for translations",
+    changes: [
+      {
+        type: "added",
+        description:
+          "Behind-the-scenes groundwork for translating FicFormatter into other languages - all of the site's buttons, menus, and messages can now be translated, so adding a new language is much easier. Everything is still in English for now",
+      },
+      {
+        type: "fixed",
+        description:
+          "Changelog entries now all line up - the Added, Fixed, and Improved labels are the same width, so every description starts in the same spot",
+      },
+    ],
+  },
+  {
     version: "0.12.0",
     date: "2026-09-28",
     title: "Report a problem",
