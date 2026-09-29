@@ -29,6 +29,11 @@ export const CHANGELOG: ChangelogRelease[] = [
         description:
           "Changelog entries now all line up - the Added, Fixed, and Improved labels are the same width, so every description starts in the same spot",
       },
+      {
+        type: "fixed",
+        description:
+          "The Validate CSS warning for numbers with too many decimal places no longer shows stray quotation marks around the message",
+      },
     ],
   },
   {
