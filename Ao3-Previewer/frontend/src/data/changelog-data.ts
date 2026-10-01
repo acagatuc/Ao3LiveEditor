@@ -22,7 +22,7 @@ export const CHANGELOG: ChangelogRelease[] = [
       {
         type: "added",
         description:
-          "Behind-the-scenes groundwork for translating FicFormatter into other languages - all of the site's buttons, menus, and messages can now be translated, so adding a new language is much easier. Everything is still in English for now (you can check the 'translated' page by appending ?lng=xx to the url. That's the basis for translation.)",
+          "Behind-the-scenes groundwork for translating FicFormatter into other languages - all of the site's buttons, menus, and messages can now be translated, so adding a new language is much easier. Everything is still in English for now",
       },
       {
         type: "fixed",
