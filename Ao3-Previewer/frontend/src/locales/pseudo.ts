@@ -17,7 +17,9 @@ function pseudoString(value: string): string {
     .map((part, i) => (i % 2 === 1 ? part : part.replace(/[a-zA-Z]/g, (ch) => ACCENTED[ch] ?? ch)))
     .join("");
   // Pad by ~30% to approximate longer languages like French or German.
-  const padding = "~".repeat(Math.ceil(value.length * 0.3));
+  // Tildes are space-separated so they wrap rather than forming one long unbreakable token.
+  // Half the count since each " ~" pair occupies two characters.
+  const padding = " ~".repeat(Math.ceil(value.length * 0.15));
   return `[${accented}${padding}]`;
 }
 
