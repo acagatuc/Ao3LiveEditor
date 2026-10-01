@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -35,6 +36,7 @@ function buildBookmarkUrl(params: {
 }
 
 export default function BookmarkSearchPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [username, setUsername] = useState("");
   const [recsOnly, setRecsOnly] = useState(false);
   const [notesOnly, setNotesOnly] = useState(false);
@@ -69,15 +71,15 @@ export default function BookmarkSearchPage() {
     <div className="bookmark-search-page">
       <div className="bookmark-search-card">
         <Typography variant="h4" component="h1" gutterBottom>
-          AO3 Bookmark Search
+          {t("bookmarks.title")}
         </Typography>
         <Typography color="text.secondary" sx={{ mb: 3 }}>
-          Find public bookmarks of an author's works on AO3.
+          {t("bookmarks.subtitle")}
         </Typography>
 
         <div className="bookmark-search-form">
           <TextField
-            label="AO3 username"
+            label={t("bookmarks.usernameLabel")}
             value={username}
             onChange={(e) => {
               setUsername(e.target.value);
@@ -88,8 +90,8 @@ export default function BookmarkSearchPage() {
             error={usernameError}
             helperText={
               usernameError
-                ? "Please enter an AO3 username"
-                : "The author whose bookmarked works you want to find"
+                ? t("bookmarks.usernameRequired")
+                : t("bookmarks.usernameHelper")
             }
           />
           <FormControlLabel
@@ -99,7 +101,7 @@ export default function BookmarkSearchPage() {
                 onChange={(e) => setRecsOnly(e.target.checked)}
               />
             }
-            label="Recommendations only"
+            label={t("bookmarks.recsOnly")}
           />
           <FormControlLabel
             control={
@@ -108,21 +110,21 @@ export default function BookmarkSearchPage() {
                 onChange={(e) => setNotesOnly(e.target.checked)}
               />
             }
-            label="Bookmarks with notes only"
+            label={t("bookmarks.notesOnly")}
           />
           <FormControl fullWidth>
-            <InputLabel>Sort</InputLabel>
+            <InputLabel>{t("bookmarks.sortLabel")}</InputLabel>
             <Select
               value={sortedDates ? "db" : "du"}
-              label="Sorted by:"
+              label={t("bookmarks.sortSelectLabel")}
               onChange={(e) => setSortedDates(e.target.value)}
             >
-              <MenuItem value="db">Date Bookmarked</MenuItem>
-              <MenuItem value="du">Date Updated</MenuItem>
+              <MenuItem value="db">{t("bookmarks.dateBookmarked")}</MenuItem>
+              <MenuItem value="du">{t("bookmarks.dateUpdated")}</MenuItem>
             </Select>
           </FormControl>
           <Button variant="contained" color="primary" onClick={handleSearch}>
-            Search on AO3
+            {t("bookmarks.search")}
           </Button>
         </div>
       </div>
@@ -133,11 +135,10 @@ export default function BookmarkSearchPage() {
         maxWidth="xs"
         fullWidth
       >
-        <DialogTitle>Leaving FicFormatter</DialogTitle>
+        <DialogTitle>{t("common:externalLink.title")}</DialogTitle>
         <DialogContent>
           <Typography variant="body2" gutterBottom>
-            You're about to open an external site. ficformatter.com is not
-            responsible for external content.
+            {t("common:externalLink.body")}
           </Typography>
           <Typography
             variant="body2"
@@ -148,9 +149,9 @@ export default function BookmarkSearchPage() {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setPendingHref(null)}>Cancel</Button>
+          <Button onClick={() => setPendingHref(null)}>{t("common:actions.cancel")}</Button>
           <Button onClick={handleConfirm} variant="contained">
-            Continue
+            {t("common:actions.continue")}
           </Button>
         </DialogActions>
       </Dialog>

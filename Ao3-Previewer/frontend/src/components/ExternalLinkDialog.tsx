@@ -4,6 +4,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Typography from "@mui/material/Typography";
+import { useTranslation } from "react-i18next";
 
 interface ExternalLinkDialogProps {
   href: string | null;
@@ -11,6 +12,8 @@ interface ExternalLinkDialogProps {
 }
 
 export default function ExternalLinkDialog({ href, onClose }: ExternalLinkDialogProps) {
+  const { t } = useTranslation();
+
   const handleConfirm = () => {
     if (href) {
       const win = window.open(href, "_blank", "noopener,noreferrer");
@@ -21,20 +24,19 @@ export default function ExternalLinkDialog({ href, onClose }: ExternalLinkDialog
 
   return (
     <Dialog open={!!href} onClose={onClose} maxWidth="xs" fullWidth>
-      <DialogTitle>Leaving FicFormatter</DialogTitle>
+      <DialogTitle>{t("externalLink.title")}</DialogTitle>
       <DialogContent>
         <Typography variant="body2" gutterBottom>
-          You're about to open an external site. ficformatter.com is not responsible for external
-          content.
+          {t("externalLink.body")}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ wordBreak: "break-all" }}>
           {href}
         </Typography>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onClose}>{t("actions.cancel")}</Button>
         <Button onClick={handleConfirm} variant="contained">
-          Continue
+          {t("actions.continue")}
         </Button>
       </DialogActions>
     </Dialog>

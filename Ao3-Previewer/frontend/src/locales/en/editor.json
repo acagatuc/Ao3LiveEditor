@@ -1,0 +1,79 @@
+{
+  "tabs": {
+    "html": "HTML",
+    "css": "CSS"
+  },
+  "input": {
+    "htmlPlaceholder": "Write HTML here",
+    "cssPlaceholder": "Write CSS here",
+    "copyToClipboard": "Copy to clipboard",
+    "copied": "Copied {{tab}} to clipboard!",
+    "copyFailed": "Failed to copy.",
+    "export": "Export",
+    "formatForAo3": "Format for AO3",
+    "formatForAo3Tooltip": "Wraps lone text in paragraph tags and clears html-like whitespace",
+    "validateCss": "Validate CSS",
+    "formatCss": "Format CSS"
+  },
+  "preview": {
+    "heading": "Preview:",
+    "iframeTitle": "Preview",
+    "reportProblem": "Report a problem",
+    "reportProblemTooltip": "Does your work look different on AO3? Send a report",
+    "share": "Share",
+    "linksDisabled": "Links disabled",
+    "linksDisabledTooltip": "Links disabled in preview. You can still open them in a new tab."
+  },
+  "share": {
+    "title": "Share Preview",
+    "titleLabel": "Title (optional)",
+    "titlePlaceholder": "e.g. The Long Way Home",
+    "authorLabel": "Author (optional)",
+    "authorPlaceholder": "e.g. your AO3 username",
+    "failed": "Something went wrong. Please try again.",
+    "generating": "Generating...",
+    "generate": "Generate Link",
+    "copyLink": "Copy Link",
+    "expires": "This link expires in 7 days",
+    "shareAnother": "Share another"
+  },
+  "bugReport": {
+    "title": "Looks different on AO3?",
+    "intro": "If your work shows up differently on AO3 than it does in this preview, let me know here. Your current HTML and CSS are sent along with the report, so there's nothing else you need to copy.",
+    "checks": {
+      "label": "Worth a quick check first",
+      "summary": "A work can look different on AO3 and in the preview (in either direction) without anything being broken. These are the usual reasons.",
+      "disallowedCss": "<strong>CSS AO3 doesn't allow.</strong> The preview shows all of your CSS, but AO3 removes anything outside its rules. <validate>Validate CSS</validate> to see what AO3 will strip. A strict mode that previews only what AO3 keeps is coming soon.",
+      "siteSkin": "<strong>Your site skin.</strong> Custom and dark-mode skins can override colors and backgrounds. Try switching to Default under Preferences → Skins.",
+      "creatorStyle": "<strong>Creator's style.</strong> If \"Hide Creator's Style\" is on for the work, or \"Hide work skins\" is on in your preferences, work skins won't show.",
+      "workSkin": "<strong>The work skin itself.</strong> Make sure it's selected on the work (Edit Work → Select Work Skin).",
+      "extensions": "<strong>Browser extensions,</strong> like dark mode or reader-view tools.",
+      "footer": "Still looks different? Send it anyway. I'd much rather get a report that turns out to be nothing than miss a real bug."
+    },
+    "intentLabel": "Template URL, or what you're trying to make",
+    "intentPlaceholder": "e.g. a link to the skin you're using, or \"a fake text message thread\"",
+    "descriptionLabel": "What looks different between AO3 and the preview?",
+    "descriptionPlaceholder": "e.g. the message bubbles are gray here but white on AO3",
+    "siteSkinLabel": "Your AO3 site skin (optional)",
+    "siteSkinPlaceholder": "e.g. Default, Reversi, or the name of a custom skin",
+    "siteSkinHelper": "If you're not sure, it's probably Default",
+    "emailLabel": "Your email (optional)",
+    "emailPlaceholder": "Only if you'd like a reply",
+    "emailInvalid": "That doesn't look like an email address",
+    "needsCode": "Add the HTML or CSS that's causing the problem to the editor first.",
+    "sendFailed": "Something went wrong sending your report. Please try again.",
+    "sending": "Sending...",
+    "send": "Send Report",
+    "sent": "Thanks! Your report was sent.",
+    "sentWithEmail": "A confirmation is on its way to {{email}}. I'll reply there if I have questions or a fix.",
+    "sentNoEmail": "I'll look into it. You don't need to do anything else.",
+    "done": "Done"
+  },
+  "bugReportNotice": {
+    "title": "Looks different on AO3?",
+    "body": "If your work shows up differently on AO3 than it does in the preview, click <strong>Report a problem</strong> above the preview.",
+    "body2": "It sends me your HTML and CSS along with a short note, so I can see exactly what went wrong and fix it. You don't need to do anything else.",
+    "reportNow": "Report something now",
+    "gotIt": "Got it"
+  }
+}

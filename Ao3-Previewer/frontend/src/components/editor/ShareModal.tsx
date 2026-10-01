@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
@@ -22,6 +23,7 @@ interface ShareModalProps {
 type ModalState = 'input' | 'link'
 
 export default function ShareModal({ open, onClose, html, css }: ShareModalProps) {
+  const { t } = useTranslation(['editor', 'common'])
   const [modalState, setModalState] = useState<ModalState>('input')
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
@@ -51,7 +53,7 @@ export default function ShareModal({ open, onClose, html, css }: ShareModalProps
       setShareUrl(`${window.location.origin}/preview/${data.id}`)
       setModalState('link')
     } catch {
-      setError('Something went wrong. Please try again.')
+      setError(t('share.failed'))
     } finally {
       setGenerating(false)
     }
@@ -77,8 +79,8 @@ export default function ShareModal({ open, onClose, html, css }: ShareModalProps
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pr: 1 }}>
-        Share Preview
-        <IconButton size="small" onClick={handleClose} aria-label="close">
+        {t('share.title')}
+        <IconButton size="small" onClick={handleClose} aria-label={t('common:actions.close')}>
           <CloseIcon fontSize="small" />
         </IconButton>
       </DialogTitle>
@@ -87,16 +89,16 @@ export default function ShareModal({ open, onClose, html, css }: ShareModalProps
         {modalState === 'input' ? (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 0.5 }}>
             <TextField
-              label="Title (optional)"
-              placeholder="e.g. The Long Way Home"
+              label={t('share.titleLabel')}
+              placeholder={t('share.titlePlaceholder')}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               fullWidth
               size="small"
             />
             <TextField
-              label="Author (optional)"
-              placeholder="e.g. your AO3 username"
+              label={t('share.authorLabel')}
+              placeholder={t('share.authorPlaceholder')}
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
               fullWidth
@@ -113,7 +115,7 @@ export default function ShareModal({ open, onClose, html, css }: ShareModalProps
                 onClick={handleGenerate}
                 disabled={generating}
               >
-                {generating ? 'Generating...' : 'Generate Link'}
+                {generating ? t('share.generating') : t('share.generate')}
               </Button>
             </Box>
           </Box>
@@ -133,14 +135,14 @@ export default function ShareModal({ open, onClose, html, css }: ShareModalProps
                 color={copied ? 'success' : 'primary'}
                 sx={{ flexShrink: 0 }}
               >
-                {copied ? 'Copied!' : 'Copy Link'}
+                {copied ? t('common:actions.copied') : t('share.copyLink')}
               </Button>
             </Box>
             <Typography variant="body2" color="text.secondary">
-              This link expires in 7 days
+              {t('share.expires')}
             </Typography>
             <Button variant="text" onClick={handleShareAnother} sx={{ alignSelf: 'flex-start', p: 0 }}>
-              Share another
+              {t('share.shareAnother')}
             </Button>
           </Box>
         )}

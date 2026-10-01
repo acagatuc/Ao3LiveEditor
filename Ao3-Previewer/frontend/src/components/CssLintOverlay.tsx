@@ -1,4 +1,5 @@
 import { useRef, useState, useMemo, useEffect, type CSSProperties } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { PositionedWarning } from '../hooks/useCssAnalyzer'
 import type { CssWarning } from '../utilities/analyzeCss'
 import './CssLintOverlay.css'
@@ -30,20 +31,12 @@ const TYPE_PRIORITY: Record<CssWarning['type'], number> = {
   'comment-stripped': 0,
 }
 
-const SHORT: Record<CssWarning['type'], string> = {
-  'invalid-property': 'PROP',
-  'duplicate-property': 'DUP',
-  'disallowed-atrule': '@RULE',
-  'comment-stripped': 'CMT',
-  'invalid-var-usage': 'VAR',
-  'value-invalid': 'VAL',
-}
-
 function worstType(ws: PositionedWarning[]): CssWarning['type'] {
   return ws.reduce((a, b) => (TYPE_PRIORITY[a.type] >= TYPE_PRIORITY[b.type] ? a : b)).type
 }
 
 export default function CssLintOverlay({ warnings, rawCss, textareaRef }: CssLintOverlayProps) {
+  const { t } = useTranslation('cssWarnings')
   const overlayRef = useRef<HTMLDivElement | null>(null)
   const [measure, setMeasure] = useState<Measure>({
     offsetTop: 0, offsetLeft: 0, width: 0, height: 0,
@@ -171,8 +164,8 @@ export default function CssLintOverlay({ warnings, rawCss, textareaRef }: CssLin
               <span className="lint-line__tooltip">
                 {line.warnings.map((w, i) => (
                   <span key={i} className={`tooltip__row tooltip__row--${w.type}`}>
-                    <span className="tooltip__badge">{SHORT[w.type]}</span>
-                    {w.message}
+                    <span className="tooltip__badge">{t(`short.${w.type}`)}</span>
+                    {t(`messages.${w.message.key}`, w.message.params)}
                   </span>
                 ))}
               </span>

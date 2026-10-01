@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import Tooltip from '@mui/material/Tooltip'
@@ -25,6 +26,7 @@ export default function PreviewFrame({
   onReportOpenChange,
   onValidateCss,
 }: PreviewFrameProps) {
+  const { t } = useTranslation(['editor', 'common'])
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const [hideCreatorStyleMode, setHideCreatorStyleMode] = useState(false)
   const [debouncedHtml, setDebouncedHtml] = useState(html)
@@ -85,16 +87,16 @@ export default function PreviewFrame({
   return (
     <div className="preview-root">
       <div className="preview-header-row">
-        <div className="preview-header-title">Preview:</div>
+        <div className="preview-header-title">{t('preview.heading')}</div>
         <div className="preview-header-actions">
-          <Tooltip title="Does your work look different on AO3? Send a report" placement="bottom">
+          <Tooltip title={t('preview.reportProblemTooltip')} placement="bottom">
             <Button
               size="small"
               variant="text"
               startIcon={<BugReportOutlinedIcon />}
               onClick={() => onReportOpenChange(true)}
             >
-              Report a problem
+              {t('preview.reportProblem')}
             </Button>
           </Tooltip>
           <Button
@@ -102,7 +104,7 @@ export default function PreviewFrame({
             variant="outlined"
             onClick={handleToggleCreatorStyle}
           >
-            {hideCreatorStyleMode ? "Show Creator's Style" : "Hide Creator's Style"}
+            {hideCreatorStyleMode ? t('common:preview.showCreatorStyle') : t('common:preview.hideCreatorStyle')}
           </Button>
         </div>
       </div>
@@ -114,7 +116,7 @@ export default function PreviewFrame({
           className="preview-frame"
           sandbox="allow-scripts"
           srcDoc={srcdoc}
-          title="Preview"
+          title={t('preview.iframeTitle')}
         />
       </div>
 
@@ -125,15 +127,15 @@ export default function PreviewFrame({
           startIcon={<ShareIcon />}
           onClick={() => setShareOpen(true)}
         >
-          Share
+          {t('preview.share')}
         </Button>
         <Tooltip
-          title="Links disabled in preview. You can still open them in a new tab."
+          title={t('preview.linksDisabledTooltip')}
           placement="top"
         >
           <div className="preview-footer-label">
             <LinkOffIcon sx={{ fontSize: 16 }} />
-            <span>Links disabled</span>
+            <span>{t('preview.linksDisabled')}</span>
           </div>
         </Tooltip>
       </div>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
@@ -16,6 +17,7 @@ import { editorPathFor, payloadTypeLabel, payloadTypeColor, payloadTypeIcon, for
 const RECENT_LIMIT = 5
 
 export default function DraftsHeaderMenu() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const draftsIndex = useDraftsIndexContext()
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
@@ -57,12 +59,12 @@ export default function DraftsHeaderMenu() {
           letterSpacing: '0.06em',
         }}
       >
-        My Drafts
+        {t('drafts.myDrafts')}
       </Button>
 
       <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={() => setAnchorEl(null)}>
         {recent.length === 0 ? (
-          <MenuItem disabled>No saved drafts yet</MenuItem>
+          <MenuItem disabled>{t('drafts.menuEmpty')}</MenuItem>
         ) : (
           recent.map((entry) => {
             const Icon = payloadTypeIcon(entry.payloadType)
@@ -76,8 +78,11 @@ export default function DraftsHeaderMenu() {
                   <Icon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText
-                  primary={entry.title || 'Untitled'}
-                  secondary={`${payloadTypeLabel(entry.payloadType)} · Edited ${formatRelativeTime(entry.updatedAt)}`}
+                  primary={entry.title || t('drafts.untitled')}
+                  secondary={t('drafts.menuEntrySubtitle', {
+                    type: payloadTypeLabel(entry.payloadType),
+                    time: formatRelativeTime(entry.updatedAt),
+                  })}
                 />
               </MenuItem>
             )
@@ -90,7 +95,7 @@ export default function DraftsHeaderMenu() {
             setAnchorEl(null)
           }}
         >
-          View All Drafts…
+          {t('drafts.viewAll')}
         </MenuItem>
       </Menu>
 

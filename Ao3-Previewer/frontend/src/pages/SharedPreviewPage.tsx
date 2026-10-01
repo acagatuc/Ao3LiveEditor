@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, Link } from 'react-router-dom'
 import CircularProgress from '@mui/material/CircularProgress'
 import Button from '@mui/material/Button'
@@ -14,6 +15,7 @@ function getDaysRemaining(expiresAt: string): number {
 }
 
 export default function SharedPreviewPage() {
+  const { t } = useTranslation(['pages', 'common'])
   const { id } = useParams<{ id: string }>()
   const [fetchState, setFetchState] = useState<'loading' | 'error' | 'loaded'>('loading')
   const [data, setData] = useState<GetPreviewResponse | null>(null)
@@ -76,27 +78,32 @@ export default function SharedPreviewPage() {
     return (
       <div className="shared-preview shared-preview--centered">
         <p className="shared-preview__expired-msg">
-          This preview has expired or could not be found.
+          {t('sharedPreview.notFound')}
         </p>
         <Link to="/" className="shared-preview__home-link">
-          Create your own preview →
+          {t('sharedPreview.createYourOwn')}
         </Link>
       </div>
     )
   }
 
   const daysRemaining = getDaysRemaining(data.expiresAt)
-  const expiryText = daysRemaining < 1 ? 'Expires today' : `Expires in ${daysRemaining} day${daysRemaining === 1 ? '' : 's'}`
+  const expiryText =
+    daysRemaining < 1
+      ? t('sharedPreview.expiresToday')
+      : t('sharedPreview.expiresIn', { count: daysRemaining })
 
   return (
     <div className="shared-preview">
       <div className="shared-preview__header">
         <div className="shared-preview__meta">
           <span className={`shared-preview__title${data.title ? '' : ' shared-preview__title--muted'}`}>
-            {data.title || 'Shared Preview'}
+            {data.title || t('sharedPreview.defaultTitle')}
           </span>
           {data.author && (
-            <span className="shared-preview__author">by {data.author}</span>
+            <span className="shared-preview__author">
+              {t('sharedPreview.byAuthor', { author: data.author })}
+            </span>
           )}
         </div>
         <div className="shared-preview__actions">
@@ -109,10 +116,10 @@ export default function SharedPreviewPage() {
               fontFamily: "'Lucida Grande', Verdana, sans-serif",
             }}
           >
-            Preview normalized to match AO3 rendering
+            {t('sharedPreview.normalizedNote')}
           </span>
           <Button size="small" variant="outlined" onClick={handleToggleCreatorStyle}>
-            {hideCreatorStyle ? "Show Creator's Style" : "Hide Creator's Style"}
+            {hideCreatorStyle ? t('common:preview.showCreatorStyle') : t('common:preview.hideCreatorStyle')}
           </Button>
         </div>
       </div>
@@ -123,7 +130,7 @@ export default function SharedPreviewPage() {
           className="shared-preview__frame"
           sandbox="allow-scripts"
           srcDoc={srcdoc}
-          title={data.title || 'Shared Preview'}
+          title={data.title || t('sharedPreview.defaultTitle')}
         />
       </div>
     </div>

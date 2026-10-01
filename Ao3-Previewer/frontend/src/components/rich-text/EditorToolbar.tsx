@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import type { Editor } from '@tiptap/react'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
@@ -22,6 +23,8 @@ import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify'
 import FormatTextdirectionLToRIcon from '@mui/icons-material/FormatTextdirectionLToR'
 import FormatTextdirectionRToLIcon from '@mui/icons-material/FormatTextdirectionRToL'
 import './EditorToolbar.css'
+
+const HEADING_LEVELS = [1, 2, 3, 4, 5, 6] as const
 
 interface EditorToolbarProps {
   editor: Editor | null
@@ -57,6 +60,7 @@ function ToolBtn({
 }
 
 export default function EditorToolbar({ editor }: EditorToolbarProps) {
+  const { t } = useTranslation('richText')
   if (!editor) return null
 
   // Capture the non-null editor so TypeScript narrows it inside closures.
@@ -64,7 +68,7 @@ export default function EditorToolbar({ editor }: EditorToolbarProps) {
 
   function addLink() {
     const current = e.getAttributes('link').href ?? ''
-    const url = window.prompt('Enter URL:', current)
+    const url = window.prompt(t('toolbar.linkPrompt'), current)
     if (url === null) return
     if (url.trim() === '') {
       e.chain().focus().extendMarkRange('link').unsetLink().run()
@@ -74,13 +78,13 @@ export default function EditorToolbar({ editor }: EditorToolbarProps) {
   }
 
   function insertImage() {
-    const url = window.prompt('Enter image URL:')
+    const url = window.prompt(t('toolbar.imagePrompt'))
     if (!url?.trim()) return
     e.chain().focus().setImage({ src: url.trim() }).run()
   }
 
   function getHeadingValue(): string {
-    for (const level of [1, 2, 3, 4, 5, 6] as const) {
+    for (const level of HEADING_LEVELS) {
       if (e.isActive('heading', { level })) return String(level)
     }
     return 'paragraph'
@@ -106,16 +110,16 @@ export default function EditorToolbar({ editor }: EditorToolbarProps) {
     <div className="editor-toolbar">
       {/* Text formatting */}
       <div className="toolbar-group">
-        <ToolBtn title="Bold (Ctrl+B)" active={e.isActive('bold')} onClick={() => e.chain().focus().toggleBold().run()}>
+        <ToolBtn title={t('toolbar.bold')} active={e.isActive('bold')} onClick={() => e.chain().focus().toggleBold().run()}>
           <FormatBoldIcon fontSize="small" />
         </ToolBtn>
-        <ToolBtn title="Italic (Ctrl+I)" active={e.isActive('italic')} onClick={() => e.chain().focus().toggleItalic().run()}>
+        <ToolBtn title={t('toolbar.italic')} active={e.isActive('italic')} onClick={() => e.chain().focus().toggleItalic().run()}>
           <FormatItalicIcon fontSize="small" />
         </ToolBtn>
-        <ToolBtn title="Underline (Ctrl+U)" active={e.isActive('underline')} onClick={() => e.chain().focus().toggleUnderline().run()}>
+        <ToolBtn title={t('toolbar.underline')} active={e.isActive('underline')} onClick={() => e.chain().focus().toggleUnderline().run()}>
           <FormatUnderlinedIcon fontSize="small" />
         </ToolBtn>
-        <ToolBtn title="Strikethrough" active={e.isActive('strike')} onClick={() => e.chain().focus().toggleStrike().run()}>
+        <ToolBtn title={t('toolbar.strikethrough')} active={e.isActive('strike')} onClick={() => e.chain().focus().toggleStrike().run()}>
           <FormatStrikethroughIcon fontSize="small" />
         </ToolBtn>
       </div>
@@ -124,13 +128,13 @@ export default function EditorToolbar({ editor }: EditorToolbarProps) {
 
       {/* Links & media */}
       <div className="toolbar-group">
-        <ToolBtn title="Add / edit link" active={e.isActive('link')} onClick={addLink}>
+        <ToolBtn title={t('toolbar.link')} active={e.isActive('link')} onClick={addLink}>
           <LinkIcon fontSize="small" />
         </ToolBtn>
-        <ToolBtn title="Remove link" onClick={() => e.chain().focus().unsetLink().run()}>
+        <ToolBtn title={t('toolbar.removeLink')} onClick={() => e.chain().focus().unsetLink().run()}>
           <LinkOffIcon fontSize="small" />
         </ToolBtn>
-        <ToolBtn title="Insert image" onClick={insertImage}>
+        <ToolBtn title={t('toolbar.image')} onClick={insertImage}>
           <ImageIcon fontSize="small" />
         </ToolBtn>
       </div>
@@ -139,10 +143,10 @@ export default function EditorToolbar({ editor }: EditorToolbarProps) {
 
       {/* Block formatting */}
       <div className="toolbar-group">
-        <ToolBtn title="Blockquote" active={e.isActive('blockquote')} onClick={() => e.chain().focus().toggleBlockquote().run()}>
+        <ToolBtn title={t('toolbar.blockquote')} active={e.isActive('blockquote')} onClick={() => e.chain().focus().toggleBlockquote().run()}>
           <FormatQuoteIcon fontSize="small" />
         </ToolBtn>
-        <ToolBtn title="Horizontal rule" onClick={() => e.chain().focus().setHorizontalRule().run()}>
+        <ToolBtn title={t('toolbar.horizontalRule')} onClick={() => e.chain().focus().setHorizontalRule().run()}>
           <HorizontalRuleIcon fontSize="small" />
         </ToolBtn>
       </div>
@@ -151,10 +155,10 @@ export default function EditorToolbar({ editor }: EditorToolbarProps) {
 
       {/* Lists */}
       <div className="toolbar-group">
-        <ToolBtn title="Bullet list" active={e.isActive('bulletList')} onClick={() => e.chain().focus().toggleBulletList().run()}>
+        <ToolBtn title={t('toolbar.bulletList')} active={e.isActive('bulletList')} onClick={() => e.chain().focus().toggleBulletList().run()}>
           <FormatListBulletedIcon fontSize="small" />
         </ToolBtn>
-        <ToolBtn title="Numbered list" active={e.isActive('orderedList')} onClick={() => e.chain().focus().toggleOrderedList().run()}>
+        <ToolBtn title={t('toolbar.numberedList')} active={e.isActive('orderedList')} onClick={() => e.chain().focus().toggleOrderedList().run()}>
           <FormatListNumberedIcon fontSize="small" />
         </ToolBtn>
       </div>
@@ -163,16 +167,16 @@ export default function EditorToolbar({ editor }: EditorToolbarProps) {
 
       {/* Text alignment */}
       <div className="toolbar-group">
-        <ToolBtn title="Align left" active={e.isActive({ textAlign: 'left' })} onClick={() => e.chain().focus().setTextAlign('left').run()}>
+        <ToolBtn title={t('toolbar.alignLeft')} active={e.isActive({ textAlign: 'left' })} onClick={() => e.chain().focus().setTextAlign('left').run()}>
           <FormatAlignLeftIcon fontSize="small" />
         </ToolBtn>
-        <ToolBtn title="Align center" active={e.isActive({ textAlign: 'center' })} onClick={() => e.chain().focus().setTextAlign('center').run()}>
+        <ToolBtn title={t('toolbar.alignCenter')} active={e.isActive({ textAlign: 'center' })} onClick={() => e.chain().focus().setTextAlign('center').run()}>
           <FormatAlignCenterIcon fontSize="small" />
         </ToolBtn>
-        <ToolBtn title="Align right" active={e.isActive({ textAlign: 'right' })} onClick={() => e.chain().focus().setTextAlign('right').run()}>
+        <ToolBtn title={t('toolbar.alignRight')} active={e.isActive({ textAlign: 'right' })} onClick={() => e.chain().focus().setTextAlign('right').run()}>
           <FormatAlignRightIcon fontSize="small" />
         </ToolBtn>
-        <ToolBtn title="Justify" active={e.isActive({ textAlign: 'justify' })} onClick={() => e.chain().focus().setTextAlign('justify').run()}>
+        <ToolBtn title={t('toolbar.justify')} active={e.isActive({ textAlign: 'justify' })} onClick={() => e.chain().focus().setTextAlign('justify').run()}>
           <FormatAlignJustifyIcon fontSize="small" />
         </ToolBtn>
       </div>
@@ -182,14 +186,14 @@ export default function EditorToolbar({ editor }: EditorToolbarProps) {
       {/* Text direction */}
       <div className="toolbar-group">
         <ToolBtn
-          title="Left-to-right (LTR)"
+          title={t('toolbar.ltr')}
           active={currentDir === 'ltr'}
           onClick={() => e.chain().focus().unsetTextDirection().run()}
         >
           <FormatTextdirectionLToRIcon fontSize="small" />
         </ToolBtn>
         <ToolBtn
-          title="Right-to-left (RTL)"
+          title={t('toolbar.rtl')}
           active={currentDir === 'rtl'}
           onClick={() => e.chain().focus().setTextDirection('rtl').run()}
         >
@@ -207,13 +211,12 @@ export default function EditorToolbar({ editor }: EditorToolbarProps) {
           onChange={(ev) => setHeading(ev.target.value)}
           sx={{ fontSize: 13, minWidth: 110 }}
         >
-          <MenuItem value="paragraph">Paragraph</MenuItem>
-          <MenuItem value="1">Heading 1</MenuItem>
-          <MenuItem value="2">Heading 2</MenuItem>
-          <MenuItem value="3">Heading 3</MenuItem>
-          <MenuItem value="4">Heading 4</MenuItem>
-          <MenuItem value="5">Heading 5</MenuItem>
-          <MenuItem value="6">Heading 6</MenuItem>
+          <MenuItem value="paragraph">{t('toolbar.paragraph')}</MenuItem>
+          {HEADING_LEVELS.map((level) => (
+            <MenuItem key={level} value={String(level)}>
+              {t('toolbar.heading', { level })}
+            </MenuItem>
+          ))}
         </Select>
       </div>
     </div>

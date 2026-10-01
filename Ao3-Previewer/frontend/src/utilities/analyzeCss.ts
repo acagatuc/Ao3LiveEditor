@@ -2,12 +2,13 @@
 
 import { validateProperty } from './validateProperties'
 import { validateValue } from './validateValue'
+import type { LintMessage } from './lintMessage'
 
 export interface CssDeclaration {
   property: string
   value: string
   valid: boolean
-  reason?: string
+  reason?: LintMessage
 }
 
 export interface CssRule {
@@ -23,7 +24,7 @@ export interface CssWarning {
     | 'comment-stripped'
     | 'invalid-var-usage'
     | 'value-invalid'
-  message: string
+  message: LintMessage
   selector?: string
   property?: string
 }
@@ -50,7 +51,7 @@ export function analyzeCss(
   if (commentRegex.test(rawCss)) {
     warnings.push({
       type: 'comment-stripped',
-      message: 'Comments are stripped by AO3',
+      message: { key: 'commentStripped' },
     })
   }
 
@@ -65,7 +66,7 @@ export function analyzeCss(
     if (selector.startsWith('@')) {
       warnings.push({
         type: 'disallowed-atrule',
-        message: `${selector} is not allowed by AO3`,
+        message: { key: 'notAllowedByAo3', params: { name: selector } },
         selector,
       })
     }
@@ -91,7 +92,7 @@ export function analyzeCss(
       if (seenProperties.has(normalizedProperty)) {
         warnings.push({
           type: 'duplicate-property',
-          message: `Duplicate declaration for "${normalizedProperty}"! AO3 keeps only the last one!`,
+          message: { key: 'duplicateDeclaration', params: { property: normalizedProperty } },
           selector,
           property: normalizedProperty,
         })
@@ -104,7 +105,7 @@ export function analyzeCss(
         if (fallbackPattern.test(value)) {
           warnings.push({
             type: 'invalid-var-usage',
-            message: 'var() fallbacks are not allowed by AO3',
+            message: { key: 'varFallback' },
             selector,
             property: normalizedProperty,
           })
@@ -114,7 +115,7 @@ export function analyzeCss(
       if (!validation.valid) {
         warnings.push({
           type: 'invalid-property',
-          message: validation.reason || 'Invalid property',
+          message: validation.reason ?? { key: 'invalidProperty' },
           selector,
           property: normalizedProperty,
         })
@@ -123,7 +124,7 @@ export function analyzeCss(
         if (!valueValidation.valid) {
           warnings.push({
             type: 'value-invalid',
-            message: valueValidation.reason || 'Invalid value',
+            message: valueValidation.reason ?? { key: 'invalidValue' },
             selector,
             property: normalizedProperty,
           })

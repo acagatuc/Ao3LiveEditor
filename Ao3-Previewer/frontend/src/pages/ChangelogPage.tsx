@@ -1,17 +1,11 @@
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import Typography from '@mui/material/Typography'
 import Chip from '@mui/material/Chip'
 import { CHANGELOG, type ChangeType } from '../data/changelog-data'
 import { UPCOMING, type UpcomingStatus } from '../data/upcoming-data'
 import { markChangelogSeen } from '../hooks/useChangelogUnseen'
 import './ChangelogPage.css'
-
-const TYPE_LABEL: Record<ChangeType, string> = {
-  added: 'Added',
-  fixed: 'Fixed',
-  improved: 'Improved',
-  removed: 'Removed',
-}
 
 const TYPE_COLOR: Record<ChangeType, 'success' | 'error' | 'info' | 'warning'> = {
   added: 'success',
@@ -20,14 +14,11 @@ const TYPE_COLOR: Record<ChangeType, 'success' | 'error' | 'info' | 'warning'> =
   removed: 'warning',
 }
 
-const UPCOMING_STATUS_LABEL: Record<UpcomingStatus, string> = {
-  'in-progress': 'In progress',
-  planned: 'Planned',
-}
-
 const UPCOMING_STATUSES: UpcomingStatus[] = ['in-progress', 'planned']
 
 export default function ChangelogPage() {
+  const { t } = useTranslation('pages')
+
   useEffect(() => {
     markChangelogSeen()
   }, [])
@@ -37,10 +28,10 @@ export default function ChangelogPage() {
       <div className="changelog-layout">
         <div className="changelog-main">
           <Typography variant="h4" component="h1" gutterBottom>
-            Changelog
+            {t('changelog.title')}
           </Typography>
           <Typography color="text.secondary" sx={{ mb: 4 }}>
-            A history of what's changed in FicFormatter.
+            {t('changelog.subtitle')}
           </Typography>
 
           <div className="changelog-list">
@@ -59,7 +50,7 @@ export default function ChangelogPage() {
                   {release.changes.map((change, i) => (
                     <li key={i} className="changelog-release__change">
                       <Chip
-                        label={TYPE_LABEL[change.type]}
+                        label={t(`changelog.changeType.${change.type}`)}
                         color={TYPE_COLOR[change.type]}
                         size="small"
                         className="changelog-release__chip"
@@ -75,10 +66,10 @@ export default function ChangelogPage() {
 
         <div className="changelog-upcoming">
           <Typography variant="h6" component="h2" gutterBottom>
-            Upcoming
+            {t('changelog.upcoming')}
           </Typography>
           <Typography color="text.secondary" variant="body2" sx={{ mb: 2 }}>
-            What we're working on and thinking about next.
+            {t('changelog.upcomingSubtitle')}
           </Typography>
 
           {UPCOMING_STATUSES.map((status) => {
@@ -87,7 +78,7 @@ export default function ChangelogPage() {
             return (
               <div key={status} className="changelog-upcoming__group">
                 <Typography variant="overline" className="changelog-upcoming__group-label">
-                  {UPCOMING_STATUS_LABEL[status]}
+                  {t(`changelog.upcomingStatus.${status}`)}
                 </Typography>
                 <ul className="changelog-upcoming__items">
                   {items.map((item, i) => (

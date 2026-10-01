@@ -1,0 +1,29 @@
+{
+  "toolbar": {
+    "bold": "Bold (Ctrl+B)",
+    "italic": "Italic (Ctrl+I)",
+    "underline": "Underline (Ctrl+U)",
+    "strikethrough": "Strikethrough",
+    "link": "Add / edit link",
+    "removeLink": "Remove link",
+    "image": "Insert image",
+    "blockquote": "Blockquote",
+    "horizontalRule": "Horizontal rule",
+    "bulletList": "Bullet list",
+    "numberedList": "Numbered list",
+    "alignLeft": "Align left",
+    "alignCenter": "Align center",
+    "alignRight": "Align right",
+    "justify": "Justify",
+    "ltr": "Left-to-right (LTR)",
+    "rtl": "Right-to-left (RTL)",
+    "paragraph": "Paragraph",
+    "heading": "Heading {{level}}",
+    "linkPrompt": "Enter URL:",
+    "imagePrompt": "Enter image URL:"
+  },
+  "htmlOutput": "HTML Output",
+  "htmlOutputEmpty": "Your HTML will appear here as you type.",
+  "clear": "Clear",
+  "copyHtml": "Copy HTML"
+}

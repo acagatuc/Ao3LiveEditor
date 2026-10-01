@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -39,6 +40,7 @@ export default function SaveDraftDialog({
   currentDraft,
   onSaved,
 }: SaveDraftDialogProps) {
+  const { t } = useTranslation();
   const [title, setTitle] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -76,7 +78,7 @@ export default function SaveDraftDialog({
       }
       onClose();
     } catch {
-      setError("Failed to save draft. Please try again.");
+      setError(t("drafts.saveFailed"));
     } finally {
       setSaving(false);
     }
@@ -97,12 +99,12 @@ export default function SaveDraftDialog({
           pr: 1,
         }}
       >
-        Save Draft
+        {t("drafts.saveDraft")}
         <IconButton
           size="small"
           onClick={onClose}
           disabled={saving}
-          aria-label="close"
+          aria-label={t("actions.close")}
         >
           <CloseIcon fontSize="small" />
         </IconButton>
@@ -120,16 +122,12 @@ export default function SaveDraftDialog({
         >
           <InfoOutlinedIcon fontSize="small" sx={{ mt: "2px" }} />
           <Typography variant="body2" color="text.secondary">
-            Drafts are saved to this browser only, not to an account - they
-            won't be there if you switch browsers or devices, or clear your site
-            data. If you experience an issue, please use the contact form to get
-            in touch. As with AO3 itself, please don't rely on this as your only
-            copy - keep your work saved somewhere else too.
+            {t("drafts.storageNotice")}
           </Typography>
         </Box>
         <TextField
-          label="Title"
-          placeholder="Untitled"
+          label={t("drafts.titleLabel")}
+          placeholder={t("drafts.untitled")}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           fullWidth
@@ -139,9 +137,7 @@ export default function SaveDraftDialog({
         />
         {currentDraft && (
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
-            This content is linked to an existing draft. "Update" overwrites it
-            - "Save as New" keeps the original untouched and creates a separate
-            copy.
+            {t("drafts.linkedNotice")}
           </Typography>
         )}
         {error && (
@@ -153,11 +149,11 @@ export default function SaveDraftDialog({
 
       <DialogActions>
         <Button onClick={onClose} disabled={saving}>
-          Cancel
+          {t("actions.cancel")}
         </Button>
         {currentDraft && (
           <Button onClick={() => handleSave(true)} disabled={saving}>
-            {saving ? <CircularProgress size={16} /> : "Save as New"}
+            {saving ? <CircularProgress size={16} /> : t("drafts.saveAsNew")}
           </Button>
         )}
         <Button
@@ -168,9 +164,9 @@ export default function SaveDraftDialog({
           {saving ? (
             <CircularProgress size={16} />
           ) : currentDraft ? (
-            "Update"
+            t("drafts.update")
           ) : (
-            "Save"
+            t("actions.save")
           )}
         </Button>
       </DialogActions>

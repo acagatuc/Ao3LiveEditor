@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -69,6 +70,7 @@ function NavButton({ label, to, showBadge }: { label: string; to: string; showBa
 function MoreMenu({ onExternalLink }: { onExternalLink: (href: string) => void }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const active = MORE_MENU_ROUTES.includes(location.pathname);
 
@@ -92,27 +94,27 @@ function MoreMenu({ onExternalLink }: { onExternalLink: (href: string) => void }
         aria-expanded={!!anchorEl}
         sx={navButtonSx(active)}
       >
-        More
+        {t("nav.more")}
       </Button>
 
       <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={() => setAnchorEl(null)}>
-        <ListSubheader sx={{ lineHeight: "32px" }}>Tools</ListSubheader>
+        <ListSubheader sx={{ lineHeight: "32px" }}>{t("nav.tools")}</ListSubheader>
         <MenuItem selected={location.pathname === "/workskins"} onClick={() => goTo("/workskins")}>
-          Workskins
+          {t("nav.workskins")}
         </MenuItem>
         <MenuItem selected={location.pathname === "/bookmarks"} onClick={() => goTo("/bookmarks")}>
-          Bookmark Search
+          {t("nav.bookmarkSearch")}
         </MenuItem>
 
-        <ListSubheader sx={{ lineHeight: "32px" }}>Resources</ListSubheader>
+        <ListSubheader sx={{ lineHeight: "32px" }}>{t("nav.resources")}</ListSubheader>
         <MenuItem onClick={() => openExternal(HTML_REFERENCE_URL)}>
-          <ListItemText>HTML Reference</ListItemText>
+          <ListItemText>{t("nav.htmlReference")}</ListItemText>
           <ListItemIcon sx={{ justifyContent: "flex-end" }}>
             <OpenInNewIcon fontSize="small" />
           </ListItemIcon>
         </MenuItem>
         <MenuItem onClick={() => openExternal(KOFI_URL)}>
-          <ListItemText>Support on Ko-fi</ListItemText>
+          <ListItemText>{t("nav.supportKofi")}</ListItemText>
           <ListItemIcon sx={{ justifyContent: "flex-end" }}>
             <OpenInNewIcon fontSize="small" />
           </ListItemIcon>
@@ -120,7 +122,7 @@ function MoreMenu({ onExternalLink }: { onExternalLink: (href: string) => void }
 
         <Divider />
         <MenuItem selected={location.pathname === "/contact"} onClick={() => goTo("/contact")}>
-          Contact
+          {t("nav.contact")}
         </MenuItem>
       </Menu>
     </>
@@ -128,6 +130,7 @@ function MoreMenu({ onExternalLink }: { onExternalLink: (href: string) => void }
 }
 
 export default function AppToolbar() {
+  const { t } = useTranslation();
   const changelogUnseen = useChangelogUnseen();
   const [externalHref, setExternalHref] = useState<string | null>(null);
 
@@ -145,7 +148,7 @@ export default function AppToolbar() {
               lineHeight: 1,
             }}
           >
-            FicFormatter
+            {t("appName")}
           </Typography>
           <Typography
             sx={{
@@ -157,7 +160,7 @@ export default function AppToolbar() {
               fontFamily: "'Lucida Grande', Verdana, sans-serif",
             }}
           >
-            fanfic writing tools
+            {t("tagline")}
           </Typography>
         </div>
 
@@ -170,18 +173,18 @@ export default function AppToolbar() {
           }}
         />
 
-        <NavButton label="HTML/CSS" to="/" />
-        <NavButton label="Rich Text" to="/rich-text" />
-        <NavButton label="Changelog" to="/changelog" showBadge={changelogUnseen} />
+        <NavButton label={t("nav.htmlCss")} to="/" />
+        <NavButton label={t("nav.richText")} to="/rich-text" />
+        <NavButton label={t("nav.changelog")} to="/changelog" showBadge={changelogUnseen} />
         <MoreMenu onExternalLink={setExternalHref} />
 
         <div style={{ flexGrow: 1 }} />
 
-        <Tooltip title="Support FicFormatter on Ko-fi">
+        <Tooltip title={t("nav.supportKofiLong")}>
           <IconButton
             color="inherit"
             size="small"
-            aria-label="Support FicFormatter on Ko-fi"
+            aria-label={t("nav.supportKofiLong")}
             onClick={() => setExternalHref(KOFI_URL)}
             sx={{ mr: 1, opacity: 0.85, "&:hover": { opacity: 1 } }}
           >

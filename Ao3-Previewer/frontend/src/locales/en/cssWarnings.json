@@ -1,0 +1,46 @@
+{
+  "messages": {
+    "commentStripped": "Comments are stripped by AO3",
+    "notAllowedByAo3": "{{name}} is not allowed by AO3",
+    "duplicateDeclaration": "Duplicate declaration for \"{{property}}\"! AO3 keeps only the last one!",
+    "varFallback": "var() fallbacks are not allowed by AO3",
+    "invalidProperty": "Invalid property",
+    "invalidValue": "Invalid value",
+    "emptyProperty": "Empty property name",
+    "atRule": "At-rules are not allowed in work skins",
+    "fontShorthand": "Font shorthand is not allowed; specify font properties individually",
+    "customPropertyNotAllowed": "Custom properties (CSS variables) are only allowed in site skins",
+    "customPropertyName": "Invalid custom property name format",
+    "notInAllowlist": "\"{{property}}\" is not in the AO3 allowlist",
+    "emptyValue": "Empty value",
+    "varNotAllowed": "var() is not allowed in work skin values",
+    "tooManyDecimals": "AO3 allows {{max}} decimal places at most!",
+    "unitNotAllowed": "Unit \"{{unit}}\" is not allowed by AO3; allowed units are: {{allowed}}",
+    "imageFormatNotAllowed": "Image format \".{{ext}}\" is not allowed; allowed formats are: {{allowed}}"
+  },
+  "short": {
+    "invalid-property": "PROP",
+    "duplicate-property": "DUP",
+    "disallowed-atrule": "@RULE",
+    "comment-stripped": "CMT",
+    "invalid-var-usage": "VAR",
+    "value-invalid": "VAL"
+  },
+  "label": {
+    "invalid-property": "Invalid property",
+    "duplicate-property": "Duplicate property",
+    "disallowed-atrule": "Disallowed @rule",
+    "comment-stripped": "Comment stripped",
+    "invalid-var-usage": "Invalid var() usage",
+    "value-invalid": "Invalid value"
+  },
+  "banner": {
+    "title_one": "{{count}} lint warning",
+    "title_other": "{{count}} lint warnings",
+    "expand": "Expand warnings",
+    "collapse": "Collapse warnings",
+    "dismiss": "Dismiss warnings",
+    "selector": "Selector: {{selector}}",
+    "line": "line {{line}}"
+  }
+}

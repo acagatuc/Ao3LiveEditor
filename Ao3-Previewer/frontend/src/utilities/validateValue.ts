@@ -3,10 +3,11 @@ import {
   ALLOWED_IMAGE_FORMATS,
   MAX_DECIMAL_PLACES,
 } from '../allowlist/cssAllowedProperties'
+import type { LintMessage } from './lintMessage'
 
 export interface ValueValidationResult {
   valid: boolean
-  reason?: string
+  reason?: LintMessage
 }
 
 const FLOAT_REGEX = /\d+\.(\d+)/g
@@ -14,12 +15,12 @@ const DIMENSION_REGEX = /(-?\d+(?:\.\d+)?)\s*([a-z%]+)/gi
 const URL_REGEX = /url\(\s*['"]?([^'")\s]+)['"]?\s*\)/gi
 
 export function validateValue(value: string, _property: string): ValueValidationResult {
-  if (!value?.trim()) return { valid: false, reason: 'Empty value' }
+  if (!value?.trim()) return { valid: false, reason: { key: 'emptyValue' } }
 
   const v = value.trim()
 
   if (/\bvar\s*\(/.test(v)) {
-    return { valid: false, reason: `var() is not allowed in work skin values` }
+    return { valid: false, reason: { key: 'varNotAllowed' } }
   }
 
   FLOAT_REGEX.lastIndex = 0
@@ -27,7 +28,7 @@ export function validateValue(value: string, _property: string): ValueValidation
   while ((floatMatch = FLOAT_REGEX.exec(v)) !== null) {
     const decimals = floatMatch[1]
     if (decimals!.length > MAX_DECIMAL_PLACES) {
-      return { valid: false, reason: `"AO3 allows 2 decimal places at most!"` }
+      return { valid: false, reason: { key: 'tooManyDecimals', params: { max: MAX_DECIMAL_PLACES } } }
     }
   }
 
@@ -40,7 +41,7 @@ export function validateValue(value: string, _property: string): ValueValidation
     if (!ALLOWED_UNITS.includes(unit)) {
       return {
         valid: false,
-        reason: `Unit "${unit}" is not allowed by AO3; allowed units are: ${ALLOWED_UNITS.join(', ')}`,
+        reason: { key: 'unitNotAllowed', params: { unit, allowed: ALLOWED_UNITS.join(', ') } },
       }
     }
   }
@@ -53,7 +54,10 @@ export function validateValue(value: string, _property: string): ValueValidation
     if (ext && !ALLOWED_IMAGE_FORMATS.includes(ext)) {
       return {
         valid: false,
-        reason: `Image format ".${ext}" is not allowed; allowed formats are: ${ALLOWED_IMAGE_FORMATS.join(', ')}`,
+        reason: {
+          key: 'imageFormatNotAllowed',
+          params: { ext, allowed: ALLOWED_IMAGE_FORMATS.join(', ') },
+        },
       }
     }
   }
