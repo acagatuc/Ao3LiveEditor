@@ -16,13 +16,13 @@ export interface ChangelogRelease {
 export const CHANGELOG: ChangelogRelease[] = [
   {
     version: "0.13.0",
-    date: "2026-10-03",
+    date: "2026-10-01",
     title: "Groundwork for translations",
     changes: [
       {
         type: "added",
         description:
-          "Behind-the-scenes groundwork for translating FicFormatter into other languages - all of the site's buttons, menus, and messages can now be translated, so adding a new language is much easier. Everything is still in English for now",
+          "Behind-the-scenes groundwork for translating FicFormatter into other languages - all of the site's buttons, menus, and messages can now be translated, so adding a new language is much easier. Everything is still in English for now (you can check the 'translated' page by appending ?lng=xx to the url. That's the basis for translation.)",
       },
       {
         type: "fixed",

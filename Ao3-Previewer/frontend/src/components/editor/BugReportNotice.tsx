@@ -45,7 +45,7 @@ export default function BugReportNotice({ onReport }: BugReportNoticeProps) {
   }
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
+    <Dialog open={open} onClose={handleClose} fullWidth>
       <DialogTitle>{t('bugReportNotice.title')}</DialogTitle>
       <DialogContent>
         <Typography variant="body2" gutterBottom>
