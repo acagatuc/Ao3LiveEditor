@@ -177,7 +177,9 @@ describe("createBugReport handler", () => {
 
     const received = callsFor(TEMPLATE_NAMES.received)[0]!;
     expect(received.Destination.ToAddresses).toEqual(["reader@example.com"]);
-    expect(received.ReplyToAddresses).toEqual(["me@example.com"]);
+    // The maintainer's address must never be exposed to the reporter.
+    expect(received.ReplyToAddresses).toBeUndefined();
+    expect(JSON.stringify(received)).not.toContain("me@example.com");
     const data = JSON.parse(received.TemplateData);
     expect(Object.keys(data).sort()).toEqual(templateVariables(template("received")));
     // Nothing the reporter typed is echoed back to the address they entered.

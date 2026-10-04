@@ -49,7 +49,7 @@ describe("followup script", () => {
       status: "looking-into-it",
       message: "",
       from: "a@b.co",
-      replyTo: "c@d.co",
+      bcc: "c@d.co",
     });
     expect((ses.send.mock.calls[0]![0] as SentCommand).input.Template).toBe("FicFormatterBugReportFollowUpDev");
   });
@@ -76,13 +76,16 @@ describe("followup script", () => {
       status: "fixed",
       message: "It works now!",
       from: "noreply@ficformatter.com",
-      replyTo: "me@example.com",
+      bcc: "me@example.com",
     });
 
     const email = (ses.send.mock.calls[0]![0] as SentCommand).input;
     expect(email.Template).toBe(templateNames("prod").followUp);
     expect(email.Destination.ToAddresses).toEqual(["reader@example.com"]);
-    expect(email.ReplyToAddresses).toEqual(["me@example.com"]);
+    // The maintainer only gets a hidden BCC; their address isn't anywhere the reporter can see.
+    expect(email.Destination.BccAddresses).toEqual(["me@example.com"]);
+    expect(email.ReplyToAddresses).toBeUndefined();
+    expect(email.Destination.ToAddresses).not.toContain("me@example.com");
     const data = JSON.parse(email.TemplateData);
     const followUp = bugReportEmailTemplates("prod").find((t) => t.key === "followUp")!;
     expect(Object.keys(data).sort()).toEqual(templateVariables(followUp));
@@ -106,7 +109,7 @@ describe("followup script", () => {
         status: "fixed",
         message: "",
         from: "a@b.co",
-        replyTo: "c@d.co",
+        bcc: "c@d.co",
       }),
     ).rejects.toThrow("SES down");
     expect(docClient.send).not.toHaveBeenCalled();

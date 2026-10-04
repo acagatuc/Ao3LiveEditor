@@ -75,16 +75,17 @@ export async function sendFollowUp(params: {
   status: FollowUpStatus;
   message: string;
   from: string;
-  replyTo: string;
+  // The maintainer's address. Only ever used as a hidden BCC, never shown to the reporter.
+  bcc: string;
 }): Promise<void> {
   const { headline, intro } = FOLLOW_UP_STATUSES[params.status];
 
   await params.ses.send(
     new SendTemplatedEmailCommand({
       Source: params.from,
-      Destination: { ToAddresses: [params.report.contactEmail!] },
-      // The sending domain has no inbox, so replies go to the maintainer.
-      ReplyToAddresses: [params.replyTo],
+      // The maintainer gets a blind copy for their records. There's deliberately no Reply-To:
+      // the maintainer's address must never appear in email sent to reporters.
+      Destination: { ToAddresses: [params.report.contactEmail!], BccAddresses: [params.bcc] },
       Template: templateNames(params.env).followUp,
       // Every template variable must be present, or SES fails to render after accepting the send.
       TemplateData: JSON.stringify({
@@ -120,8 +121,8 @@ async function main() {
   }
 
   const from = process.env.SES_FROM_EMAIL;
-  const replyTo = process.env.CONTACT_EMAIL;
-  if (!from || !replyTo) {
+  const bcc = process.env.CONTACT_EMAIL;
+  if (!from || !bcc) {
     console.error("SES_FROM_EMAIL and CONTACT_EMAIL must be set in infrastructure/.env");
     process.exit(1);
   }
@@ -141,6 +142,7 @@ async function main() {
     console.log(`Note:     already followed up on ${new Date(report.followedUpAt * 1000).toLocaleString()}`);
   }
   console.log(`To:       ${report.contactEmail}`);
+  console.log(`Copy:     ${bcc} (BCC, hidden from the reporter)`);
   console.log(`Headline: ${FOLLOW_UP_STATUSES[status].headline}`);
   console.log(`Message:  ${message || "(none)"}\n`);
 
@@ -152,7 +154,7 @@ async function main() {
     return;
   }
 
-  await sendFollowUp({ docClient, ses, tableName, env, report, status, message, from, replyTo });
+  await sendFollowUp({ docClient, ses, tableName, env, report, status, message, from, bcc });
   console.log(`Sent, and report ${report.id} marked "${status}".`);
 }
 
