@@ -210,7 +210,10 @@ export const ALLOWED_PROPERTIES = new Set([
 export const DISALLOWED_AT_RULES = ['@font-face', '@import']
 
 // Numeric values and units
-export const ALLOWED_UNITS = ['cm', 'em', 'ex', 'in', 'mm', 'pc', 'pt', 'px', '%']
+// UNITS_REGEX in AO3's lib/css_cleaner.rb (deg for transforms, s for transitions), plus units
+// AO3 has been confirmed to save in practice even though they aren't in that list: its value
+// pattern lets letters follow a number, so these pass (verified on AO3 for rem, vw and ms).
+export const ALLOWED_UNITS = ['deg', 'cm', 'em', 'ex', 'in', 'mm', 'pc', 'pt', 'px', 's', '%', 'rem', 'vw', 'ms']
 
 export const MAX_DECIMAL_PLACES = 2
 

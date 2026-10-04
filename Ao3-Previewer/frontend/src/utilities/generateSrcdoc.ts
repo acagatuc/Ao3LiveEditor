@@ -1,6 +1,7 @@
 import { sanitizeHtml } from './sanitizeHtml'
 import { normalizeForAo3 } from './normalizeForAo3'
 import { AO3_BASE_STYLES } from '../styles/ao3BaseStyles'
+import { applyAo3CssRules } from './applyAo3CssRules'
 
 export function generateSrcdoc(params: {
   html: string
@@ -23,13 +24,13 @@ export function generateSrcdoc(params: {
   <style>
     ${AO3_BASE_STYLES}
 
+    /* Links are disabled in the preview. Only the cursor shows it, so links keep AO3's look. */
     a {
       pointer-events: auto;
       cursor: not-allowed;
-      text-decoration: underline dotted;
     }
 
-    ${hideCreatorStyle ? '' : css}
+    ${hideCreatorStyle ? '' : escapeForStyleTag(applyAo3CssRules(css))}
   </style>
 </head>
 <body>
@@ -67,4 +68,11 @@ export function generateSrcdoc(params: {
   </script>
 </body>
 </html>`
+}
+
+// Stops CSS from closing the <style> tag early (e.g. "</style><script>..."), which would let it
+// add markup or scripts to the preview. "\3c " is CSS's escape for "<", so a "<" inside a quoted
+// value like content: "<" still displays the same.
+function escapeForStyleTag(css: string): string {
+  return css.replace(/</g, '\\3c ')
 }
