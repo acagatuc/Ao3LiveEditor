@@ -18,6 +18,9 @@
   "preview": {
     "heading": "Preview:",
     "iframeTitle": "Preview",
+    "invalidSkin_one": "Invalid AO3 skin · {{count}} problem",
+    "invalidSkin_other": "Invalid AO3 skin · {{count}} problems",
+    "invalidSkinTooltip": "AO3 will refuse to save this skin until these are fixed. Click to see them in the CSS linter.",
     "reportProblem": "Report a problem",
     "reportProblemTooltip": "Does your work look different on AO3? Send a report",
     "share": "Share",

@@ -16,7 +16,8 @@
     "varNotAllowed": "var() is not allowed in work skin values",
     "tooManyDecimals": "AO3 allows {{max}} decimal places at most!",
     "unitNotAllowed": "Unit \"{{unit}}\" is not allowed by AO3; allowed units are: {{allowed}}",
-    "imageFormatNotAllowed": "Image format \".{{ext}}\" is not allowed; allowed formats are: {{allowed}}"
+    "imageFormatNotAllowed": "Image format \".{{ext}}\" is not allowed; allowed formats are: {{allowed}}",
+    "imageUrlNoExtension": "Image URLs must end in a file extension AO3 allows: {{allowed}}"
   },
   "short": {
     "invalid-property": "PROP",

@@ -29,6 +29,19 @@ export interface CssWarning {
   property?: string
 }
 
+// Warnings that make AO3 refuse to save the skin. AO3 handles the others silently: it strips
+// comments and keeps only the last of a duplicated property.
+const SAVE_BLOCKING_TYPES = new Set<CssWarning['type']>([
+  'invalid-property',
+  'value-invalid',
+  'disallowed-atrule',
+  'invalid-var-usage',
+])
+
+export function blocksAo3Save(warning: CssWarning): boolean {
+  return SAVE_BLOCKING_TYPES.has(warning.type)
+}
+
 export interface CssAnalysis {
   rules: CssRule[]
   warnings: CssWarning[]

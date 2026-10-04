@@ -15,6 +15,38 @@ export interface ChangelogRelease {
 // Newest first. Derived from the real commit history on main.
 export const CHANGELOG: ChangelogRelease[] = [
   {
+    version: "0.13.1",
+    date: "2026-10-04",
+    title: "Bug fixes - Selectors and Images",
+    changes: [
+      {
+        type: "added",
+        description:
+          "An \"Invalid AO3 skin\" warning above the preview whenever your CSS has something AO3 would refuse to save - click it to see exactly what to fix, no need to run Validate CSS first",
+      },
+      {
+        type: "fixed",
+        description:
+          "The preview now adds #workskin to the front of your selectors the way AO3 does, so when two rules conflict, the same one wins here as on AO3",
+      },
+      {
+        type: "fixed",
+        description:
+          "Validate CSS no longer mistakes letters and numbers inside image URLs for units, and now accepts units AO3 allows that it used to flag: s, ms, deg, rem, and vw",
+      },
+      {
+        type: "fixed",
+        description:
+          "Background images AO3 won't accept, like .webp files or image links without a file extension, no longer show in the preview, and Validate CSS now points them out",
+      },
+      {
+        type: "fixed",
+        description:
+          "Links in the preview now look like they do on AO3 (dark with a line underneath, gray on hover) instead of the browser's default blue",
+      },
+    ],
+  },
+  {
     version: "0.13.0",
     date: "2026-10-01",
     title: "Groundwork for translations",

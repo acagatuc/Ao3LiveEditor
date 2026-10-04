@@ -20,6 +20,32 @@ export const AO3_BASE_STYLES = `
     padding: 0;
   }
 
+  /* AO3 link styles (site/2.0/02-elements.css). Without these, links fall back to the
+     browser's default blue instead of AO3's near-black with a line underneath. */
+  a, a:link, a:visited:hover {
+    color: #111;
+    text-decoration: none;
+    border-bottom: 1px solid;
+  }
+
+  a:visited {
+    color: #666;
+    text-decoration: none;
+    border-bottom: 1px dashed;
+  }
+
+  a:hover {
+    color: #999;
+  }
+
+  a:active, a:focus {
+    outline: 1px dotted;
+  }
+
+  a img {
+    border: 0;
+  }
+
   /* AO3 base styles */
   body {
     font: 100%/1.125 'Lucida Grande', 'Lucida Sans Unicode', Verdana, Helvetica, sans-serif, 'GNU Unifont';
