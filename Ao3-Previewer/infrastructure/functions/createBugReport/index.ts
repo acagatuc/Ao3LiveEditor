@@ -154,7 +154,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
           codeUrl: s3ConsoleUrl(BUCKET_NAME, s3Key),
           followUpCommand: followUpCommand(EMAIL_ENV),
         }),
-        replyTo ? sendReceived(FROM_EMAIL, replyTo, TO_EMAIL, id) : Promise.resolve(),
+        replyTo ? sendReceived(FROM_EMAIL, replyTo, id) : Promise.resolve(),
       ]);
     }
 
@@ -211,10 +211,11 @@ async function sendNotice(from: string, to: string, replyTo: string | undefined,
   }
 }
 
-// Confirmation to the reporter. Replies go to the maintainer, since the sending domain has no inbox.
-async function sendReceived(from: string, to: string, maintainer: string, reportId: string) {
+// Confirmation to the reporter. Deliberately has no Reply-To: the maintainer's address must never
+// appear in email sent to reporters.
+async function sendReceived(from: string, to: string, reportId: string) {
   try {
-    await sendTemplated({ from, to, replyTo: maintainer, template: TEMPLATES.received, data: { reportId } });
+    await sendTemplated({ from, to, template: TEMPLATES.received, data: { reportId } });
   } catch (error) {
     console.error("createBugReport confirmation email error:", error);
   }

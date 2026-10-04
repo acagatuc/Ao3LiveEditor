@@ -110,8 +110,8 @@ const received: EmailTemplate = {
         "exactly what you saw. You don't need to send anything else.",
     ) +
       paragraph(
-        "I read every report. If I have questions or a fix, I'll reply to this address. You can " +
-          "also reply to this email if you think of anything to add.",
+        "I read every report, and if I have questions or a fix, I'll get back to you at this " +
+          "address. If you think of anything to add, you can send another report from the editor.",
       ) +
       referenceBox("Report ID: <strong>{{reportId}}</strong>") +
       paragraph(`Thanks for helping make FicFormatter better!`),
@@ -125,8 +125,8 @@ const received: EmailTemplate = {
     "Your report came through, along with the HTML and CSS you were working on, so I can see " +
       "exactly what you saw. You don't need to send anything else.",
     "",
-    "I read every report. If I have questions or a fix, I'll reply to this address. You can " +
-      "also reply to this email if you think of anything to add.",
+    "I read every report, and if I have questions or a fix, I'll get back to you at this " +
+      "address. If you think of anything to add, you can send another report from the editor.",
     "",
     "Report ID: {{{reportId}}}",
     "",
@@ -151,7 +151,7 @@ const followUp: EmailTemplate = {
       "{{/if}}" +
       referenceBox("Report ID: <strong>{{reportId}}</strong>") +
       paragraph(
-        `If anything still looks off, just reply to this email. ` +
+        `If anything still looks off, you can send another report from the editor. ` +
           `<a href="${SITE_URL}" style="color:${BRAND};">Open FicFormatter</a>`,
       ),
     "You're receiving this because you submitted a bug report on " +
@@ -166,7 +166,7 @@ const followUp: EmailTemplate = {
     "",
     "{{/if}}Report ID: {{{reportId}}}",
     "",
-    `If anything still looks off, just reply to this email. ${SITE_URL}`,
+    `If anything still looks off, you can send another report from the editor. ${SITE_URL}`,
     "",
     "--",
     "You're receiving this because you submitted a bug report on ficformatter.com and left this " +
