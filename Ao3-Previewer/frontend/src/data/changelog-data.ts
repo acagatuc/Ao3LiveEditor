@@ -35,6 +35,16 @@ export const CHANGELOG: ChangelogRelease[] = [
           "CSS that targets #chapters now applies in the preview, just like it does on AO3",
       },
       {
+        type: "fixed",
+        description:
+          "Validate CSS squiggles now sit exactly under the text they point to - they no longer run past the end of it, slip onto the wrong line below long wrapped lines, or trail behind when you scroll",
+      },
+      {
+        type: "improved",
+        description:
+          "Problems with a single property, like a duplicate or an invalid value, are now underlined on that property's own line instead of on the selector above it",
+      },
+      {
         type: "improved",
         description:
           "Validate CSS now shows which line each comment is on, so a comment that's missing its closing */ and swallowing the rules after it is easy to spot",
