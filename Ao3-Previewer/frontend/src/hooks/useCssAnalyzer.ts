@@ -19,7 +19,7 @@ function findSelectorLine(rawCss: string, selector: string): number | undefined 
 function enrichWarnings(rawCss: string, warnings: CssWarning[]): PositionedWarning[] {
   return warnings.map((w) => ({
     ...w,
-    line: w.selector ? findSelectorLine(rawCss, w.selector) : undefined,
+    line: w.line ?? (w.selector ? findSelectorLine(rawCss, w.selector) : undefined),
   }))
 }
 

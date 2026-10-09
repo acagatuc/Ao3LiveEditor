@@ -2,6 +2,7 @@
 
 import { validateProperty } from './validateProperties'
 import { validateValue } from './validateValue'
+import { CSS_COMMENT_REGEX } from './cssComments'
 import type { LintMessage } from './lintMessage'
 
 export interface CssDeclaration {
@@ -27,6 +28,9 @@ export interface CssWarning {
   message: LintMessage
   selector?: string
   property?: string
+  // Set when the warning isn't tied to a selector, e.g. a comment. Otherwise the line is found
+  // from the selector.
+  line?: number
 }
 
 // Warnings that make AO3 refuse to save the skin. AO3 handles the others silently: it strips
@@ -60,15 +64,17 @@ export function analyzeCss(
     return { rules: [], warnings: [] }
   }
 
-  const commentRegex = /\/\*[\s\S]*?\*\//g
-  if (commentRegex.test(rawCss)) {
+  // One warning per comment, on the line it starts, so a comment that runs on past where the
+  // author meant it to end is easy to spot.
+  for (const match of rawCss.matchAll(CSS_COMMENT_REGEX)) {
     warnings.push({
       type: 'comment-stripped',
       message: { key: 'commentStripped' },
+      line: lineAt(rawCss, match.index),
     })
   }
 
-  const cssWithoutComments = rawCss.replace(commentRegex, '')
+  const cssWithoutComments = rawCss.replace(CSS_COMMENT_REGEX, '')
   const ruleRegex = /([^{}]+)\{([^{}]+)\}/g
 
   for (const match of cssWithoutComments.matchAll(ruleRegex)) {
@@ -156,4 +162,13 @@ export function analyzeCss(
   }
 
   return { rules, warnings }
+}
+
+// 1-based line number of the character at `index`.
+function lineAt(text: string, index: number): number {
+  let line = 1
+  for (let i = 0; i < index; i++) {
+    if (text[i] === '\n') line++
+  }
+  return line
 }
