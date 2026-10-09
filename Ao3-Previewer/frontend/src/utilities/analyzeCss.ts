@@ -2,6 +2,7 @@
 
 import { validateProperty } from './validateProperties'
 import { validateValue } from './validateValue'
+import { CSS_COMMENT_REGEX } from './cssComments'
 import type { LintMessage } from './lintMessage'
 
 export interface CssDeclaration {
@@ -27,6 +28,11 @@ export interface CssWarning {
   message: LintMessage
   selector?: string
   property?: string
+  // Where the problem is in the CSS: character offsets [start, end) and the 1-based line it
+  // starts on. The lint overlay underlines exactly this text.
+  start: number
+  end: number
+  line: number
 }
 
 // Warnings that make AO3 refuse to save the skin. AO3 handles the others silently: it strips
@@ -60,15 +66,23 @@ export function analyzeCss(
     return { rules: [], warnings: [] }
   }
 
-  const commentRegex = /\/\*[\s\S]*?\*\//g
-  if (commentRegex.test(rawCss)) {
+  const at = (start: number, end: number) => ({ start, end, line: lineAt(rawCss, start) })
+
+  // One warning per comment, covering the whole comment, so one that runs on past where the
+  // author meant it to end is easy to spot.
+  for (const match of rawCss.matchAll(CSS_COMMENT_REGEX)) {
     warnings.push({
       type: 'comment-stripped',
       message: { key: 'commentStripped' },
+      ...at(match.index, match.index + match[0].length),
     })
   }
 
-  const cssWithoutComments = rawCss.replace(commentRegex, '')
+  // Comments are blanked out rather than removed, so offsets into this text are offsets into
+  // rawCss too.
+  const cssWithoutComments = rawCss.replace(CSS_COMMENT_REGEX, (comment) =>
+    comment.replace(/[^\n]/g, ' '),
+  )
   const ruleRegex = /([^{}]+)\{([^{}]+)\}/g
 
   for (const match of cssWithoutComments.matchAll(ruleRegex)) {
@@ -76,19 +90,24 @@ export function analyzeCss(
     if (!untrimmedSelector || !body) continue
 
     const selector = untrimmedSelector.trim()
+    const selectorStart = match.index + leadingSpace(untrimmedSelector)
     if (selector.startsWith('@')) {
       warnings.push({
         type: 'disallowed-atrule',
         message: { key: 'notAllowedByAo3', params: { name: selector } },
         selector,
+        ...at(selectorStart, selectorStart + selector.length),
       })
     }
 
     const seenProperties = new Set<string>()
     const declarations: CssDeclaration[] = []
-    const declarationParts = body.split(';')
+    let partStart = match.index + untrimmedSelector.length + 1
 
-    for (const part of declarationParts) {
+    for (const part of body.split(';')) {
+      const declarationStart = partStart + leadingSpace(part)
+      const declarationAt = at(declarationStart, declarationStart + part.trim().length)
+      partStart += part.length + 1
       if (!part.trim()) continue
 
       const [rawProperty, ...values] = part.split(':')
@@ -108,6 +127,7 @@ export function analyzeCss(
           message: { key: 'duplicateDeclaration', params: { property: normalizedProperty } },
           selector,
           property: normalizedProperty,
+          ...declarationAt,
         })
       }
 
@@ -121,6 +141,7 @@ export function analyzeCss(
             message: { key: 'varFallback' },
             selector,
             property: normalizedProperty,
+            ...declarationAt,
           })
         }
       }
@@ -131,6 +152,7 @@ export function analyzeCss(
           message: validation.reason ?? { key: 'invalidProperty' },
           selector,
           property: normalizedProperty,
+          ...declarationAt,
         })
       } else {
         const valueValidation = validateValue(value, normalizedProperty)
@@ -140,6 +162,7 @@ export function analyzeCss(
             message: valueValidation.reason ?? { key: 'invalidValue' },
             selector,
             property: normalizedProperty,
+            ...declarationAt,
           })
         }
       }
@@ -156,4 +179,17 @@ export function analyzeCss(
   }
 
   return { rules, warnings }
+}
+
+// 1-based line number of the character at `index`.
+function lineAt(text: string, index: number): number {
+  let line = 1
+  for (let i = 0; i < index; i++) {
+    if (text[i] === '\n') line++
+  }
+  return line
+}
+
+function leadingSpace(text: string): number {
+  return text.length - text.trimStart().length
 }

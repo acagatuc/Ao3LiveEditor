@@ -9,6 +9,7 @@
 // - Comments are stripped, as AO3 does.
 
 import { imageUrlProblem } from './validateValue'
+import { CSS_COMMENT_REGEX } from './cssComments'
 
 const PREFIX = '#workskin'
 
@@ -18,7 +19,7 @@ const GROUPING_AT_RULE = /^@(media|supports)\b/i
 
 export function applyAo3CssRules(css: string): string {
   // AO3 strips comments, and removing them first keeps braces in comments from confusing the scan.
-  return prefixRules(css.replace(/\/\*[\s\S]*?\*\//g, ''))
+  return prefixRules(css.replace(CSS_COMMENT_REGEX, ''))
 }
 
 function prefixRules(css: string): string {

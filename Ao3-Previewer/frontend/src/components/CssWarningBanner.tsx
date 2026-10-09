@@ -4,15 +4,14 @@ import IconButton from '@mui/material/IconButton'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import CloseIcon from '@mui/icons-material/Close'
-import type { PositionedWarning } from '../hooks/useCssAnalyzer'
 import type { CssWarning } from '../utilities/analyzeCss'
 import './CssWarningBanner.css'
 
 interface CssWarningBannerProps {
-  warnings: PositionedWarning[]
+  warnings: CssWarning[]
   visible?: boolean
   onDismiss: () => void
-  onJump: (warning: PositionedWarning) => void
+  onJump: (warning: CssWarning) => void
 }
 
 export default function CssWarningBanner({

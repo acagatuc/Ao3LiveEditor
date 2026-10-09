@@ -13,9 +13,33 @@
   min-height: 0;
 }
 
+/* The CSS tab's scroll box. It takes the textarea's border and focus ring, since the textarea
+   inside it grows with its text and scrolls along with everything else. */
 .textarea-lint-wrap {
   position: relative;
   height: 100%;
+  overflow: auto;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.23);
+  border-radius: 4px;
+  background-color: white;
+}
+
+.textarea-lint-wrap:hover {
+  border-color: rgba(0, 0, 0, 0.87);
+}
+
+.textarea-lint-wrap:focus-within {
+  border-color: #7b1d1d;
+  box-shadow: 0 0 0 1px #7b1d1d;
+}
+
+/* The textarea and the lint overlay share one grid cell. The overlay holds a copy of the text,
+   so the cell, and the stretched textarea with it, is always as tall as the text. */
+.textarea-lint-stack {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100%;
 }
 
 .editor-textarea {
@@ -41,6 +65,22 @@
 .editor-textarea:focus {
   border-color: #7b1d1d;
   box-shadow: 0 0 0 1px #7b1d1d;
+}
+
+/* Must lay text out exactly like .lint-mirror, or the squiggles won't line up. */
+.editor-textarea--grows {
+  grid-area: 1 / 1;
+  height: auto;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.editor-textarea--grows:focus {
+  box-shadow: none;
 }
 
 .copy-button {

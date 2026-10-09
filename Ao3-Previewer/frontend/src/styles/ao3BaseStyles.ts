@@ -310,4 +310,51 @@ export const AO3_BASE_STYLES = `
   .userstuff video {
     max-width: 100%;
   }
+
+  /* AO3's page wrappers around a work. #main sets the fic's column: smaller text than the
+     body and padding at the sides. */
+  #outer.wrapper {
+    float: left;
+    width: 100%;
+  }
+
+  #main {
+    font-size: 0.875em;
+    line-height: 1.286;
+    margin: auto;
+    padding: 0.5em 2.5em 3.5em;
+    position: relative;
+  }
+
+  /* AO3 loads these for narrower windows (site_midsize and site_narrow), and the preview
+     pane usually is one. */
+  @media only screen and (max-width: 62em) {
+    #main {
+      float: none;
+      margin: auto;
+      padding-left: 3.5%;
+      padding-right: 3.5%;
+      width: auto;
+    }
+
+    #workskin {
+      margin: auto 1.5%;
+    }
+  }
+
+  @media only screen and (max-width: 42em) {
+    #outer {
+      background: #fff;
+      font-size: 0.875em;
+      position: relative;
+    }
+
+    #main {
+      position: static;
+    }
+
+    #workskin {
+      margin: auto;
+    }
+  }
 `

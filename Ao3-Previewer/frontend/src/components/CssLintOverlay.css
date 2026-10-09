@@ -1,28 +1,38 @@
-.lint-overlay {
+/* Must lay text out exactly like .editor-textarea--grows, or the squiggles won't line up. */
+.lint-mirror {
+  grid-area: 1 / 1;
+  position: relative;
   pointer-events: none;
+  margin: 0;
+  border: 0;
+  padding: 8px 16px;
+  box-sizing: border-box;
+  font-family: 'Lucida Grande', 'Verdana', sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  color: transparent;
 }
 
-.lint-line__squiggle {
-  position: absolute;
-  top: 55%;
-  left: 0;
-  height: 3px;
-  min-width: 4ch;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='3'%3E%3Cpath d='M0 3 L3 0 L6 3' stroke='%23f59e0b' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
-  background-repeat: repeat-x;
-  background-size: 6px 3px;
-  opacity: 0.85;
+.lint-mirror__squiggle {
+  text-decoration: underline wavy #f59e0b;
+  text-decoration-skip-ink: none;
+  text-underline-offset: 3px;
 }
 
+/* Inline-level, so with no top set it stays on the line it marks; right pins it to the edge. */
 .lint-line__gutter {
   position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: auto;
-  display: flex;
+  right: 6px;
+  display: inline-flex;
   align-items: center;
+  height: 20px;
+  vertical-align: top;
+  pointer-events: auto;
   cursor: default;
+  color: initial;
+  white-space: normal;
 }
 
 .lint-line__dot {

@@ -34,9 +34,18 @@ export function generateSrcdoc(params: {
   </style>
 </head>
 <body>
-  <div id="workskin">
-    <div class="userstuff">
-      ${normalizedHtml}
+  <!-- The same wrappers AO3 puts around a one-chapter work, so skins that target them match. -->
+  <div id="outer" class="wrapper">
+    <div id="inner" class="wrapper">
+      <div id="main" class="works-show region" role="main">
+        <div id="workskin">
+          <div id="chapters" role="article">
+            <div class="userstuff">
+              ${normalizedHtml}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

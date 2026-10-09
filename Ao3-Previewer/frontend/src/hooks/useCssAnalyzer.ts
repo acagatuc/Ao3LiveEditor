@@ -4,35 +4,13 @@ import type { CssAnalysis, CssWarning, CssRule } from '../utilities/analyzeCss'
 
 export type LintStatus = 'idle' | 'clean' | 'warnings' | 'error'
 
-export interface PositionedWarning extends CssWarning {
-  line?: number
-}
-
-function findSelectorLine(rawCss: string, selector: string): number | undefined {
-  const lines = rawCss.split('\n')
-  for (let i = 0; i < lines.length; i++) {
-    if (lines[i]?.includes(selector)) return i + 1
-  }
-  return undefined
-}
-
-function enrichWarnings(rawCss: string, warnings: CssWarning[]): PositionedWarning[] {
-  return warnings.map((w) => ({
-    ...w,
-    line: w.selector ? findSelectorLine(rawCss, w.selector) : undefined,
-  }))
-}
-
 export function useCssAnalyzer() {
   const [rawCss, setRawCss] = useState('')
   const [analysis, setAnalysis] = useState<CssAnalysis | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [lastError, setLastError] = useState<string | null>(null)
 
-  const warnings = useMemo<PositionedWarning[]>(() => {
-    if (!analysis) return []
-    return enrichWarnings(rawCss, analysis.warnings)
-  }, [rawCss, analysis])
+  const warnings = useMemo<CssWarning[]>(() => analysis?.warnings ?? [], [analysis])
 
   const rules = useMemo<CssRule[]>(() => analysis?.rules ?? [], [analysis])
 
