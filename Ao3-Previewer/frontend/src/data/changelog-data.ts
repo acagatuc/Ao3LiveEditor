@@ -15,6 +15,33 @@ export interface ChangelogRelease {
 // Newest first. Derived from the real commit history on main.
 export const CHANGELOG: ChangelogRelease[] = [
   {
+    version: "0.13.2",
+    date: "2026-10-08",
+    title: "Bug fixes - Comments and Layout",
+    changes: [
+      {
+        type: "fixed",
+        description:
+          "HTML-style comments in your CSS, like <!-- note --> or <!— note —>, are now removed the same way AO3 removes them, instead of quietly breaking the rule right after them in the preview",
+      },
+      {
+        type: "fixed",
+        description:
+          "The preview's text size and side margins now match the column your fic sits in on AO3, so text, chat boxes, and other skin elements line up and wrap the way they will there",
+      },
+      {
+        type: "fixed",
+        description:
+          "CSS that targets #chapters now applies in the preview, just like it does on AO3",
+      },
+      {
+        type: "improved",
+        description:
+          "Validate CSS now shows which line each comment is on, so a comment that's missing its closing */ and swallowing the rules after it is easy to spot",
+      },
+    ],
+  },
+  {
     version: "0.13.1",
     date: "2026-10-04",
     title: "Bug fixes - Selectors and Images",
