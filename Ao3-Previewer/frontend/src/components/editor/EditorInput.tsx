@@ -15,7 +15,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import FormatIndentIncreaseIcon from '@mui/icons-material/FormatIndentIncrease'
 import SaveIcon from '@mui/icons-material/Save'
 import { useCssAnalyzer } from '../../hooks/useCssAnalyzer'
-import type { PositionedWarning } from '../../hooks/useCssAnalyzer'
+import type { CssWarning } from '../../utilities/analyzeCss'
 import { formatCss } from '../../utilities/formatCss'
 import { formatForAo3 } from '../../utilities/formatForAo3'
 import CssWarningBanner from '../CssWarningBanner'
@@ -49,6 +49,7 @@ export default function EditorInput({
   const { t } = useTranslation(['editor', 'common'])
   const [tab, setTab] = useState<TabValue>('html')
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+  const cssScrollRef = useRef<HTMLDivElement | null>(null)
   const [snack, setSnack] = useState<Snack | null>(null)
 
   const { warnings: lintWarnings, status: lintStatus, isAnalyzing, analyze, reset: resetLint } =
@@ -90,10 +91,13 @@ export default function EditorInput({
     analyze(css)
   }
 
-  function onJumpToWarning(w: PositionedWarning) {
-    if (!textareaRef.current || !w.line) return
-    const lineHeight = 20
-    textareaRef.current.scrollTop = (w.line - 1) * lineHeight
+  // Scrolls the warning's line to the top, found by its dot in the overlay so wrapped lines
+  // above it are counted.
+  function onJumpToWarning(w: CssWarning) {
+    const box = cssScrollRef.current
+    const marker = box?.querySelector(`[data-line="${w.line}"]`)
+    if (!box || !marker) return
+    box.scrollTop += marker.getBoundingClientRect().top - box.getBoundingClientRect().top
   }
 
   async function copyToClipboard() {
@@ -145,22 +149,20 @@ export default function EditorInput({
         )}
 
         {tab === 'css' && (
-          <div className="textarea-lint-wrap">
-            <textarea
-              ref={textareaRef}
-              className="editor-textarea"
-              placeholder={t('input.cssPlaceholder')}
-              value={css}
-              onChange={handleCssChange}
-              spellCheck={false}
-            />
-            {lintStatus !== 'idle' && (
-              <CssLintOverlay
-                warnings={lintWarnings}
-                rawCss={css}
-                textareaRef={textareaRef}
+          // The textarea grows to fit its text, so this box does the scrolling for both it and
+          // the lint overlay, and they can't scroll apart.
+          <div className="textarea-lint-wrap" ref={cssScrollRef}>
+            <div className="textarea-lint-stack">
+              <textarea
+                ref={textareaRef}
+                className="editor-textarea editor-textarea--grows"
+                placeholder={t('input.cssPlaceholder')}
+                value={css}
+                onChange={handleCssChange}
+                spellCheck={false}
               />
-            )}
+              <CssLintOverlay css={css} warnings={lintStatus === 'idle' ? [] : lintWarnings} />
+            </div>
           </div>
         )}
 

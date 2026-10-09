@@ -1,25 +1,16 @@
-import { useRef, useState, useMemo, useEffect, type CSSProperties } from 'react'
+import { Fragment, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { PositionedWarning } from '../hooks/useCssAnalyzer'
 import type { CssWarning } from '../utilities/analyzeCss'
 import './CssLintOverlay.css'
 
-interface Measure {
-  offsetTop: number
-  offsetLeft: number
-  width: number
-  height: number
-  paddingTop: number
-  paddingLeft: number
-  fontSize: number
-  lineHeight: number
-  scrollTop: number
-}
+// A copy of the CSS laid over the textarea, in the same grid cell, with the same font, padding
+// and wrapping, and its text invisible. Flagged text gets a wavy underline, so the browser
+// sizes and wraps the squiggles exactly like the real text. The copy also sets the textarea's
+// height (see .textarea-lint-stack), so the two scroll together in one box and can't drift.
 
 interface CssLintOverlayProps {
-  warnings: PositionedWarning[]
-  rawCss: string
-  textareaRef: React.RefObject<HTMLTextAreaElement | null>
+  css: string
+  warnings: CssWarning[]
 }
 
 const TYPE_PRIORITY: Record<CssWarning['type'], number> = {
@@ -31,148 +22,87 @@ const TYPE_PRIORITY: Record<CssWarning['type'], number> = {
   'comment-stripped': 0,
 }
 
-function worstType(ws: PositionedWarning[]): CssWarning['type'] {
+function worstType(ws: CssWarning[]): CssWarning['type'] {
   return ws.reduce((a, b) => (TYPE_PRIORITY[a.type] >= TYPE_PRIORITY[b.type] ? a : b)).type
 }
 
-export default function CssLintOverlay({ warnings, rawCss, textareaRef }: CssLintOverlayProps) {
+interface Segment {
+  start: number
+  end: number
+  underlined: boolean
+  // Warnings for the line starting here, shown as one dot at the right edge.
+  lineWarnings?: CssWarning[]
+}
+
+// Cuts the text wherever an underline starts or ends, or a warned line begins.
+function segment(css: string, warnings: CssWarning[]): Segment[] {
+  const ranges = mergeRanges(warnings.map((w) => [w.start, w.end] as const))
+
+  const byLineStart = new Map<number, CssWarning[]>()
+  for (const w of warnings) {
+    const lineStart = css.lastIndexOf('\n', w.start - 1) + 1
+    byLineStart.set(lineStart, [...(byLineStart.get(lineStart) ?? []), w])
+  }
+
+  const cuts = new Set([0, css.length, ...byLineStart.keys(), ...ranges.flat()])
+  const sorted = [...cuts].sort((a, b) => a - b)
+
+  const segments: Segment[] = []
+  for (let i = 0; i < sorted.length - 1; i++) {
+    const start = sorted[i]!
+    const end = sorted[i + 1]!
+    segments.push({
+      start,
+      end,
+      underlined: ranges.some(([from, to]) => from <= start && end <= to),
+      lineWarnings: byLineStart.get(start),
+    })
+  }
+  return segments
+}
+
+function mergeRanges(ranges: (readonly [number, number])[]): [number, number][] {
+  const merged: [number, number][] = []
+  for (const [start, end] of [...ranges].sort((a, b) => a[0] - b[0])) {
+    const last = merged[merged.length - 1]
+    if (last && start <= last[1]) last[1] = Math.max(last[1], end)
+    else merged.push([start, end])
+  }
+  return merged
+}
+
+export default function CssLintOverlay({ css, warnings }: CssLintOverlayProps) {
   const { t } = useTranslation('cssWarnings')
-  const overlayRef = useRef<HTMLDivElement | null>(null)
-  const [measure, setMeasure] = useState<Measure>({
-    offsetTop: 0, offsetLeft: 0, width: 0, height: 0,
-    paddingTop: 8, paddingLeft: 16, fontSize: 13, lineHeight: 20, scrollTop: 0,
-  })
-
-  function readMeasure() {
-    const ta = textareaRef.current
-    if (!ta || !overlayRef.current) return
-    const cs = window.getComputedStyle(ta)
-    const parsePx = (v: string) => parseFloat(v) || 0
-    const fontSize = parsePx(cs.fontSize)
-    const rawLh = cs.lineHeight
-    const lineHeight = rawLh === 'normal' ? Math.round(fontSize * 1.5) : parsePx(rawLh)
-    const wrap = overlayRef.current.closest('.editor-body') as HTMLElement | null
-    const taRect = ta.getBoundingClientRect()
-    const wrapRect = wrap?.getBoundingClientRect() ?? { top: 0, left: 0 }
-    setMeasure({
-      offsetTop: taRect.top - wrapRect.top,
-      offsetLeft: taRect.left - wrapRect.left,
-      width: ta.clientWidth,
-      height: ta.clientHeight,
-      paddingTop: parsePx(cs.paddingTop),
-      paddingLeft: parsePx(cs.paddingLeft),
-      fontSize,
-      lineHeight,
-      scrollTop: ta.scrollTop,
-    })
-  }
-
-  useEffect(() => {
-    const ta = textareaRef.current
-    if (!ta) return
-
-    readMeasure()
-
-    const onScroll = () => {
-      if (textareaRef.current) {
-        setMeasure((m) => ({ ...m, scrollTop: textareaRef.current!.scrollTop }))
-      }
-    }
-
-    ta.addEventListener('scroll', onScroll, { passive: true })
-
-    const ro = new ResizeObserver(readMeasure)
-    ro.observe(ta)
-    const wrap = overlayRef.current?.closest('.editor-body') as HTMLElement | null
-    if (wrap) ro.observe(wrap)
-
-    return () => {
-      ro.disconnect()
-      ta.removeEventListener('scroll', onScroll)
-    }
-  }, [])
-
-  const allAnnotatedLines = useMemo(() => {
-    const byLine = new Map<number, PositionedWarning[]>()
-    for (const w of warnings) {
-      if (w.line == null) continue
-      const bucket = byLine.get(w.line) ?? []
-      bucket.push(w)
-      byLine.set(w.line, bucket)
-    }
-    return rawCss.split('\n').map((text, i) => {
-      const ws = byLine.get(i + 1) ?? []
-      const hasWarning = ws.length > 0
-      const selectorText = (text.split('{')[0] ?? text).trimEnd()
-      return {
-        index: i,
-        hasWarning,
-        warnings: ws,
-        worstType: hasWarning ? worstType(ws) : ('comment-stripped' as CssWarning['type']),
-        selectorWidth: selectorText.length - 1,
-      }
-    })
-  }, [warnings, rawCss])
-
-  const visibleWarnedLines = useMemo(
-    () => allAnnotatedLines.filter((l) => l.hasWarning),
-    [allAnnotatedLines],
-  )
-
-  const overlayStyle: CSSProperties = {
-    position: 'absolute',
-    top: measure.offsetTop,
-    left: measure.offsetLeft,
-    width: measure.width,
-    height: measure.height,
-    pointerEvents: 'none',
-    overflow: 'hidden',
-    boxSizing: 'border-box',
-    zIndex: 2,
-  }
-
-  const clipStyle: CSSProperties = {
-    position: 'relative',
-    paddingLeft: measure.paddingLeft,
-    paddingRight: 20,
-    boxSizing: 'border-box',
-    height: '100%',
-  }
-
-  function linePositionStyle(lineIndex: number): CSSProperties {
-    const { paddingTop, lineHeight, scrollTop } = measure
-    const top = paddingTop + lineIndex * lineHeight - scrollTop
-    return {
-      position: 'absolute',
-      top,
-      left: 10,
-      right: 20,
-      height: lineHeight,
-      lineHeight: `${lineHeight}px`,
-      fontSize: measure.fontSize,
-    }
-  }
+  const segments = useMemo(() => segment(css, warnings), [css, warnings])
 
   return (
-    <div ref={overlayRef} className="lint-overlay" aria-hidden="true" style={overlayStyle}>
-      <div style={clipStyle}>
-        {visibleWarnedLines.map((line) => (
-          <div key={line.index} className="lint-line" style={linePositionStyle(line.index)}>
-            <span className="lint-line__squiggle" style={{ width: `${line.selectorWidth}ch` }} />
-            <span className={`lint-line__gutter lint-line__gutter--${line.worstType}`}>
-              <span className="lint-line__dot" />
-              <span className="lint-line__tooltip">
-                {line.warnings.map((w, i) => (
-                  <span key={i} className={`tooltip__row tooltip__row--${w.type}`}>
-                    <span className="tooltip__badge">{t(`short.${w.type}`)}</span>
-                    {t(`messages.${w.message.key}`, w.message.params)}
-                  </span>
-                ))}
+    <div className="lint-mirror" aria-hidden="true">
+      {segments.map((s) => {
+        const text = css.slice(s.start, s.end)
+        return (
+          <Fragment key={s.start}>
+            {s.lineWarnings && (
+              <span
+                className={`lint-line__gutter lint-line__gutter--${worstType(s.lineWarnings)}`}
+                data-line={s.lineWarnings[0]!.line}
+              >
+                <span className="lint-line__dot" />
+                <span className="lint-line__tooltip">
+                  {s.lineWarnings.map((w, i) => (
+                    <span key={i} className={`tooltip__row tooltip__row--${w.type}`}>
+                      <span className="tooltip__badge">{t(`short.${w.type}`)}</span>
+                      {t(`messages.${w.message.key}`, w.message.params)}
+                    </span>
+                  ))}
+                </span>
               </span>
-            </span>
-          </div>
-        ))}
-      </div>
+            )}
+            {s.underlined ? <span className="lint-mirror__squiggle">{text}</span> : text}
+          </Fragment>
+        )
+      })}
+      {/* A textarea shows an empty last line after a trailing newline. This keeps the copy as tall. */}
+      {' '}
     </div>
   )
 }
