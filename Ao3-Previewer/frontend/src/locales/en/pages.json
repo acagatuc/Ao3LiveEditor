@@ -62,7 +62,8 @@
       "added": "Added",
       "fixed": "Fixed",
       "improved": "Improved",
-      "removed": "Removed"
+      "removed": "Removed",
+      "note": "Note"
     },
     "upcoming": "Upcoming",
     "upcomingSubtitle": "What we're working on and thinking about next.",

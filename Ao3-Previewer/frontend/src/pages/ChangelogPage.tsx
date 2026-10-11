@@ -7,11 +7,12 @@ import { UPCOMING, type UpcomingStatus } from '../data/upcoming-data'
 import { markChangelogSeen } from '../hooks/useChangelogUnseen'
 import './ChangelogPage.css'
 
-const TYPE_COLOR: Record<ChangeType, 'success' | 'error' | 'info' | 'warning'> = {
+const TYPE_COLOR: Record<ChangeType, 'success' | 'error' | 'info' | 'warning' | 'primary'> = {
   added: 'success',
   fixed: 'error',
   improved: 'info',
   removed: 'warning',
+  note: 'primary',
 }
 
 const UPCOMING_STATUSES: UpcomingStatus[] = ['in-progress', 'planned']
@@ -55,7 +56,11 @@ export default function ChangelogPage() {
                         size="small"
                         className="changelog-release__chip"
                       />
-                      <span>{change.description}</span>
+                      {change.important ? (
+                        <strong>{change.description}</strong>
+                      ) : (
+                        <span>{change.description}</span>
+                      )}
                     </li>
                   ))}
                 </ul>

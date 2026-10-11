@@ -1,8 +1,10 @@
-export type ChangeType = "added" | "fixed" | "improved" | "removed";
+export type ChangeType = "added" | "fixed" | "improved" | "removed" | "note";
 
 export interface ChangelogChange {
   type: ChangeType;
   description: string;
+  // Shown in bold, for changes people need to know about.
+  important?: boolean;
 }
 
 export interface ChangelogRelease {
@@ -14,6 +16,25 @@ export interface ChangelogRelease {
 
 // Newest first. Derived from the real commit history on main.
 export const CHANGELOG: ChangelogRelease[] = [
+  {
+    version: "0.14.1",
+    date: "2026-10-11",
+    title: "Moving to ficformatter.com",
+    changes: [
+      {
+        type: "fixed",
+        important: true,
+        description:
+          "Your saved work now moves with you: opening an old FicFormatter link (the cloudfront.net address from the first Twitter and Reddit posts, or www.ficformatter.com) brings your editor contents and drafts list over to ficformatter.com. This happens once per browser, and anything you already have on ficformatter.com is kept",
+      },
+      {
+        type: "note",
+        important: true,
+        description:
+          "Missing drafts or editor contents after the move? Your saved work is still in your browser under the old address. Open d2gmcdwlhahrqc.cloudfront.net/robots.txt, then your browser's developer tools → Application → Local Storage to find it, and copy it over to ficformatter.com's Local Storage the same way. Or reach out through the contact form and I'll help",
+      },
+    ],
+  },
   {
     version: "0.14.0",
     date: "2026-10-11",
