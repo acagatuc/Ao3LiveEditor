@@ -18,6 +18,11 @@ import {
 // served with a real 404 status.
 
 const PREVIEW_SHELL_FILE = "preview-shell.html";
+
+// Link preview card image (Discord, X, Bluesky, iMessage, ...). The app icon
+// for now; it fits the small square "summary" card. Swap in a 1200x630 image
+// and "summary_large_image" for a big banner card.
+const SOCIAL_IMAGE = { path: "/apple-touch-icon.png", width: 180, height: 180, alt: `${SITE_NAME} logo` };
 const NOT_FOUND_FILE = "404.html";
 
 function escapeHtml(text: string): string {
@@ -42,6 +47,11 @@ function headTags(route: RouteMeta): string {
     `<meta property="og:type" content="website" />`,
     `<meta property="og:title" content="${escapeHtml(route.title)}" />`,
     `<meta property="og:description" content="${escapeHtml(route.description)}" />`,
+    `<meta property="og:image" content="${SITE_ORIGIN}${SOCIAL_IMAGE.path}" />`,
+    `<meta property="og:image:type" content="image/png" />`,
+    `<meta property="og:image:width" content="${SOCIAL_IMAGE.width}" />`,
+    `<meta property="og:image:height" content="${SOCIAL_IMAGE.height}" />`,
+    `<meta property="og:image:alt" content="${escapeHtml(SOCIAL_IMAGE.alt)}" />`,
     `<meta name="twitter:card" content="summary" />`,
   ];
 
