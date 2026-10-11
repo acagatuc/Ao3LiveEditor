@@ -19,10 +19,14 @@ import {
 
 const PREVIEW_SHELL_FILE = "preview-shell.html";
 
-// Link preview card image (Discord, X, Bluesky, iMessage, ...). The app icon
-// for now; it fits the small square "summary" card. Swap in a 1200x630 image
-// and "summary_large_image" for a big banner card.
-const SOCIAL_IMAGE = { path: "/apple-touch-icon.png", width: 180, height: 180, alt: `${SITE_NAME} logo` };
+// Link preview card image (Discord, X, Bluesky, iMessage, ...), shown as a
+// large banner card. X shows only the image, so it carries the message itself.
+const SOCIAL_IMAGE = {
+  path: "/og-image.png",
+  width: 1200,
+  height: 630,
+  alt: `${SITE_NAME}: live preview for AO3 HTML and workskins, showing chat-bubble workskin CSS beside its AO3 preview`,
+};
 const NOT_FOUND_FILE = "404.html";
 
 function escapeHtml(text: string): string {
@@ -52,7 +56,7 @@ function headTags(route: RouteMeta): string {
     `<meta property="og:image:width" content="${SOCIAL_IMAGE.width}" />`,
     `<meta property="og:image:height" content="${SOCIAL_IMAGE.height}" />`,
     `<meta property="og:image:alt" content="${escapeHtml(SOCIAL_IMAGE.alt)}" />`,
-    `<meta name="twitter:card" content="summary" />`,
+    `<meta name="twitter:card" content="summary_large_image" />`,
   ];
 
   if (route.noindex) {
