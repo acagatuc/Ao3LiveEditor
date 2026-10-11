@@ -9,6 +9,7 @@ import DOMPurify from "dompurify";
 import Button from "@mui/material/Button";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CheckIcon from "@mui/icons-material/Check";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import SaveIcon from "@mui/icons-material/Save";
 import EditorToolbar from "../components/rich-text/EditorToolbar";
@@ -17,6 +18,7 @@ import HtmlOutput from "../components/rich-text/HtmlOutput";
 import SaveDraftDialog from "../components/editor/SaveDraftDialog";
 import type { SavedDraftResult } from "../components/editor/SaveDraftDialog";
 import { useDraftsIndexContext } from "../contexts/draftsIndexContext";
+import { useCopyToClipboard } from "../hooks/useCopyToClipboard";
 import type { GetDraftResponse } from "../api/drafts";
 import { AO3_ALLOWED_TAGS, AO3_ALLOWED_ATTR } from "../allowlist/ao3HtmlAllowlist";
 import "./RichTextEditorPage.css";
@@ -36,13 +38,15 @@ function loadContent(): string {
 function saveContent(html: string): void {
   try {
     localStorage.setItem(STORAGE_KEY, html);
-  } catch {}
+  } catch {
+    // storage unavailable; nothing to do
+  }
 }
 
 export default function RichTextEditorPage() {
   const { t } = useTranslation(["richText", "common"]);
   const [html, setHtml] = useState(() => loadContent().replace(STRIP_LTR, ""));
-  const [copied, setCopied] = useState(false);
+  const { copyState, copy } = useCopyToClipboard();
   const [leftWidth, setLeftWidth] = useState(50);
   const dragging = useRef(false);
   const location = useLocation();
@@ -95,12 +99,8 @@ export default function RichTextEditorPage() {
     });
   }, [html]);
 
-  async function copyHtml() {
-    try {
-      await navigator.clipboard.writeText(sanitizedHtml);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {}
+  function copyHtml() {
+    copy(sanitizedHtml);
   }
 
   function clearEditor() {
@@ -180,11 +180,17 @@ export default function RichTextEditorPage() {
         <Button
           size="small"
           variant="text"
-          startIcon={copied ? <CheckIcon /> : <ContentCopyIcon />}
+          startIcon={
+            copyState === "copied" ? <CheckIcon /> : copyState === "failed" ? <ErrorOutlineIcon /> : <ContentCopyIcon />
+          }
           onClick={copyHtml}
-          color={copied ? "success" : "inherit"}
+          color={copyState === "copied" ? "success" : copyState === "failed" ? "error" : "inherit"}
         >
-          {copied ? t("common:actions.copied") : t("copyHtml")}
+          {copyState === "copied"
+            ? t("common:actions.copied")
+            : copyState === "failed"
+              ? t("common:actions.copyFailed")
+              : t("copyHtml")}
         </Button>
       </div>
 

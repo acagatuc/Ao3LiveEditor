@@ -15,6 +15,7 @@ import * as path from "path";
 import { Construct } from "constructs";
 import { addDraftsResources } from "./drafts-resources";
 import { addBugReportsResources } from "./bug-reports-resources";
+import { routingFunctionCode } from "./routing-function";
 
 export class Ao3PreviewerStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -49,6 +50,11 @@ export class Ao3PreviewerStack extends cdk.Stack {
       },
     );
 
+    const routingFunction = new cloudfront.Function(this, "RoutingFunction", {
+      runtime: cloudfront.FunctionRuntime.JS_2_0,
+      code: cloudfront.FunctionCode.fromInline(routingFunctionCode(domainName)),
+    });
+
     const cloudFrontDistribution = new cloudfront.Distribution(
       this,
       "CloudFrontDistribution",
@@ -59,22 +65,25 @@ export class Ao3PreviewerStack extends cdk.Stack {
           viewerProtocolPolicy:
             cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
           cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+          functionAssociations: [
+            {
+              function: routingFunction,
+              eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
+            },
+          ],
         },
         defaultRootObject: "index.html",
         domainNames: [domainName, `www.${domainName}`],
         certificate,
-        errorResponses: [
-          {
-            httpStatus: 403,
-            responseHttpStatus: 200,
-            responsePagePath: "/index.html",
-          },
-          {
-            httpStatus: 404,
-            responseHttpStatus: 200,
-            responsePagePath: "/index.html",
-          },
-        ],
+        // Known routes are rewritten to real files by routingFunction, so a
+        // miss here is a genuinely unknown path (mostly bots probing for
+        // WordPress). S3 reports missing objects as 403 under OAC.
+        errorResponses: [403, 404].map((httpStatus) => ({
+          httpStatus,
+          responseHttpStatus: 404,
+          responsePagePath: "/404.html",
+          ttl: cdk.Duration.minutes(5),
+        })),
       },
     );
 
@@ -153,7 +162,7 @@ export class Ao3PreviewerStack extends cdk.Stack {
     const api = new apigateway.RestApi(this, "PreviewsApi", {
       restApiName: "ao3-previewer-api",
       defaultCorsPreflightOptions: {
-        allowOrigins: [`https://${domainName}`, `https://www.${domainName}`],
+        allowOrigins: [`https://${domainName}`],
         allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowHeaders: ["Content-Type"],
       },

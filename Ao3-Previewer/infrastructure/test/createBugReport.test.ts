@@ -236,14 +236,14 @@ describe("createBugReport handler", () => {
     errorSpy.mockRestore();
   });
 
-  it("allows the www origin on its response", async () => {
+  it("allows the site origin on its response", async () => {
     const event = {
       body: JSON.stringify(VALID),
-      headers: { origin: "https://www.ficformatter.com" },
+      headers: { origin: "https://ficformatter.com" },
     } as unknown as APIGatewayProxyEvent;
     const res = await handler(event);
     expect(res.statusCode).toBe(201);
-    expect(res.headers?.["Access-Control-Allow-Origin"]).toBe("https://www.ficformatter.com");
+    expect(res.headers?.["Access-Control-Allow-Origin"]).toBe("https://ficformatter.com");
   });
 
   it("returns 500 when storage fails", async () => {

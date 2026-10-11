@@ -48,8 +48,8 @@
       "summary": "A work can look different on AO3 and in the preview (in either direction) without anything being broken. These are the usual reasons.",
       "disallowedCss": "<strong>CSS AO3 doesn't allow.</strong> The preview shows all of your CSS, but AO3 removes anything outside its rules. <validate>Validate CSS</validate> to see what AO3 will strip. A strict mode that previews only what AO3 keeps is coming soon.",
       "siteSkin": "<strong>Your site skin.</strong> Custom and dark-mode skins can override colors and backgrounds. Try switching to Default under Preferences → Skins.",
-      "creatorStyle": "<strong>Creator's style.</strong> If \"Hide Creator's Style\" is on for the work, or \"Hide work skins\" is on in your preferences, work skins won't show.",
-      "workSkin": "<strong>The work skin itself.</strong> Make sure it's selected on the work (Edit Work → Select Work Skin).",
+      "creatorStyle": "<strong>Creator's style.</strong> If \"Hide Creator's Style\" is on for the work, or \"Hide work skins\" is on in your preferences, workskins won't show.",
+      "workSkin": "<strong>The workskin itself.</strong> Make sure it's selected on the work (Edit Work → Select Work Skin).",
       "extensions": "<strong>Browser extensions,</strong> like dark mode or reader-view tools.",
       "footer": "Still looks different? Send it anyway. I'd much rather get a report that turns out to be nothing than miss a real bug."
     },

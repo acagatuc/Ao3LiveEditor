@@ -1,12 +1,33 @@
-# Search engine crawlers: allowed to index the site
+# Search engines and AI search/answer crawlers: allowed.
 User-agent: Googlebot
 User-agent: Bingbot
 User-agent: DuckDuckBot
 User-agent: Applebot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Claude-SearchBot
+User-agent: Claude-User
 Allow: /
 Disallow: /preview/
 
-# Everyone else (AI scrapers, SEO bots, etc.): blocked
+# Link preview bots: allowed, including shared previews, so pasted links get a
+# card on X, Discord, Bluesky, Slack, etc. (They fetch pages people share;
+# they don't index anything.)
+User-agent: Twitterbot
+User-agent: facebookexternalhit
+User-agent: Discordbot
+User-agent: Slackbot
+User-agent: Slackbot-LinkExpanding
+User-agent: Cardyb
+User-agent: TelegramBot
+User-agent: WhatsApp
+User-agent: LinkedInBot
+Allow: /
+
+# Everyone else, including AI training crawlers (GPTBot, ClaudeBot, CCBot,
+# Google-Extended, Applebot-Extended, ...) and SEO bots: blocked
 User-agent: *
 Disallow: /
 

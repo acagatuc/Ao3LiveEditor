@@ -15,7 +15,7 @@ const FLOAT_REGEX = /\d+\.(\d+)/g
 const DIMENSION_REGEX = /(?<![\w.])(-?\d*\.?\d+)([a-z%]+)/gi
 const URL_REGEX = /url\(\s*['"]?([^'")\s]+)['"]?\s*\)/gi
 
-export function validateValue(value: string, _property: string): ValueValidationResult {
+export function validateValue(value: string): ValueValidationResult {
   if (!value?.trim()) return { valid: false, reason: { key: 'emptyValue' } }
 
   const v = value.trim()

@@ -8,7 +8,8 @@
     "save": "Save",
     "delete": "Delete",
     "open": "Open",
-    "copied": "Copied!"
+    "copied": "Copied!",
+    "copyFailed": "Couldn't copy"
   },
   "nav": {
     "htmlCss": "HTML/CSS",

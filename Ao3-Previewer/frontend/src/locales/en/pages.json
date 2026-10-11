@@ -6,7 +6,7 @@
     "tryIt": "Try it",
     "featuredBadge": "From a fellow dev",
     "featuredTitle": "Need CSS effects for your fic?",
-    "featuredBody": "Effects for AO3 is a free collection of CSS effects and templates for AO3 works - browse the examples, grab the code, and paste it straight into your work skin. Built by a fellow dev who's been generous enough to send readers our way, too.",
+    "featuredBody": "Effects for AO3 is a free collection of CSS effects and templates for AO3 works - browse the examples, grab the code, and paste it straight into your workskin. Built by a fellow dev who's been generous enough to send readers our way, too.",
     "featuredLink": "Visit fanfictemplates.com",
     "comingSoonBadge": "Coming Soon",
     "comingSoonTitle": "Community-submitted workskins are on the way",
@@ -70,5 +70,32 @@
       "in-progress": "In progress",
       "planned": "Planned"
     }
+  },
+  "notFound": {
+    "code": "404",
+    "title": "This page wandered off",
+    "subtitle": "There's nothing at {{path}}. It may have been moved, or the link might have a typo.",
+    "toolsHeading": "Here's what FicFormatter can do",
+    "tools": {
+      "htmlCss": {
+        "name": "HTML/CSS Previewer",
+        "description": "Preview your chapter and workskin the way AO3 will show them."
+      },
+      "richText": {
+        "name": "Rich Text Editor",
+        "description": "Format visually and copy out AO3-ready HTML."
+      },
+      "workskins": {
+        "name": "Workskins",
+        "description": "CSS effects to copy and try before you post."
+      },
+      "bookmarks": {
+        "name": "Bookmark Search",
+        "description": "Find public AO3 bookmarks of an author's works."
+      }
+    },
+    "goHome": "Back to the previewer",
+    "reportPrefix": "Followed a link here from somewhere on FicFormatter?",
+    "reportLink": "Let us know"
   }
 }

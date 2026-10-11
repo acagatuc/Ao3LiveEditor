@@ -16,16 +16,19 @@ describe("corsHeaders", () => {
     );
   });
 
-  it("echoes the www origin", () => {
+  it("doesn't allow the www or cloudfront.net origins, which only redirect", () => {
     expect(corsHeaders(eventFrom("https://www.ficformatter.com"))["Access-Control-Allow-Origin"]).toBe(
-      "https://www.ficformatter.com",
+      "https://ficformatter.com",
     );
+    expect(
+      corsHeaders(eventFrom("https://d2gmcdwlhahrqc.cloudfront.net"))["Access-Control-Allow-Origin"],
+    ).toBe("https://ficformatter.com");
   });
 
   it("reads the Origin header case-insensitively", () => {
-    expect(
-      corsHeaders(eventFrom("https://www.ficformatter.com", "Origin"))["Access-Control-Allow-Origin"],
-    ).toBe("https://www.ficformatter.com");
+    expect(corsHeaders(eventFrom("https://ficformatter.com", "Origin"))["Access-Control-Allow-Origin"]).toBe(
+      "https://ficformatter.com",
+    );
   });
 
   it("falls back to the apex origin for unknown or missing origins", () => {
