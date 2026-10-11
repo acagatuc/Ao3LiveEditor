@@ -1,8 +1,8 @@
 import type { APIGatewayProxyEvent } from "aws-lambda";
 
-// The site is served on both the apex and www domains (see CloudFront domainNames in
-// lib/infrastructure-stack.ts), so responses must allow whichever one made the request.
-const DEFAULT_ALLOWED_ORIGINS = ["https://ficformatter.com", "https://www.ficformatter.com", "https://d2gmcdwlhahrqc.cloudfront.net"];
+// The site is only served from the apex domain: www and the distribution's cloudfront.net
+// host redirect to it (see lib/routing-function.ts), so no page ever calls from them.
+const DEFAULT_ALLOWED_ORIGINS = ["https://ficformatter.com"];
 
 function allowedOrigins(): string[] {
   const configured = process.env.ALLOWED_ORIGIN;

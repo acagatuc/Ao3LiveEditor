@@ -15,6 +15,21 @@ export interface ChangelogRelease {
 // Newest first. Derived from the real commit history on main.
 export const CHANGELOG: ChangelogRelease[] = [
   {
+    version: "0.13.3",
+    date: "2026-10-11",
+    title: "Bug fixes - Routes and 404 Page",
+    changes: [
+      {
+        type: "added",
+        description: "An actual 404 page",
+      },
+      {
+        type: "fixed",
+        description: "Public route HTML and redirection",
+      },
+    ],
+  },
+  {
     version: "0.13.2",
     date: "2026-10-08",
     title: "Bug fixes - Comments and Layout",
