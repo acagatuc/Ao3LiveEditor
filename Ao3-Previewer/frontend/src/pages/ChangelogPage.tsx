@@ -56,11 +56,7 @@ export default function ChangelogPage() {
                         size="small"
                         className="changelog-release__chip"
                       />
-                      {change.important ? (
-                        <strong>{change.description}</strong>
-                      ) : (
-                        <span>{change.description}</span>
-                      )}
+                      <span>{change.description}</span>
                     </li>
                   ))}
                 </ul>
