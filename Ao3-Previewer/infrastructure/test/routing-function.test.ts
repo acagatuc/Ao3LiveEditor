@@ -65,21 +65,27 @@ describe("routing function", () => {
     });
   });
 
+  describe("old addresses (www, cloudfront.net)", () => {
+    const hosts = ["www.ficformatter.com", "d111111abcdef8.cloudfront.net"];
+
+    it("answers every page with the handoff page instead of redirecting", () => {
+      for (const host of hosts) {
+        for (const uri of ["/", "/workskins", "/workskins/", "/preview/abc123", "/index.html", "/wp-admin"]) {
+          expect((run(uri, host) as Request).uri).toBe("/legacy-handoff.html");
+        }
+      }
+    });
+
+    it("serves files as-is", () => {
+      for (const host of hosts) {
+        expect((run("/og-image.png", host) as Request).uri).toBe("/og-image.png");
+        expect((run("/assets/index-abc.js", host) as Request).uri).toBe("/assets/index-abc.js");
+        expect((run("/robots.txt", host) as Request).uri).toBe("/robots.txt");
+      }
+    });
+  });
+
   describe("redirects", () => {
-    it("sends www to the bare domain, keeping path and query", () => {
-      expect(location("/workskins", "www.ficformatter.com", "utm_source=chatgpt.com")).toBe(
-        "https://ficformatter.com/workskins?utm_source=chatgpt.com",
-      );
-    });
-
-    it("strips trailing slashes in the same hop as the host redirect", () => {
-      expect(location("/workskins/", "www.ficformatter.com")).toBe("https://ficformatter.com/workskins");
-      expect(location("/", "www.ficformatter.com")).toBe("https://ficformatter.com/");
-    });
-
-    it("sends the cloudfront.net hostname to the bare domain", () => {
-      expect(location("/", "d111111abcdef8.cloudfront.net")).toBe("https://ficformatter.com/");
-    });
 
     it("matches the host case-insensitively", () => {
       expect((run("/", "FicFormatter.com") as Request).uri).toBe("/index.html");

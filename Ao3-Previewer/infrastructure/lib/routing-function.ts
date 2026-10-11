@@ -1,10 +1,14 @@
 // Source for the CloudFront viewer-request function in front of the frontend
 // bucket (cloudfront-js-2.0 runtime, so plain ES5-style JS in a string).
 //
-// - Any host other than the bare domain (www, the distribution's own
-//   *.cloudfront.net name that old links point at) is 301'd to it.
-// - Trailing slashes are 301'd away so each page has one URL (in the same
-//   hop as the host redirect, when both apply).
+// - On any host other than the bare domain (www, and the distribution's own
+//   *.cloudfront.net name that the early Twitter and Reddit posts link to),
+//   every page is answered with "/legacy-handoff.html". Browsers keep
+//   localStorage per host, so that page carries the editor contents and
+//   drafts list saved there over to the bare domain before sending the
+//   visitor on (see frontend/public/legacy-handoff.html). It's a rewrite, not
+//   a 301, so browsers never cache a redirect that would skip it.
+// - Trailing slashes are 301'd away so each page has one URL.
 // - Clean URLs are mapped onto the files the frontend's prerender-routes
 //   plugin writes: "/foo" -> "/foo/index.html", "/preview/<id>" ->
 //   "/preview-shell.html".
@@ -34,13 +38,23 @@ function redirect(request, path) {
   };
 }
 
+// Pages are extensionless paths (and .html files); anything else is a file
+// like an image or robots.txt and is served as-is on every host.
+function isPage(uri) {
+  var lastSegment = uri.substring(uri.lastIndexOf("/") + 1);
+  return lastSegment.indexOf(".") === -1 || /\\.html$/.test(lastSegment);
+}
+
 function handler(event) {
   var request = event.request;
   var uri = request.uri;
   var host = request.headers.host ? request.headers.host.value.toLowerCase() : "";
 
   if (host !== CANONICAL_HOST) {
-    return redirect(request, stripTrailingSlashes(uri));
+    if (isPage(uri)) {
+      request.uri = "/legacy-handoff.html";
+    }
+    return request;
   }
 
   if (uri.length > 1 && uri.charAt(uri.length - 1) === "/") {

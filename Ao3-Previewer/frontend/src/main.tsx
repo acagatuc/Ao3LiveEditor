@@ -4,6 +4,7 @@ import * as Sentry from "@sentry/react";
 import "./i18n";
 import "./index.css";
 import App from "./App.tsx";
+import { importLegacyData } from "./utilities/legacyImport";
 
 Sentry.init({
   dsn: import.meta.env.VITE_SENTRY_DSN,
@@ -12,8 +13,11 @@ Sentry.init({
   tracesSampleRate: import.meta.env.MODE === "production" ? 0.1 : 1.0,
 });
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
+// Bring over anything saved on the old addresses before the app reads storage.
+importLegacyData().finally(() => {
+  createRoot(document.getElementById("root")!).render(
+    <StrictMode>
+      <App />
+    </StrictMode>,
+  );
+});

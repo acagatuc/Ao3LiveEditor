@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <!-- ficformatter.com only accepts the handoff when it comes from here. -->
+    <meta name="referrer" content="origin" />
+    <title>Moving to ficformatter.com…</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        box-sizing: border-box;
+        font-family: "Lucida Grande", Verdana, sans-serif;
+        color: rgba(0, 0, 0, 0.87);
+        text-align: center;
+      }
+      a {
+        color: #7b1d1d;
+      }
+    </style>
+  </head>
+  <body>
+    <p>
+      FicFormatter has moved to <a id="target" href="https://ficformatter.com/">ficformatter.com</a>.
+      Bringing your saved work with you…
+    </p>
+    <script>
+      // CloudFront serves this in place of every page on the site's old
+      // addresses: the cloudfront.net host the first posts linked to, and www.
+      // Browsers keep localStorage per address, so this hands everything the
+      // app saved here (editor contents, drafts list, settings) over to
+      // ficformatter.com, where src/utilities/legacyImport.ts merges it in.
+      // The data rides in the URL fragment, which is never sent to a server.
+      (async () => {
+        const TARGET = "https://ficformatter.com";
+        // Stay well under browser URL length limits.
+        const MAX_PAYLOAD = 1500000;
+        // Too big to fit? Bring everything except the editor contents.
+        const BULKY_KEYS = ["ao3-editor-state", "ao3-rich-text-state"];
+
+        const path = location.pathname.replace(/\/+$/, "") || "/";
+        const destination = TARGET + path + location.search;
+        document.getElementById("target").href = destination;
+
+        function readStorage(skipKeys) {
+          const data = {};
+          try {
+            for (let i = 0; i < localStorage.length; i++) {
+              const key = localStorage.key(i);
+              if (!skipKeys.includes(key)) data[key] = localStorage.getItem(key);
+            }
+          } catch {
+            // Storage blocked: nothing to bring.
+          }
+          return data;
+        }
+
+        function toBase64Url(bytes) {
+          let binary = "";
+          for (let i = 0; i < bytes.length; i += 0x8000) {
+            binary += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+          }
+          return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+        }
+
+        // "z" + deflated JSON where the browser can compress, else "j" + plain JSON.
+        async function encode(data) {
+          const bytes = new TextEncoder().encode(JSON.stringify(data));
+          if (typeof CompressionStream !== "function") return "j" + toBase64Url(bytes);
+          const stream = new Blob([bytes]).stream().pipeThrough(new CompressionStream("deflate-raw"));
+          return "z" + toBase64Url(new Uint8Array(await new Response(stream).arrayBuffer()));
+        }
+
+        let payload = "";
+        try {
+          const all = readStorage([]);
+          if (Object.keys(all).length > 0) {
+            payload = await encode(all);
+            if (payload.length > MAX_PAYLOAD) payload = await encode(readStorage(BULKY_KEYS));
+            if (payload.length > MAX_PAYLOAD) payload = "";
+          }
+        } catch {
+          payload = "";
+        }
+
+        location.replace(payload ? `${destination}#ff-import=${payload}` : destination);
+      })();
+    </script>
+  </body>
+</html>
