@@ -3,6 +3,7 @@ import { routingFunctionCode } from "../lib/routing-function";
 
 interface Request {
   uri: string;
+  cookies?: Record<string, { value: string }>;
   headers: Record<string, { value: string }>;
   rawQueryString: () => string | undefined;
 }
@@ -19,8 +20,8 @@ const handler = new Function(`${routingFunctionCode("ficformatter.com")}; return
 
 // rawQueryString mirrors CloudFront's helper: the query exactly as received,
 // without the "?", or undefined when there isn't one.
-function run(uri: string, host = "ficformatter.com", rawQuery?: string) {
-  return handler({ request: { uri, headers: { host: { value: host } }, rawQueryString: () => rawQuery } });
+function run(uri: string, host = "ficformatter.com", rawQuery?: string, cookies: Record<string, { value: string }> = {}) {
+  return handler({ request: { uri, headers: { host: { value: host } }, cookies, rawQueryString: () => rawQuery } });
 }
 
 function rewrittenUri(uri: string) {
@@ -73,6 +74,16 @@ describe("routing function", () => {
         for (const uri of ["/", "/workskins", "/workskins/", "/preview/abc123", "/index.html", "/wp-admin"]) {
           expect((run(uri, host) as Request).uri).toBe("/legacy-handoff.html");
         }
+      }
+    });
+
+    it("redirects straight to the bare domain once the handoff has happened", () => {
+      const done = { ff_handoff: { value: "done" } };
+      for (const host of hosts) {
+        const result = run("/workskins/", host, "utm_source=twitter", done) as Redirect;
+        expect(result.statusCode).toBe(301);
+        expect(result.headers.location.value).toBe("https://ficformatter.com/workskins?utm_source=twitter");
+        expect(((run("/og-image.png", host, undefined, done)) as Request).uri).toBe("/og-image.png");
       }
     });
 

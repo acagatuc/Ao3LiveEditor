@@ -89,6 +89,11 @@
           payload = "";
         }
 
+        // Hand off once per browser: with this cookie set, CloudFront answers
+        // later visits to this address with a plain redirect instead of this
+        // page, so stale data here never gets sent over again.
+        document.cookie = "ff_handoff=done; Max-Age=315360000; Path=/; Secure; SameSite=Lax";
+
         location.replace(payload ? `${destination}#ff-import=${payload}` : destination);
       })();
     </script>

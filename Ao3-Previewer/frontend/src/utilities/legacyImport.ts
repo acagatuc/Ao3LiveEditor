@@ -14,6 +14,10 @@ const IMPORT_PREFIX = '#ff-import='
 // crafted link can't write into someone's storage.
 const LEGACY_ORIGINS = ['https://d2gmcdwlhahrqc.cloudfront.net', 'https://www.ficformatter.com']
 
+// Old addresses already imported from. Each is imported once, so data still
+// sitting on the old address can't bring back drafts deleted here since.
+const IMPORTED_FROM_KEY = 'ao3-legacy-imported-from'
+
 const DRAFTS_INDEX_KEY = 'ao3-drafts-index'
 // Filled in only when there's nothing here yet, so work already done on
 // ficformatter.com is never overwritten.
@@ -31,8 +35,17 @@ interface DraftIndexEntry {
   [key: string]: unknown
 }
 
-function cameFromLegacyOrigin(referrer: string): boolean {
-  return LEGACY_ORIGINS.some((origin) => referrer === origin || referrer.startsWith(`${origin}/`))
+function legacyOriginOf(referrer: string): string | undefined {
+  return LEGACY_ORIGINS.find((origin) => referrer === origin || referrer.startsWith(`${origin}/`))
+}
+
+function importedFrom(storage: Storage): string[] {
+  try {
+    const parsed: unknown = JSON.parse(storage.getItem(IMPORTED_FROM_KEY) ?? '[]')
+    return Array.isArray(parsed) ? parsed.filter((o): o is string => typeof o === 'string') : []
+  } catch {
+    return []
+  }
 }
 
 async function decode(payload: string): Promise<Record<string, unknown>> {
@@ -108,9 +121,14 @@ export async function importLegacyData(): Promise<void> {
   // Drop the payload from the address bar (and history) whatever happens next.
   window.history.replaceState(window.history.state, '', window.location.pathname + window.location.search)
 
-  if (!cameFromLegacyOrigin(document.referrer)) return
+  const origin = legacyOriginOf(document.referrer)
+  if (!origin) return
+  const storage = window.localStorage
+  const alreadyImported = importedFrom(storage)
+  if (alreadyImported.includes(origin)) return
   try {
-    mergeLegacyData(await decode(payload), window.localStorage)
+    mergeLegacyData(await decode(payload), storage)
+    storage.setItem(IMPORTED_FROM_KEY, JSON.stringify([...alreadyImported, origin]))
   } catch (err) {
     console.warn('Could not import saved data from the old address:', err)
   }

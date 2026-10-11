@@ -7,7 +7,9 @@
 //   localStorage per host, so that page carries the editor contents and
 //   drafts list saved there over to the bare domain before sending the
 //   visitor on (see frontend/public/legacy-handoff.html). It's a rewrite, not
-//   a 301, so browsers never cache a redirect that would skip it.
+//   a 301, so browsers never cache a redirect that would skip it. The page
+//   sets an "ff_handoff" cookie when it's done, and from then on that browser
+//   gets a plain 301 to the bare domain, so the data is only sent over once.
 // - Trailing slashes are 301'd away so each page has one URL.
 // - Clean URLs are mapped onto the files the frontend's prerender-routes
 //   plugin writes: "/foo" -> "/foo/index.html", "/preview/<id>" ->
@@ -51,9 +53,13 @@ function handler(event) {
   var host = request.headers.host ? request.headers.host.value.toLowerCase() : "";
 
   if (host !== CANONICAL_HOST) {
-    if (isPage(uri)) {
-      request.uri = "/legacy-handoff.html";
+    if (!isPage(uri)) {
+      return request;
     }
+    if (request.cookies && request.cookies.ff_handoff) {
+      return redirect(request, stripTrailingSlashes(uri));
+    }
+    request.uri = "/legacy-handoff.html";
     return request;
   }
 
