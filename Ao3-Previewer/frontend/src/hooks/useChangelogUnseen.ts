@@ -16,14 +16,32 @@ function getLatestVersion(): string | undefined {
   return CHANGELOG[0]?.version
 }
 
+// Compares "0.14.1"-style versions numerically: negative if a is older.
+function compareVersions(a: string, b: string): number {
+  const pa = a.split('.').map(Number)
+  const pb = b.split('.').map(Number)
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const diff = (pa[i] || 0) - (pb[i] || 0)
+    if (diff !== 0) return diff
+  }
+  return 0
+}
+
+// Unseen only when the latest release is newer than the last one seen, so a
+// tab still running an older build can't bring the dot back.
 export function isChangelogUnseen(): boolean {
   const latest = getLatestVersion()
-  return !!latest && readLastSeenVersion() !== latest
+  if (!latest) return false
+  const lastSeen = readLastSeenVersion()
+  return !lastSeen || compareVersions(latest, lastSeen) > 0
 }
 
 export function markChangelogSeen(): void {
   const latest = getLatestVersion()
   if (!latest) return
+  // Never move "seen" backwards from an older build.
+  const lastSeen = readLastSeenVersion()
+  if (lastSeen && compareVersions(latest, lastSeen) <= 0) return
   try {
     localStorage.setItem(STORAGE_KEY, latest)
   } catch (err) {

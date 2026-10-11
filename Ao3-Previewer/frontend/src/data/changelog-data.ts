@@ -15,6 +15,22 @@ export interface ChangelogRelease {
 // Newest first. Derived from the real commit history on main.
 export const CHANGELOG: ChangelogRelease[] = [
   {
+    version: "0.14.2",
+    date: "2026-10-11",
+    title: "Bug fixes - Changelog and Caching",
+    changes: [
+      {
+        type: "fixed",
+        description: "The changelog dot now goes away once you've seen the changelog",
+      },
+      {
+        type: "fixed",
+        description:
+          "Pages always load the latest version of the site, instead of sometimes showing an older copy saved in your browser until you refreshed",
+      },
+    ],
+  },
+  {
     version: "0.14.1",
     date: "2026-10-11",
     title: "Moving to ficformatter.com",

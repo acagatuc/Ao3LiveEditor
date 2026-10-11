@@ -55,13 +55,33 @@ export class Ao3PreviewerStack extends cdk.Stack {
       code: cloudfront.FunctionCode.fromInline(routingFunctionCode(domainName)),
     });
 
+    // Browser caching. S3 sends no Cache-Control, which leaves browsers to
+    // guess, and they'd keep using a stale copy of one page's HTML (pointing at
+    // an old build) after a deploy. Pages must be checked on every load (a
+    // cheap 304 when unchanged); /assets/* files have content hashes in their
+    // names, so they can be kept for a year.
+    const revalidateHeaders = new cloudfront.ResponseHeadersPolicy(this, "RevalidateHeaders", {
+      customHeadersBehavior: {
+        customHeaders: [{ header: "Cache-Control", value: "no-cache", override: true }],
+      },
+    });
+    const immutableHeaders = new cloudfront.ResponseHeadersPolicy(this, "ImmutableHeaders", {
+      customHeadersBehavior: {
+        customHeaders: [
+          { header: "Cache-Control", value: "public, max-age=31536000, immutable", override: true },
+        ],
+      },
+    });
+
+    const siteOrigin = origins.S3BucketOrigin.withOriginAccessControl(reactAppBucket);
+
     const cloudFrontDistribution = new cloudfront.Distribution(
       this,
       "CloudFrontDistribution",
       {
         defaultBehavior: {
-          origin:
-            origins.S3BucketOrigin.withOriginAccessControl(reactAppBucket),
+          origin: siteOrigin,
+          responseHeadersPolicy: revalidateHeaders,
           viewerProtocolPolicy:
             cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
           cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
@@ -71,6 +91,15 @@ export class Ao3PreviewerStack extends cdk.Stack {
               eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
             },
           ],
+        },
+        // Hashed build output. No routing function: nothing here is a page.
+        additionalBehaviors: {
+          "/assets/*": {
+            origin: siteOrigin,
+            viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+            cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+            responseHeadersPolicy: immutableHeaders,
+          },
         },
         defaultRootObject: "index.html",
         domainNames: [domainName, `www.${domainName}`],
