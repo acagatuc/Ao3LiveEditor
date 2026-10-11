@@ -7,8 +7,8 @@ export interface UpcomingItem {
 
 // Forward-looking only - once something ships, move it into CHANGELOG instead.
 export const UPCOMING: UpcomingItem[] = [
-  { status: 'in-progress', description: 'Saved drafts - save your work and pick up where you left off' },
-  { status: 'in-progress', description: 'Dark mode / theming' },
+  { status: 'in-progress', description: 'Saved drafts - save your work and pick up where you left off, now including your workskin CSS' },
+  { status: 'in-progress', description: 'Dark mode / theming - moving the site\'s colors into CSS variables so it can be re-themed' },
   { status: 'planned', description: 'Strict mode - a preview that only shows the CSS AO3 will keep' },
   { status: 'planned', description: 'Version history for drafts' },
   { status: 'planned', description: 'AO3 bookmark searcher improvements' },
