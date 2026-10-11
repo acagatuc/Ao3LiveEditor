@@ -25,7 +25,7 @@ export default function SharedPreviewPage() {
   const savedScrollY = useRef<number>(0)
 
   useEffect(() => {
-    if (!id) { setFetchState('error'); return }
+    if (!id) return
     getPreview(id)
       .then((d) => { setData(d); setFetchState('loaded') })
       .catch(() => setFetchState('error'))
@@ -66,7 +66,8 @@ export default function SharedPreviewPage() {
     setHideCreatorStyle((s) => !s)
   }
 
-  if (fetchState === 'loading') {
+  // Without an id there's nothing to load; fall through to the error state.
+  if (id && fetchState === 'loading') {
     return (
       <div className="shared-preview shared-preview--centered">
         <CircularProgress />

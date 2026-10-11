@@ -15,17 +15,35 @@ export interface ChangelogRelease {
 // Newest first. Derived from the real commit history on main.
 export const CHANGELOG: ChangelogRelease[] = [
   {
-    version: "0.13.3",
+    version: "0.14.0",
     date: "2026-10-11",
-    title: "Bug fixes - Routes and 404 Page",
+    title: "404 Page, Link Previews, and Route Fixes",
     changes: [
       {
         type: "added",
-        description: "An actual 404 page",
+        description: "An actual 404 page, with links to every tool",
+      },
+      {
+        type: "added",
+        description:
+          "Link previews: sharing a FicFormatter link on Discord, X, Bluesky, and other apps now shows a preview card",
       },
       {
         type: "fixed",
         description: "Public route HTML and redirection",
+      },
+      {
+        type: "fixed",
+        description:
+          "The Copy buttons now say when your browser blocks copying, instead of silently doing nothing",
+      },
+      {
+        type: "improved",
+        description: "Each page now has its own title in your browser tab",
+      },
+      {
+        type: "improved",
+        description: 'Consistent "workskin" spelling across the site',
       },
     ],
   },

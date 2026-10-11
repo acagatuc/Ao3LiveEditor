@@ -11,7 +11,9 @@ import Box from '@mui/material/Box'
 import CloseIcon from '@mui/icons-material/Close'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import CheckIcon from '@mui/icons-material/Check'
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import { createPreview } from '../../api/previews'
+import { useCopyToClipboard } from '../../hooks/useCopyToClipboard'
 
 interface ShareModalProps {
   open: boolean
@@ -30,7 +32,7 @@ export default function ShareModal({ open, onClose, html, css }: ShareModalProps
   const [generating, setGenerating] = useState(false)
   const [error, setError] = useState('')
   const [shareUrl, setShareUrl] = useState('')
-  const [copied, setCopied] = useState(false)
+  const { copyState, copy, reset: resetCopy } = useCopyToClipboard()
 
   function handleClose() {
     onClose()
@@ -41,7 +43,7 @@ export default function ShareModal({ open, onClose, html, css }: ShareModalProps
       setAuthor('')
       setError('')
       setShareUrl('')
-      setCopied(false)
+      resetCopy()
     }, 200)
   }
 
@@ -59,12 +61,8 @@ export default function ShareModal({ open, onClose, html, css }: ShareModalProps
     }
   }
 
-  async function handleCopyLink() {
-    try {
-      await navigator.clipboard.writeText(shareUrl)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {}
+  function handleCopyLink() {
+    copy(shareUrl)
   }
 
   function handleShareAnother() {
@@ -73,7 +71,7 @@ export default function ShareModal({ open, onClose, html, css }: ShareModalProps
     setAuthor('')
     setError('')
     setShareUrl('')
-    setCopied(false)
+    resetCopy()
   }
 
   return (
@@ -130,12 +128,18 @@ export default function ShareModal({ open, onClose, html, css }: ShareModalProps
               />
               <Button
                 variant="outlined"
-                startIcon={copied ? <CheckIcon /> : <ContentCopyIcon />}
+                startIcon={
+                  copyState === 'copied' ? <CheckIcon /> : copyState === 'failed' ? <ErrorOutlineIcon /> : <ContentCopyIcon />
+                }
                 onClick={handleCopyLink}
-                color={copied ? 'success' : 'primary'}
+                color={copyState === 'copied' ? 'success' : copyState === 'failed' ? 'error' : 'primary'}
                 sx={{ flexShrink: 0 }}
               >
-                {copied ? t('common:actions.copied') : t('share.copyLink')}
+                {copyState === 'copied'
+                  ? t('common:actions.copied')
+                  : copyState === 'failed'
+                    ? t('common:actions.copyFailed')
+                    : t('share.copyLink')}
               </Button>
             </Box>
             <Typography variant="body2" color="text.secondary">
