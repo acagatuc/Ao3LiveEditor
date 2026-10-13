@@ -15,6 +15,10 @@
 //   plugin writes: "/foo" -> "/foo/index.html", "/preview/<id>" ->
 //   "/preview-shell.html".
 //
+// - Any path containing "php" is refused with a bare 403 before it reaches
+//   S3. The site has no PHP, so these are all bots probing for WordPress and
+//   phpMyAdmin; ids are hex, so no real URL can contain it.
+//
 // Anything else is passed through untouched. If the object doesn't exist,
 // S3 answers 403 (no ListBucket under OAC) and the distribution's error
 // responses serve 404.html with a 404 status.
@@ -50,6 +54,10 @@ function isPage(uri) {
 function handler(event) {
   var request = event.request;
   var uri = request.uri;
+
+  if (/php/i.test(uri)) {
+    return { statusCode: 403, statusDescription: "Forbidden" };
+  }
   var host = request.headers.host ? request.headers.host.value.toLowerCase() : "";
 
   if (host !== CANONICAL_HOST) {

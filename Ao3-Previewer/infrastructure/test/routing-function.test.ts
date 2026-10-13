@@ -57,12 +57,21 @@ describe("routing function", () => {
     it("leaves files alone so missing ones reach S3 and 404", () => {
       expect(rewrittenUri("/assets/index-abc.js")).toBe("/assets/index-abc.js");
       expect(rewrittenUri("/robots.txt")).toBe("/robots.txt");
-      expect(rewrittenUri("/wp-login.php")).toBe("/wp-login.php");
       expect(rewrittenUri("/wp-content/plugins/foo/readme.txt")).toBe("/wp-content/plugins/foo/readme.txt");
     });
 
     it("maps unknown extensionless paths to files that don't exist", () => {
       expect(rewrittenUri("/wp-admin")).toBe("/wp-admin/index.html");
+    });
+  });
+
+  describe("php probes", () => {
+    it("refuses any path containing php, on every host", () => {
+      for (const host of ["ficformatter.com", "www.ficformatter.com", "d111111abcdef8.cloudfront.net"]) {
+        for (const uri of ["/wp-login.php", "/xmlrpc.php", "/index.PHP/x", "/phpmyadmin/", "/vendor/phpunit/src/eval-stdin.php", "/php-cgi"]) {
+          expect(run(uri, host)).toEqual({ statusCode: 403, statusDescription: "Forbidden" });
+        }
+      }
     });
   });
 
