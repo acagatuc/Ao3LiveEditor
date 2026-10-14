@@ -15,9 +15,14 @@
 //   plugin writes: "/foo" -> "/foo/index.html", "/preview/<id>" ->
 //   "/preview-shell.html".
 //
-// - Any path containing "php" is refused with a bare 403 before it reaches
-//   S3. The site has no PHP, so these are all bots probing for WordPress and
-//   phpMyAdmin; ids are hex, so no real URL can contain it.
+// - PHP probes are refused with a bare 403 before they reach S3: any ".php"
+//   file, or any path segment starting with "php" or "pma" (phpMyAdmin,
+//   phpunit, php-cgi). The site has no PHP, so these are all bots. It
+//   doesn't match "php" anywhere in the path, because Vite's asset hashes
+//   are mixed-case base64 and one could contain it.
+// - Env file probes (any path segment starting with ".env", like "/.env" or
+//   "/api/.env.production") get the same 403. The built site never contains
+//   dotfiles.
 //
 // Anything else is passed through untouched. If the object doesn't exist,
 // S3 answers 403 (no ListBucket under OAC) and the distribution's error
@@ -55,7 +60,10 @@ function handler(event) {
   var request = event.request;
   var uri = request.uri;
 
-  if (/php/i.test(uri)) {
+  if (/\\.php\\d?(\\/|$)|\\/(php|pma)/i.test(uri)) {
+    return { statusCode: 403, statusDescription: "Forbidden" };
+  }
+  if (/\\/\\.env/i.test(uri)) {
     return { statusCode: 403, statusDescription: "Forbidden" };
   }
   var host = request.headers.host ? request.headers.host.value.toLowerCase() : "";

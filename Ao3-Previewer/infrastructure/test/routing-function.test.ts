@@ -66,12 +66,51 @@ describe("routing function", () => {
   });
 
   describe("php probes", () => {
-    it("refuses any path containing php, on every host", () => {
-      for (const host of ["ficformatter.com", "www.ficformatter.com", "d111111abcdef8.cloudfront.net"]) {
-        for (const uri of ["/wp-login.php", "/xmlrpc.php", "/index.PHP/x", "/phpmyadmin/", "/vendor/phpunit/src/eval-stdin.php", "/php-cgi"]) {
+    const hosts = ["ficformatter.com", "www.ficformatter.com", "d111111abcdef8.cloudfront.net"];
+
+    it("refuses php files and php-named paths, on every host", () => {
+      for (const host of hosts) {
+        for (const uri of [
+          "/wp-login.php",
+          "/xmlrpc.php",
+          "/index.PHP/x",
+          "/info.php7",
+          "/phpmyadmin/",
+          "/admin/phpMyAdmin/index.html",
+          "/pma/",
+          "/vendor/phpunit/src/eval-stdin.php",
+          "/php-cgi",
+        ]) {
           expect(run(uri, host)).toEqual({ statusCode: 403, statusDescription: "Forbidden" });
         }
       }
+    });
+
+    it("lets through real files whose names happen to contain php", () => {
+      for (const host of hosts) {
+        for (const uri of ["/assets/index-xPhPq1_a.js", "/assets/vendor-mui-aphp9Z0b.css", "/assets/index-abc.phpx"]) {
+          expect((run(uri, host) as Request).uri).toBe(uri);
+        }
+      }
+    });
+  });
+
+  describe("env file probes", () => {
+    const hosts = ["ficformatter.com", "www.ficformatter.com", "d111111abcdef8.cloudfront.net"];
+
+    it("refuses .env files anywhere in the path, on every host", () => {
+      for (const host of hosts) {
+        for (const uri of ["/.env", "/.ENV", "/.env.local", "/.env.production", "/.env.bak", "/api/.env", "/backend/.env/"]) {
+          expect(run(uri, host)).toEqual({ statusCode: 403, statusDescription: "Forbidden" });
+        }
+      }
+    });
+
+    it("lets through paths that only mention env", () => {
+      for (const uri of ["/assets/env-a1B2c3D4.js", "/assets/index-x.envQ_a.js"]) {
+        expect(rewrittenUri(uri)).toBe(uri);
+      }
+      expect(rewrittenUri("/environment")).toBe("/environment/index.html");
     });
   });
 
