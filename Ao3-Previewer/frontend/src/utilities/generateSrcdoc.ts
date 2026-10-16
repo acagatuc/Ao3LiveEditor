@@ -23,6 +23,40 @@ export function generateSrcdoc(params: {
        fail at DNS and never reach a server. Not archiveofourown.org, which would send AO3 the junk. -->
   <base href="https://relative-path.invalid/">
   <script>${failedImageScript()}</script>
+  <script>
+    // Disable links, except "#id" links, which jump within the page as they do on AO3. Set up
+    // here, before the body is parsed, so no click gets through while the page loads and follows
+    // the <base> href to relative-path.invalid. Adding listeners doesn't touch layout, so this
+    // can't cause the forced-layout warning.
+    function linkFor(e) {
+      return e.target.closest ? e.target.closest('a') : null;
+    }
+    document.addEventListener('click', function(e) {
+      var link = linkFor(e);
+      if (!link) return;
+      e.preventDefault();
+      var href = link.getAttribute('href') || '';
+      if (href.charAt(0) !== '#') return;
+      var id = href.slice(1);
+      try { id = decodeURIComponent(id); } catch (err) { /* use it as written */ }
+      var target = id && (document.getElementById(id) || document.getElementsByName(id)[0]);
+      // Like a browser, "#" and "#top" go to the top when nothing has that id.
+      if (target) target.scrollIntoView();
+      else if (!id || id.toLowerCase() === 'top') window.scrollTo(0, 0);
+    }, true);
+    // A relative link (including "#id") would open relative-path.invalid in a new tab, so block
+    // the other ways to open one: middle-click, the right-click menu, and dragging it onto the tab
+    // bar. Links with a scheme (https:, mailto:) or starting with "//" can still open in a new tab.
+    // Ctrl/Cmd/Shift-click are clicks, so they're blocked above for every link.
+    ['auxclick', 'contextmenu', 'dragstart'].forEach(function(type) {
+      document.addEventListener(type, function(e) {
+        var link = linkFor(e);
+        if (!link || !link.hasAttribute('href')) return;
+        var href = link.getAttribute('href').trim();
+        if (!/^([a-z][a-z0-9+.-]*:|\\/\\/)/i.test(href)) e.preventDefault();
+      }, true);
+    });
+  </script>
 <script type="text/javascript">
     // Fix for Firefox autofocus CSS bug
     // See: http://stackoverflow.com/questions/18943276/html-5-autofocus-messes-up-css-loading/18945951#18945951
@@ -70,25 +104,6 @@ export function generateSrcdoc(params: {
       }
     });
 
-    // Disable link navigation, except "#id" links, which jump within the page as they do on AO3.
-    // Deferred until parsing ends so the script does not run mid-parse, which is what triggers
-    // the forced-layout console warning. Not until load: that waits for images, and a click
-    // before then would follow the <base> href to relative-path.invalid.
-    document.addEventListener('DOMContentLoaded', function() {
-      document.addEventListener('click', function(e) {
-        var link = e.target.closest && e.target.closest('a');
-        if (!link) return;
-        e.preventDefault();
-        var href = link.getAttribute('href') || '';
-        if (href.charAt(0) !== '#') return;
-        var id = href.slice(1);
-        try { id = decodeURIComponent(id); } catch (err) { /* use it as written */ }
-        var target = id && (document.getElementById(id) || document.getElementsByName(id)[0]);
-        // Like a browser, "#" and "#top" go to the top when nothing has that id.
-        if (target) target.scrollIntoView();
-        else if (!id || id.toLowerCase() === 'top') window.scrollTo(0, 0);
-      }, true);
-    });
   </script>
 </body>
 </html>`

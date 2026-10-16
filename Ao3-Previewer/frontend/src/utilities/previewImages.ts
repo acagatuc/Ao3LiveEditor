@@ -36,7 +36,12 @@ function looksLikePath(src: string): boolean {
   return /^\.{0,2}\//.test(src) || /\.[a-z0-9]{2,5}([?#].*)?$/i.test(src)
 }
 
-/** Lists the images in the user's HTML that the preview will show as placeholders. */
+/**
+ * Lists the images in the user's HTML that the preview will show as placeholders. Runs on the
+ * sanitized HTML, while the preview runs replaceUnloadableImages after normalizeForAo3 too.
+ * normalizeForAo3 doesn't change img src, so both find the same images; if it ever does, use the
+ * same pipeline in both or the warning count and the placeholders will disagree.
+ */
 export function listImageProblems(html: string): ImageProblem[] {
   const doc = new DOMParser().parseFromString(sanitizeHtml(html), 'text/html')
   return findImageProblems(doc).map(({ src, reason }) => ({ src, reason }))
@@ -64,7 +69,6 @@ export function replaceUnloadableImages(html: string): string {
   for (const { img, src } of problems) {
     img.setAttribute('src', imagePlaceholderSrc(note, src))
     img.setAttribute('title', src)
-    img.setAttribute('data-ff-original-src', src)
   }
   return doc.body.innerHTML
 }
