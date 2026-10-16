@@ -5,14 +5,19 @@ import Divider from '@mui/material/Divider'
 import Tooltip from '@mui/material/Tooltip'
 import Chip from '@mui/material/Chip'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
+import ImageNotSupportedOutlinedIcon from '@mui/icons-material/ImageNotSupportedOutlined'
 import LinkOffIcon from '@mui/icons-material/LinkOff'
 import ShareIcon from '@mui/icons-material/Share'
 import BugReportOutlinedIcon from '@mui/icons-material/BugReportOutlined'
 import { generateSrcdoc } from '../../utilities/generateSrcdoc'
 import { analyzeCss, blocksAo3Save } from '../../utilities/analyzeCss'
+import { listImageProblems } from '../../utilities/previewImages'
 import ShareModal from './ShareModal'
 import BugReportDialog from './BugReportDialog'
 import './PreviewFrame.css'
+
+// Keeps the image warning's tooltip short when a template has many unfilled images.
+const MAX_LISTED_IMAGE_PROBLEMS = 8
 
 interface PreviewFrameProps {
   html: string
@@ -54,6 +59,9 @@ export default function PreviewFrame({
     () => analyzeCss(debouncedCss).warnings.filter(blocksAo3Save).length,
     [debouncedCss],
   )
+
+  // Images the preview swaps for a placeholder because their address can't load on AO3.
+  const imageProblems = useMemo(() => listImageProblems(debouncedHtml), [debouncedHtml])
 
   // Track the iframe's scroll position via postMessage (works without allow-same-origin).
   // Validate source to ensure messages come from our iframe, not arbitrary pages.
@@ -113,6 +121,39 @@ export default function PreviewFrame({
                 icon={<ErrorOutlineIcon />}
                 label={t('preview.invalidSkin', { count: saveBlockingCount })}
                 onClick={onValidateCss}
+              />
+            </Tooltip>
+          )}
+          {imageProblems.length > 0 && (
+            <Tooltip
+              placement="bottom"
+              title={
+                <div className="preview-image-problems">
+                  <div>{t('preview.imageProblemsTooltip')}</div>
+                  <ul>
+                    {imageProblems.slice(0, MAX_LISTED_IMAGE_PROBLEMS).map((problem, i) => (
+                      <li key={i}>
+                        <code>{problem.src || t('preview.imageNoAddress')}</code>
+                        <div>{t(`preview.imageHint.${problem.reason}`)}</div>
+                      </li>
+                    ))}
+                  </ul>
+                  {imageProblems.length > MAX_LISTED_IMAGE_PROBLEMS && (
+                    <div>
+                      {t('preview.imageProblemsMore', {
+                        count: imageProblems.length - MAX_LISTED_IMAGE_PROBLEMS,
+                      })}
+                    </div>
+                  )}
+                </div>
+              }
+            >
+              <Chip
+                size="small"
+                color="warning"
+                icon={<ImageNotSupportedOutlinedIcon />}
+                label={t('preview.imageProblems', { count: imageProblems.length })}
+                tabIndex={0}
               />
             </Tooltip>
           )}

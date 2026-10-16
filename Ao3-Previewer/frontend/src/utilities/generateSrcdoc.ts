@@ -2,6 +2,7 @@ import { sanitizeHtml } from './sanitizeHtml'
 import { normalizeForAo3 } from './normalizeForAo3'
 import { AO3_BASE_STYLES } from '../styles/ao3BaseStyles'
 import { applyAo3CssRules } from './applyAo3CssRules'
+import { replaceUnloadableImages, failedImageScript } from './previewImages'
 
 export function generateSrcdoc(params: {
   html: string
@@ -12,11 +13,16 @@ export function generateSrcdoc(params: {
 
   const htmlContent = hideCreatorStyle ? html.replace(/\s*style="[^"]*"/gi, '') : html
   const sanitizedHtml = sanitizeHtml(htmlContent)
-  const normalizedHtml = normalizeForAo3(sanitizedHtml)
+  const normalizedHtml = replaceUnloadableImages(normalizeForAo3(sanitizedHtml))
 
   return `<!DOCTYPE html>
 <html>
 <head>
+  <!-- A srcdoc resolves relative addresses against our own site, so anything the image placeholders
+       miss (CSS url()s, fonts) would 404 there on every reload. .invalid is a reserved TLD, so these
+       fail at DNS and never reach a server. Not archiveofourown.org, which would send AO3 the junk. -->
+  <base href="https://relative-path.invalid/">
+  <script>${failedImageScript()}</script>
 <script type="text/javascript">
     // Fix for Firefox autofocus CSS bug
     // See: http://stackoverflow.com/questions/18943276/html-5-autofocus-messes-up-css-loading/18945951#18945951

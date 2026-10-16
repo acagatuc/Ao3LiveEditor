@@ -74,3 +74,16 @@
   color: rgba(0, 0, 0, 0.6);
   cursor: default;
 }
+
+.preview-image-problems ul {
+  margin: 4px 0;
+  padding-left: 16px;
+}
+
+.preview-image-problems li + li {
+  margin-top: 4px;
+}
+
+.preview-image-problems code {
+  word-break: break-all;
+}
