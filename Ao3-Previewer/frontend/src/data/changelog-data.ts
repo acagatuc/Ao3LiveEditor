@@ -15,6 +15,23 @@ export interface ChangelogRelease {
 // Newest first. Derived from the real commit history on main.
 export const CHANGELOG: ChangelogRelease[] = [
   {
+    version: "0.14.3",
+    date: "2026-10-15",
+    title: "Bug fix - Vendor-prefixed CSS",
+    changes: [
+      {
+        type: "fixed",
+        description:
+          "The CSS linter no longer flags vendor-prefixed properties that AO3 accepts, like -webkit-transform and -moz-user-select",
+      },
+      {
+        type: "added",
+        description:
+          "Prefixed properties that AO3 accepts but no current browser supports, like -ms-overflow-style, now get a warning that they do nothing",
+      },
+    ],
+  },
+  {
     version: "0.14.2",
     date: "2026-10-11",
     title: "Bug fixes - Changelog and Caching",

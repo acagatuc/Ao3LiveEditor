@@ -19,6 +19,7 @@ const TYPE_PRIORITY: Record<CssWarning['type'], number> = {
   'invalid-var-usage': 2,
   'value-invalid': 2,
   'duplicate-property': 1,
+  'unsupported-property': 1,
   'comment-stripped': 0,
 }
 

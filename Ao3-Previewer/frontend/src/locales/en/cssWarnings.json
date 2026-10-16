@@ -12,6 +12,7 @@
     "customPropertyNotAllowed": "Custom properties (CSS variables) are only allowed in site skins",
     "customPropertyName": "Invalid custom property name format",
     "notInAllowlist": "\"{{property}}\" is not in the AO3 allowlist",
+    "unsupportedProperty": "AO3 accepts \"{{property}}\", but no current browser supports it, so it does nothing",
     "emptyValue": "Empty value",
     "varNotAllowed": "var() is not allowed in workskin values",
     "tooManyDecimals": "AO3 allows {{max}} decimal places at most!",
@@ -21,6 +22,7 @@
   },
   "short": {
     "invalid-property": "PROP",
+    "unsupported-property": "UNSUP",
     "duplicate-property": "DUP",
     "disallowed-atrule": "@RULE",
     "comment-stripped": "CMT",
@@ -29,6 +31,7 @@
   },
   "label": {
     "invalid-property": "Invalid property",
+    "unsupported-property": "Unsupported property",
     "duplicate-property": "Duplicate property",
     "disallowed-atrule": "Disallowed @rule",
     "comment-stripped": "Comment stripped",

@@ -48,6 +48,7 @@
 .lint-line__gutter--invalid-var-usage .lint-line__dot { background: #10b981; }
 .lint-line__gutter--duplicate-property .lint-line__dot { background: #f59e0b; }
 .lint-line__gutter--comment-stripped .lint-line__dot { background: #3b82f6; }
+.lint-line__gutter--unsupported-property .lint-line__dot { background: #64748b; }
 .lint-line__gutter--value-invalid .lint-line__dot { background: #7c3aed; }
 
 .lint-line__gutter:hover .lint-line__dot { transform: scale(1.4); }
@@ -100,5 +101,6 @@
 .tooltip__row--duplicate-property .tooltip__badge { background: #78350f; color: #fde68a; }
 .tooltip__row--disallowed-atrule .tooltip__badge { background: #4c1d95; color: #ddd6fe; }
 .tooltip__row--comment-stripped .tooltip__badge { background: #1e3a5f; color: #93c5fd; }
+.tooltip__row--unsupported-property .tooltip__badge { background: #334155; color: #cbd5e1; }
 .tooltip__row--invalid-var-usage .tooltip__badge { background: #064e3b; color: #6ee7b7; }
 .tooltip__row--value-invalid .tooltip__badge { background: #7c3aed; color: #ddd6fe; }
