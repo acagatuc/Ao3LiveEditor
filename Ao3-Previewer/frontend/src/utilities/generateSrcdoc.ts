@@ -70,14 +70,23 @@ export function generateSrcdoc(params: {
       }
     });
 
-    // Disable link navigation. Deferred to load so the script does not run
-    // mid-parse, which is what triggers the forced-layout console warning.
-    window.addEventListener('load', function() {
+    // Disable link navigation, except "#id" links, which jump within the page as they do on AO3.
+    // Deferred until parsing ends so the script does not run mid-parse, which is what triggers
+    // the forced-layout console warning. Not until load: that waits for images, and a click
+    // before then would follow the <base> href to relative-path.invalid.
+    document.addEventListener('DOMContentLoaded', function() {
       document.addEventListener('click', function(e) {
-        var target = e.target;
-        if (target.tagName === 'A' || target.closest('a')) {
-          e.preventDefault();
-        }
+        var link = e.target.closest && e.target.closest('a');
+        if (!link) return;
+        e.preventDefault();
+        var href = link.getAttribute('href') || '';
+        if (href.charAt(0) !== '#') return;
+        var id = href.slice(1);
+        try { id = decodeURIComponent(id); } catch (err) { /* use it as written */ }
+        var target = id && (document.getElementById(id) || document.getElementsByName(id)[0]);
+        // Like a browser, "#" and "#top" go to the top when nothing has that id.
+        if (target) target.scrollIntoView();
+        else if (!id || id.toLowerCase() === 'top') window.scrollTo(0, 0);
       }, true);
     });
   </script>
