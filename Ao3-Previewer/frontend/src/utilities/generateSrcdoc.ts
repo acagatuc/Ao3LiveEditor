@@ -2,6 +2,7 @@ import { sanitizeHtml } from './sanitizeHtml'
 import { normalizeForAo3 } from './normalizeForAo3'
 import { AO3_BASE_STYLES } from '../styles/ao3BaseStyles'
 import { applyAo3CssRules } from './applyAo3CssRules'
+import { replaceUnloadableImages, failedImageScript } from './previewImages'
 
 export function generateSrcdoc(params: {
   html: string
@@ -12,11 +13,50 @@ export function generateSrcdoc(params: {
 
   const htmlContent = hideCreatorStyle ? html.replace(/\s*style="[^"]*"/gi, '') : html
   const sanitizedHtml = sanitizeHtml(htmlContent)
-  const normalizedHtml = normalizeForAo3(sanitizedHtml)
+  const normalizedHtml = replaceUnloadableImages(normalizeForAo3(sanitizedHtml))
 
   return `<!DOCTYPE html>
 <html>
 <head>
+  <!-- A srcdoc resolves relative addresses against our own site, so anything the image placeholders
+       miss (CSS url()s, fonts) would 404 there on every reload. .invalid is a reserved TLD, so these
+       fail at DNS and never reach a server. Not archiveofourown.org, which would send AO3 the junk. -->
+  <base href="https://relative-path.invalid/">
+  <script>${failedImageScript()}</script>
+  <script>
+    // Disable links, except "#id" links, which jump within the page as they do on AO3. Set up
+    // here, before the body is parsed, so no click gets through while the page loads and follows
+    // the <base> href to relative-path.invalid. Adding listeners doesn't touch layout, so this
+    // can't cause the forced-layout warning.
+    function linkFor(e) {
+      return e.target.closest ? e.target.closest('a') : null;
+    }
+    document.addEventListener('click', function(e) {
+      var link = linkFor(e);
+      if (!link) return;
+      e.preventDefault();
+      var href = link.getAttribute('href') || '';
+      if (href.charAt(0) !== '#') return;
+      var id = href.slice(1);
+      try { id = decodeURIComponent(id); } catch (err) { /* use it as written */ }
+      var target = id && (document.getElementById(id) || document.getElementsByName(id)[0]);
+      // Like a browser, "#" and "#top" go to the top when nothing has that id.
+      if (target) target.scrollIntoView();
+      else if (!id || id.toLowerCase() === 'top') window.scrollTo(0, 0);
+    }, true);
+    // A relative link (including "#id") would open relative-path.invalid in a new tab, so block
+    // the other ways to open one: middle-click, the right-click menu, and dragging it onto the tab
+    // bar. Links with a scheme (https:, mailto:) or starting with "//" can still open in a new tab.
+    // Ctrl/Cmd/Shift-click are clicks, so they're blocked above for every link.
+    ['auxclick', 'contextmenu', 'dragstart'].forEach(function(type) {
+      document.addEventListener(type, function(e) {
+        var link = linkFor(e);
+        if (!link || !link.hasAttribute('href')) return;
+        var href = link.getAttribute('href').trim();
+        if (!/^([a-z][a-z0-9+.-]*:|\\/\\/)/i.test(href)) e.preventDefault();
+      }, true);
+    });
+  </script>
 <script type="text/javascript">
     // Fix for Firefox autofocus CSS bug
     // See: http://stackoverflow.com/questions/18943276/html-5-autofocus-messes-up-css-loading/18945951#18945951
@@ -64,16 +104,6 @@ export function generateSrcdoc(params: {
       }
     });
 
-    // Disable link navigation. Deferred to load so the script does not run
-    // mid-parse, which is what triggers the forced-layout console warning.
-    window.addEventListener('load', function() {
-      document.addEventListener('click', function(e) {
-        var target = e.target;
-        if (target.tagName === 'A' || target.closest('a')) {
-          e.preventDefault();
-        }
-      }, true);
-    });
   </script>
 </body>
 </html>`

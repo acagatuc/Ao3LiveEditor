@@ -15,6 +15,37 @@ export interface ChangelogRelease {
 // Newest first. Derived from the real commit history on main.
 export const CHANGELOG: ChangelogRelease[] = [
   {
+    version: "0.14.4",
+    date: "2026-10-16",
+    title: "Image placeholders in the preview",
+    changes: [
+      {
+        type: "added",
+        description:
+          "Images whose address won't work on AO3, like template text, relative paths, or links with extra brackets or a missing quote, now show a placeholder in the preview",
+      },
+      {
+        type: "added",
+        description:
+          "A warning above the preview counts those images and explains how to fix each one",
+      },
+      {
+        type: "improved",
+        description:
+          "Images from other sites that fail to load now show a placeholder instead of a broken-image icon",
+      },
+      {
+        type: "improved",
+        description: "The preview now waits until you stop typing CSS before reloading",
+      },
+      {
+        type: "fixed",
+        description:
+          "The CSS linter no longer flags aspect-ratio, fill, stroke and stroke-width, which AO3 allows",
+      },
+    ],
+  },
+  {
     version: "0.14.3",
     date: "2026-10-15",
     title: "Bug fix - Vendor-prefixed CSS",

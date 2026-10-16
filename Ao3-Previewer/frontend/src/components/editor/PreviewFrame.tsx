@@ -1,18 +1,24 @@
 import { useRef, useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
 import Divider from '@mui/material/Divider'
 import Tooltip from '@mui/material/Tooltip'
 import Chip from '@mui/material/Chip'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
+import ImageNotSupportedOutlinedIcon from '@mui/icons-material/ImageNotSupportedOutlined'
 import LinkOffIcon from '@mui/icons-material/LinkOff'
 import ShareIcon from '@mui/icons-material/Share'
 import BugReportOutlinedIcon from '@mui/icons-material/BugReportOutlined'
 import { generateSrcdoc } from '../../utilities/generateSrcdoc'
 import { analyzeCss, blocksAo3Save } from '../../utilities/analyzeCss'
+import { listImageProblems } from '../../utilities/previewImages'
 import ShareModal from './ShareModal'
 import BugReportDialog from './BugReportDialog'
 import './PreviewFrame.css'
+
+// Keeps the image warning's tooltip short when a template has many unfilled images.
+const MAX_LISTED_IMAGE_PROBLEMS = 8
 
 interface PreviewFrameProps {
   html: string
@@ -43,7 +49,8 @@ export default function PreviewFrame({
     return () => clearTimeout(timer)
   }, [html])
 
-  // Checked a moment after typing stops, so the warning doesn't flicker mid-edit.
+  // Used a moment after typing stops, so the warning doesn't flicker mid-edit and the preview
+  // doesn't reload (and refetch every image) on each keystroke.
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedCss(css), 500)
     return () => clearTimeout(timer)
@@ -54,6 +61,9 @@ export default function PreviewFrame({
     () => analyzeCss(debouncedCss).warnings.filter(blocksAo3Save).length,
     [debouncedCss],
   )
+
+  // Images the preview swaps for a placeholder because their address can't load on AO3.
+  const imageProblems = useMemo(() => listImageProblems(debouncedHtml), [debouncedHtml])
 
   // Track the iframe's scroll position via postMessage (works without allow-same-origin).
   // Validate source to ensure messages come from our iframe, not arbitrary pages.
@@ -89,10 +99,10 @@ export default function PreviewFrame({
     () =>
       generateSrcdoc({
         html: debouncedHtml,
-        css: hideCreatorStyleMode ? '' : css,
+        css: hideCreatorStyleMode ? '' : debouncedCss,
         hideCreatorStyle: hideCreatorStyleMode,
       }),
-    [hideCreatorStyleMode, debouncedHtml, css],
+    [hideCreatorStyleMode, debouncedHtml, debouncedCss],
   )
 
   function handleToggleCreatorStyle() {
@@ -106,25 +116,78 @@ export default function PreviewFrame({
         <div className="preview-header-title">{t('preview.heading')}</div>
         <div className="preview-header-actions">
           {saveBlockingCount > 0 && (
-            <Tooltip title={t('preview.invalidSkinTooltip')} placement="bottom">
+            <Tooltip
+              placement="bottom"
+              title={
+                <div className="preview-header-tooltip">
+                  <strong>{t('preview.invalidSkin', { count: saveBlockingCount })}</strong>
+                  <div>{t('preview.invalidSkinTooltip')}</div>
+                </div>
+              }
+            >
+              {/* Just the count, so the header stays one row; the tooltip says what it's about. */}
               <Chip
                 size="small"
                 color="error"
                 icon={<ErrorOutlineIcon />}
-                label={t('preview.invalidSkin', { count: saveBlockingCount })}
+                label={t('preview.invalidSkinShort', { count: saveBlockingCount })}
+                aria-label={t('preview.invalidSkin', { count: saveBlockingCount })}
                 onClick={onValidateCss}
               />
             </Tooltip>
           )}
-          <Tooltip title={t('preview.reportProblemTooltip')} placement="bottom">
-            <Button
+          {imageProblems.length > 0 && (
+            <Tooltip
+              placement="bottom"
+              title={
+                <div className="preview-header-tooltip preview-image-problems">
+                  <strong>{t('preview.imageProblems', { count: imageProblems.length })}</strong>
+                  <div>{t('preview.imageProblemsTooltip')}</div>
+                  <ul>
+                    {imageProblems.slice(0, MAX_LISTED_IMAGE_PROBLEMS).map((problem, i) => (
+                      <li key={i}>
+                        <code>{problem.src || t('preview.imageNoAddress')}</code>
+                        <div>{t(`preview.imageHint.${problem.reason}`)}</div>
+                      </li>
+                    ))}
+                  </ul>
+                  {imageProblems.length > MAX_LISTED_IMAGE_PROBLEMS && (
+                    <div>
+                      {t('preview.imageProblemsMore', {
+                        count: imageProblems.length - MAX_LISTED_IMAGE_PROBLEMS,
+                      })}
+                    </div>
+                  )}
+                </div>
+              }
+            >
+              <Chip
+                size="small"
+                color="warning"
+                icon={<ImageNotSupportedOutlinedIcon />}
+                label={t('preview.imageProblemsShort', { count: imageProblems.length })}
+                aria-label={t('preview.imageProblems', { count: imageProblems.length })}
+                tabIndex={0}
+              />
+            </Tooltip>
+          )}
+          <Tooltip
+            placement="bottom"
+            title={
+              <div className="preview-header-tooltip">
+                <strong>{t('preview.reportProblem')}</strong>
+                <div>{t('preview.reportProblemTooltip')}</div>
+              </div>
+            }
+          >
+            <IconButton
               size="small"
-              variant="text"
-              startIcon={<BugReportOutlinedIcon />}
+              color="primary"
+              aria-label={t('preview.reportProblem')}
               onClick={() => onReportOpenChange(true)}
             >
-              {t('preview.reportProblem')}
-            </Button>
+              <BugReportOutlinedIcon fontSize="small" />
+            </IconButton>
           </Tooltip>
           <Button
             size="small"
