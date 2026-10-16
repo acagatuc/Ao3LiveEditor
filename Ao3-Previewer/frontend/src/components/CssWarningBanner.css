@@ -62,6 +62,7 @@
 .chip--duplicate-property { background: #fef3c7; color: #78350f; }
 .chip--disallowed-atrule  { background: #ede9fe; color: #4c1d95; }
 .chip--comment-stripped   { background: #dbeafe; color: #1e3a5f; }
+.chip--unsupported-property { background: #e2e8f0; color: #334155; }
 .chip--invalid-var-usage  { background: #d1fae5; color: #064e3b; }
 .chip--value-invalid      { background: #ede9fe; color: #4c1d95; }
 
@@ -104,6 +105,7 @@
 .badge--duplicate-property { background: #fef3c7; color: #78350f; }
 .badge--disallowed-atrule  { background: #ede9fe; color: #4c1d95; }
 .badge--comment-stripped   { background: #dbeafe; color: #1e3a5f; }
+.badge--unsupported-property { background: #e2e8f0; color: #334155; }
 .badge--invalid-var-usage  { background: #d1fae5; color: #064e3b; }
 .badge--value-invalid      { background: #ede9fe; color: #7c3aed; }
 

@@ -2,12 +2,16 @@ import {
   ALLOWED_PREFIXES,
   ALLOWED_PROPERTIES,
   DISALLOWED_AT_RULES,
+  UNSUPPORTED_VENDOR_PREFIXED_PROPERTIES,
+  VENDOR_PREFIXED_PROPERTIES,
 } from '../allowlist/cssAllowedProperties'
 import type { LintMessage } from './lintMessage'
 
 export interface PropertyValidationResult {
   valid: boolean
   reason?: LintMessage
+  // Set when AO3 accepts the property but no current browser supports it.
+  unsupported?: LintMessage
 }
 
 export function validateProperty(
@@ -47,6 +51,10 @@ export function validateProperty(
   }
 
   if (ALLOWED_PROPERTIES.has(property)) return { valid: true }
+  if (VENDOR_PREFIXED_PROPERTIES.has(property)) return { valid: true }
+  if (UNSUPPORTED_VENDOR_PREFIXED_PROPERTIES.has(property)) {
+    return { valid: true, unsupported: { key: 'unsupportedProperty', params: { property } } }
+  }
 
   for (const prefix of ALLOWED_PREFIXES) {
     if (property === prefix) return { valid: true }

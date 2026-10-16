@@ -20,6 +20,7 @@ export interface CssRule {
 export interface CssWarning {
   type:
     | 'invalid-property'
+    | 'unsupported-property'
     | 'duplicate-property'
     | 'disallowed-atrule'
     | 'comment-stripped'
@@ -36,7 +37,8 @@ export interface CssWarning {
 }
 
 // Warnings that make AO3 refuse to save the skin. AO3 handles the others silently: it strips
-// comments and keeps only the last of a duplicated property.
+// comments, keeps only the last of a duplicated property, and saves properties that no browser
+// supports.
 const SAVE_BLOCKING_TYPES = new Set<CssWarning['type']>([
   'invalid-property',
   'value-invalid',
@@ -144,6 +146,16 @@ export function analyzeCss(
             ...declarationAt,
           })
         }
+      }
+
+      if (validation.unsupported) {
+        warnings.push({
+          type: 'unsupported-property',
+          message: validation.unsupported,
+          selector,
+          property: normalizedProperty,
+          ...declarationAt,
+        })
       }
 
       if (!validation.valid) {
