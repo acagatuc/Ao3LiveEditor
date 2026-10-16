@@ -11,8 +11,9 @@
   justify-content: space-between;
   align-items: center;
   gap: 8px;
+  /* 48px, like the HTML/CSS tabs, so the lines under both headers meet. */
   min-height: 48px;
-  padding: 4px 16px;
+  padding: 0 16px;
   box-sizing: border-box;
   flex-shrink: 0;
 }
@@ -73,6 +74,11 @@
   font-size: 0.75rem;
   color: rgba(0, 0, 0, 0.6);
   cursor: default;
+}
+
+.preview-header-tooltip strong {
+  display: block;
+  margin-bottom: 2px;
 }
 
 .preview-image-problems ul {

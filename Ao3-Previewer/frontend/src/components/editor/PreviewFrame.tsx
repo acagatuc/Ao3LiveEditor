@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
 import Divider from '@mui/material/Divider'
 import Tooltip from '@mui/material/Tooltip'
 import Chip from '@mui/material/Chip'
@@ -115,12 +116,22 @@ export default function PreviewFrame({
         <div className="preview-header-title">{t('preview.heading')}</div>
         <div className="preview-header-actions">
           {saveBlockingCount > 0 && (
-            <Tooltip title={t('preview.invalidSkinTooltip')} placement="bottom">
+            <Tooltip
+              placement="bottom"
+              title={
+                <div className="preview-header-tooltip">
+                  <strong>{t('preview.invalidSkin', { count: saveBlockingCount })}</strong>
+                  <div>{t('preview.invalidSkinTooltip')}</div>
+                </div>
+              }
+            >
+              {/* Just the count, so the header stays one row; the tooltip says what it's about. */}
               <Chip
                 size="small"
                 color="error"
                 icon={<ErrorOutlineIcon />}
-                label={t('preview.invalidSkin', { count: saveBlockingCount })}
+                label={t('preview.invalidSkinShort', { count: saveBlockingCount })}
+                aria-label={t('preview.invalidSkin', { count: saveBlockingCount })}
                 onClick={onValidateCss}
               />
             </Tooltip>
@@ -129,7 +140,8 @@ export default function PreviewFrame({
             <Tooltip
               placement="bottom"
               title={
-                <div className="preview-image-problems">
+                <div className="preview-header-tooltip preview-image-problems">
+                  <strong>{t('preview.imageProblems', { count: imageProblems.length })}</strong>
                   <div>{t('preview.imageProblemsTooltip')}</div>
                   <ul>
                     {imageProblems.slice(0, MAX_LISTED_IMAGE_PROBLEMS).map((problem, i) => (
@@ -153,20 +165,29 @@ export default function PreviewFrame({
                 size="small"
                 color="warning"
                 icon={<ImageNotSupportedOutlinedIcon />}
-                label={t('preview.imageProblems', { count: imageProblems.length })}
+                label={t('preview.imageProblemsShort', { count: imageProblems.length })}
+                aria-label={t('preview.imageProblems', { count: imageProblems.length })}
                 tabIndex={0}
               />
             </Tooltip>
           )}
-          <Tooltip title={t('preview.reportProblemTooltip')} placement="bottom">
-            <Button
+          <Tooltip
+            placement="bottom"
+            title={
+              <div className="preview-header-tooltip">
+                <strong>{t('preview.reportProblem')}</strong>
+                <div>{t('preview.reportProblemTooltip')}</div>
+              </div>
+            }
+          >
+            <IconButton
               size="small"
-              variant="text"
-              startIcon={<BugReportOutlinedIcon />}
+              color="primary"
+              aria-label={t('preview.reportProblem')}
               onClick={() => onReportOpenChange(true)}
             >
-              {t('preview.reportProblem')}
-            </Button>
+              <BugReportOutlinedIcon fontSize="small" />
+            </IconButton>
           </Tooltip>
           <Button
             size="small"
