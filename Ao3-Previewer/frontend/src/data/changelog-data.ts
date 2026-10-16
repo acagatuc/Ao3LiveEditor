@@ -27,7 +27,7 @@ export const CHANGELOG: ChangelogRelease[] = [
       {
         type: "added",
         description:
-          "Prefixed properties that AO3 accepts but no current browser supports, like -ms-overflow-style, now get a warning that they do nothing",
+          "A new warning for prefixed properties that AO3 accepts but no current browser supports now get a warning that they do nothing",
       },
     ],
   },
