@@ -38,6 +38,11 @@ export const CHANGELOG: ChangelogRelease[] = [
         type: "improved",
         description: "The preview now waits until you stop typing CSS before reloading",
       },
+      {
+        type: "fixed",
+        description:
+          "The CSS linter no longer flags aspect-ratio, fill, stroke and stroke-width, which AO3 allows",
+      },
     ],
   },
   {
