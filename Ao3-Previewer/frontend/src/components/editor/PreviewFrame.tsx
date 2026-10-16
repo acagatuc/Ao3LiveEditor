@@ -48,7 +48,8 @@ export default function PreviewFrame({
     return () => clearTimeout(timer)
   }, [html])
 
-  // Checked a moment after typing stops, so the warning doesn't flicker mid-edit.
+  // Used a moment after typing stops, so the warning doesn't flicker mid-edit and the preview
+  // doesn't reload (and refetch every image) on each keystroke.
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedCss(css), 500)
     return () => clearTimeout(timer)
@@ -97,10 +98,10 @@ export default function PreviewFrame({
     () =>
       generateSrcdoc({
         html: debouncedHtml,
-        css: hideCreatorStyleMode ? '' : css,
+        css: hideCreatorStyleMode ? '' : debouncedCss,
         hideCreatorStyle: hideCreatorStyleMode,
       }),
-    [hideCreatorStyleMode, debouncedHtml, css],
+    [hideCreatorStyleMode, debouncedHtml, debouncedCss],
   )
 
   function handleToggleCreatorStyle() {
