@@ -14,10 +14,12 @@
     "notInAllowlist": "\"{{property}}\" is not in the AO3 allowlist",
     "unsupportedProperty": "AO3 accepts \"{{property}}\", but no current browser supports it, so it does nothing",
     "emptyValue": "Empty value",
+    "aspectRatioValue": "AO3 only allows aspect-ratio as a keyword like auto, or a ratio like 16 / 9 with an optional auto",
     "varNotAllowed": "var() is not allowed in workskin values",
     "tooManyDecimals": "AO3 allows {{max}} decimal places at most!",
     "unitNotAllowed": "Unit \"{{unit}}\" is not allowed by AO3; allowed units are: {{allowed}}",
     "imageFormatNotAllowed": "Image format \".{{ext}}\" is not allowed; allowed formats are: {{allowed}}",
+    "urlNotAllowed": "AO3 only allows url() in these properties: {{allowed}}",
     "imageUrlNoExtension": "Image URLs must end in a file extension AO3 allows: {{allowed}}"
   },
   "short": {

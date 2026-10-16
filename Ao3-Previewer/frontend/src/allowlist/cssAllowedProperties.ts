@@ -36,6 +36,7 @@ export const ALLOWED_PROPERTIES = new Set([
   'alignment-adjust',
   'alignment-baseline',
   'appearance',
+  'aspect-ratio',
   'azimuth',
   'baseline-shift',
   'behavior',
@@ -78,6 +79,7 @@ export const ALLOWED_PROPERTIES = new Set([
   'drop-initial-value',
   'elevation',
   'empty-cells',
+  'fill',
   'filter',
   'fit',
   'fit-position',
@@ -174,6 +176,8 @@ export const ALLOWED_PROPERTIES = new Set([
   'speech-rate',
   'stress',
   'string-set',
+  'stroke',
+  'stroke-width',
   'tab-side',
   'table-layout',
   'target',
@@ -424,6 +428,16 @@ export const MAX_DECIMAL_PLACES = 2
 
 // Image formats
 export const ALLOWED_IMAGE_FORMATS = ['jpg', 'jpeg', 'gif', 'png']
+
+// The only properties AO3 allows url() in (css_cleaner.rb)
+export const URL_PROPERTIES = [
+  'background',
+  'background-image',
+  'border',
+  'border-image',
+  'list-style',
+  'list-style-image',
+]
 
 // Special rules regarding AO3's current CSS setup.
 export const SPECIAL_RULES = {

@@ -167,7 +167,7 @@ export function analyzeCss(
           ...declarationAt,
         })
       } else {
-        const valueValidation = validateValue(value)
+        const valueValidation = validateValue(value, normalizedProperty)
         if (!valueValidation.valid) {
           warnings.push({
             type: 'value-invalid',

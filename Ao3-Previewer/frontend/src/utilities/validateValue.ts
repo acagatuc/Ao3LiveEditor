@@ -2,6 +2,7 @@ import {
   ALLOWED_UNITS,
   ALLOWED_IMAGE_FORMATS,
   MAX_DECIMAL_PLACES,
+  URL_PROPERTIES,
 } from '../allowlist/cssAllowedProperties'
 import type { LintMessage } from './lintMessage'
 
@@ -15,13 +16,35 @@ const FLOAT_REGEX = /\d+\.(\d+)/g
 const DIMENSION_REGEX = /(?<![\w.])(-?\d*\.?\d+)([a-z%]+)/gi
 const URL_REGEX = /url\(\s*['"]?([^'")\s]+)['"]?\s*\)/gi
 
-export function validateValue(value: string): ValueValidationResult {
+// AO3's own aspect-ratio check (css_cleaner.rb): one keyword, or a number or ratio with an
+// optional "auto" before or after. Copied as-is, including its limits on how long numbers can be.
+const AO3_NUMBER = String.raw`-?\.?\d{1,3}\.?\d{0,3}`
+const AO3_RATIO = `${AO3_NUMBER}(\\s*/\\s*${AO3_NUMBER})?`
+const ASPECT_RATIO_REGEX = new RegExp(`^([a-z-]+|(auto\\s+)?${AO3_RATIO}(\\s+auto)?)$`, 'i')
+
+export function validateValue(value: string, property?: string): ValueValidationResult {
   if (!value?.trim()) return { valid: false, reason: { key: 'emptyValue' } }
 
   const v = value.trim()
 
+  // AO3 checks !important separately, so it doesn't count against the pattern.
+  if (property === 'aspect-ratio' && !ASPECT_RATIO_REGEX.test(v.replace(/!important/i, '').trim())) {
+    return { valid: false, reason: { key: 'aspectRatioValue' } }
+  }
+
   if (/\bvar\s*\(/.test(v)) {
     return { valid: false, reason: { key: 'varNotAllowed' } }
+  }
+
+  // AO3 rejects the word "url" anywhere in other properties' values. It checks font-family and
+  // content before this, so those two are left to their own rules.
+  if (
+    property &&
+    !['font-family', 'content'].includes(property) &&
+    !URL_PROPERTIES.includes(property) &&
+    /\burl\b/i.test(v)
+  ) {
+    return { valid: false, reason: { key: 'urlNotAllowed', params: { allowed: URL_PROPERTIES.join(', ') } } }
   }
 
   // Image URLs are checked first and then removed, so letters and digits inside them
