@@ -2,6 +2,7 @@ import {
   ALLOWED_UNITS,
   ALLOWED_IMAGE_FORMATS,
   MAX_DECIMAL_PLACES,
+  URL_PROPERTIES,
 } from '../allowlist/cssAllowedProperties'
 import type { LintMessage } from './lintMessage'
 
@@ -33,6 +34,17 @@ export function validateValue(value: string, property?: string): ValueValidation
 
   if (/\bvar\s*\(/.test(v)) {
     return { valid: false, reason: { key: 'varNotAllowed' } }
+  }
+
+  // AO3 rejects the word "url" anywhere in other properties' values. It checks font-family and
+  // content before this, so those two are left to their own rules.
+  if (
+    property &&
+    !['font-family', 'content'].includes(property) &&
+    !URL_PROPERTIES.includes(property) &&
+    /\burl\b/i.test(v)
+  ) {
+    return { valid: false, reason: { key: 'urlNotAllowed', params: { allowed: URL_PROPERTIES.join(', ') } } }
   }
 
   // Image URLs are checked first and then removed, so letters and digits inside them

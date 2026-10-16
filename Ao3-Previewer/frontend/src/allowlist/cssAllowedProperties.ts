@@ -429,6 +429,16 @@ export const MAX_DECIMAL_PLACES = 2
 // Image formats
 export const ALLOWED_IMAGE_FORMATS = ['jpg', 'jpeg', 'gif', 'png']
 
+// The only properties AO3 allows url() in (css_cleaner.rb)
+export const URL_PROPERTIES = [
+  'background',
+  'background-image',
+  'border',
+  'border-image',
+  'list-style',
+  'list-style-image',
+]
+
 // Special rules regarding AO3's current CSS setup.
 export const SPECIAL_RULES = {
   DISALLOW_FONT_SHORTHAND: true,
